@@ -1,0 +1,31 @@
+.class-list {
+	column-count: 2;
+	margin: 0 0 30px 0;
+	font-size: 18px;
+	.class-item {
+		cursor: pointer;
+		margin: 0 0 8px 0;
+		color: $gc-color-primary;
+		transition: all 0.15s ease;
+		span {
+			color: $gc-color-warn;
+		}
+		&:before {
+	    content: '';
+	    width: 3px;
+	    height: 3px;
+	    padding: 4px;
+	    display: inline-block;
+	    border-radius: 25px;
+	    border: solid 4px #2d4554;
+			background: $gc-bg-main;
+			transition: all 0.15s ease;
+		}
+		&:hover {
+			color: $gc-color-warn;
+		}
+		&:hover:before {
+			border-color: $gc-color-warn;
+		}
+	}
+}

@@ -1,0 +1,17 @@
+
+@import "app/variables";
+
+// Bootstrap
+@import "bootstrap/bootstrap/_mixins";
+
+// Utils
+@import "app/utils";
+
+// Layout
+@import "app/layout";
+@import "app/header";
+@import "app/footer";
+
+@import "app/classes";
+@import "app/students";
+@import "app/tasks";

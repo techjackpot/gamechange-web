@@ -1,0 +1,23 @@
+ul {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	&>li {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+}
+.class-label {
+	color: $gc-color-warn;
+	font-size: 18px;
+}
+.widget-label {
+	margin-bottom: 4px;
+	line-height: 41px;
+	color: $gc-color-warn;
+	font-size: 18px;
+	text-align: center;
+	background: $gc-bg-sub;
+	text-transform: uppercase;
+}

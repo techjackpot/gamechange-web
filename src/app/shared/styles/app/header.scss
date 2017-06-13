@@ -1,0 +1,54 @@
+.topnav-wrapper {
+	.topnav-bar {
+		width: 960px;
+		margin: 32px auto 32px;
+		padding-bottom: 42px;
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-end;
+		overflow-x: hidden;
+		.topnav-logo {
+			.logo {
+			}
+		}
+		.topnav-menu {
+			a {
+				display: block;
+				text-transform: uppercase;
+				font-size: 24px;
+				letter-spacing: 1.5px;
+				color: $gc-color-primary;
+				transition: all 0.15s ease;
+				&:hover, &:focus, &.active {
+					text-decoration: none;
+					color: $gc-color-accent;
+				}
+			}
+			&>ul {
+				&>li {
+					display: inline-block;
+					margin-left: 45px;
+					position: relative;
+					&>ul {
+						position: absolute;
+						top: 100%;
+						right: 0;
+						text-align: right;
+						width: 960px;
+						margin-top:8px;
+						border-top: solid 1px $gc-color-accent;
+						padding-top: 8px;
+						&>li {
+							display: inline-block;
+							margin-left: 1em;
+							&>a {
+								font-size: 18px;
+								font-weight: 300;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

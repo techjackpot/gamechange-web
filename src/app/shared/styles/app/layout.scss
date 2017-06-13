@@ -1,0 +1,17 @@
+
+body {
+	background: $gc-bg-main;
+	color: $gc-color-primary;
+	font-family: 'Raleway', sans-serif;
+	font-size: 14px;
+}
+
+.main-wrapper {
+}
+
+section {
+	.content-wrapper {
+		width: 960px;
+		margin: 0 auto 30px;
+	}
+}

@@ -10,8 +10,13 @@ import { RollCallComponent } from './roll-call/roll-call.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'classes', pathMatch: 'full' },
-  { path: 'classes', component: ClassesComponent },
-  { path: 'students', component: StudentsComponent },
+  { path: 'classes', children: [
+      { path: '', redirectTo: 'classes', pathMatch: 'full' },
+      { path: 'classes', component: ClassesComponent },
+      { path: 'students', component: StudentsComponent }
+    ]
+  },
+  { path: 'student', component: StudentComponent },
   { path: 'tasks', component: TasksComponent },
   { path: 'groups', component: GroupsComponent },
   { path: 'rollcall', component: RollCallComponent },

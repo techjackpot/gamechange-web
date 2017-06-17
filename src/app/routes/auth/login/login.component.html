@@ -1,0 +1,26 @@
+<div *ngIf="!loading">
+	<div class="topnav-wrapper">
+		<div class="topnav-bar">
+			<div class="topnav-logo">
+				<img src="../../../assets/img/logo.png" alt="logo" class="logo" />
+			</div>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="row">
+	    <div class="col-md-4 col-sm-6 col-md-offset-4 col-sm-offset-3">
+	      <form (ngSubmit)="onSubmitLogin(f)" #f="ngForm" class="form login-form">
+					<input type="email" name="email" class="form-input" placeholder="Email@address.com" ngModel required>
+					<input type="password" name="password" class="form-input" placeholder="Password" ngModel required>
+
+					<button type="submit" [disabled]="!f.form.valid" class="btn form-submit">Login</button>
+					<span class="bottom-links">
+						<a [routerLink] = "['/forgot']" class="link-forgot">?</a>
+						<a [routerLink] = "['/register']" class="link-register">Register...</a>
+					</span>
+				</form>
+	    </div>
+		</div>
+	</div>
+</div>

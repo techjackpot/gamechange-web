@@ -7,11 +7,17 @@
 		justify-content: space-between;
 		align-items: flex-end;
 		overflow-x: hidden;
+		position: relative;
 		.topnav-logo {
 			.logo {
 			}
 		}
 		.topnav-menu {
+			&.profile-menu {
+				position: absolute;
+				top: 0;
+				right: 0;
+			}
 			a {
 				display: block;
 				text-transform: uppercase;
@@ -24,11 +30,14 @@
 					color: $gc-color-accent;
 				}
 			}
-			&>ul {
+			ul.top-menu {
 				&>li {
 					display: inline-block;
 					margin-left: 45px;
 					position: relative;
+					&:first-child {
+						margin-left: 0;
+					}
 					&>ul {
 						position: absolute;
 						top: 100%;

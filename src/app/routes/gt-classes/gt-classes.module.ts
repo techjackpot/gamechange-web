@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ClassesComponent } from './classes/classes.component';
 import { Routes, RouterModule } from '@angular/router';
+import { ClassesComponent } from './classes/classes.component';
 import { StudentComponent } from './student/student.component';
 import { StudentsComponent } from './students/students.component';
 import { TasksComponent } from './tasks/tasks.component';

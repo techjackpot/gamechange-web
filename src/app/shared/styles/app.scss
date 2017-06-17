@@ -12,8 +12,9 @@
 @import "app/header";
 @import "app/footer";
 
-@import "app/classes";
-@import "app/students";
-@import "app/tasks";
-@import "app/groups";
-@import "app/roll-call";
+// Teacher Pages
+@import "app/teacher-classes";
+@import "app/teacher-students";
+@import "app/teacher-tasks";
+@import "app/teacher-groups";
+@import "app/teacher-roll-call";

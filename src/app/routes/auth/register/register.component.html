@@ -1,0 +1,28 @@
+<div *ngIf="!loading">
+  <div class="topnav-wrapper">
+    <div class="topnav-bar">
+      <div class="topnav-logo">
+        <img src="../../../assets/img/logo.png" alt="logo" class="logo" />
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-4 col-sm-6 col-md-offset-4 col-sm-offset-3">
+        <form (ngSubmit)="onSubmitRegister(f)" #f="ngForm" class="form register-form">
+          <input type="email" name="email" class="form-input" placeholder="Email@address.com" [(ngModel)]="model.email" required>
+          <input type="password" name="password" class="form-input input-password" placeholder="Password" [(ngModel)]="model.password" required>
+          <input type="password" name="confirm-password" class="form-input input-password" placeholder="Confirm Password" [(ngModel)]="model.confirm_password" required>
+          <select name="role" class="form-input" required [(ngModel)]="model.role">
+            <option value="Choose" selected>Choose a Role ...</option>
+            <option *ngFor="let r of roles" [value]="r">{{r}}</option>
+          </select>
+          <button type="submit" [disabled]="!f.form.valid || model.password!=model.confirm_password || model.password=='' || model.role==0" class="btn form-submit">Register</button>
+          <span class="bottom-links">
+            <a [routerLink] = "['/login']" class="link-login">Already have account? Login ...</a>
+          </span>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

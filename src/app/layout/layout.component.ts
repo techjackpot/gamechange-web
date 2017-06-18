@@ -9,14 +9,15 @@ import { AuthService } from '../core/services/auth.service';
 })
 export class LayoutComponent implements OnInit {
 
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService) {
+    this.authService.userInfo().subscribe(
+      user => {
+        localStorage.setItem('user', JSON.stringify(user.UserInfo));
+      }
+    )
+  }
 
   ngOnInit() {
-  	this.authService.userInfo().subscribe(
-  		user => {
-        localStorage.setItem('user', JSON.stringify(user.UserInfo));
-  		}
-  	)
   }
 
 }

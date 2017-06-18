@@ -21,7 +21,7 @@ export class RegisterComponent implements OnInit {
     } else {
     	this.loading = false;
     }
-  	this.model = { email: '', password: '', confirm_password: '', role: 0 }
+  	this.model = { firstname: '', lastname: '', email: '', password: '', confirm_password: '', role: 0 }
   }
 
   ngOnInit() {
@@ -45,7 +45,12 @@ export class RegisterComponent implements OnInit {
 					}
 				]
 			},
-      Role: form.value.role
+      Role: form.value.role,
+      DisplayName: form.value.firstname + ' ' + form.value.lastname,
+      Name: {
+        First: form.value.firstname,
+        Last: form.value.lastname
+      }
 		};
     this.authService.register(data).subscribe(
       response => {

@@ -39,6 +39,9 @@ export class AuthService {
   getUserRole() {
     return this.getUser().Role;
   }
+  getUserDisplayName() {
+    return this.getUser().DisplayName;
+  }
 
   login(data) {
 		return this.http.post(this.url + '/api/login', data, { headers: this.getHeaders() })

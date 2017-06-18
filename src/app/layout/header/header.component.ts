@@ -15,7 +15,10 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit() {
   	this.checkUserRole();
-    console.log(this.userRole);
+  }
+
+  getUserDisplayName() {
+    return this.authService.getUserDisplayName();
   }
 
   checkUserRole() {

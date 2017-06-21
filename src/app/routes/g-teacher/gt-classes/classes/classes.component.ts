@@ -20,7 +20,7 @@ export class ClassesComponent implements OnInit {
       response => {
       	let teacherId = this.dataService.getTeacherID();
         this.assignedClasses = response.Classes.filter(function (classInfo) {
-        	return classInfo.Users.indexOf(teacherId)>-1;
+        	return classInfo.Teachers.indexOf(teacherId)>-1;
         });
       },
       (error) => {

@@ -1,7 +1,161 @@
 .page-gt-convenor {
-	.class-list {
+	.convenor-class-list {
+		.row {
+			margin-bottom: 30px;
+			&.active-wrapper {
+				border-top: dotted 1px $gc-color-warn;
+				border-bottom: dotted 1px $gc-color-warn;
+				padding: 30px 0 10px;
+			}
+		}
+		.class-actions {
+			.btn-register {
+				color: $gc-color-warn;
+				background: transparent;
+				font-size: 18px;
+				line-height: 1.3em;
+				padding: 20px 25px;
+				width: 235px;
+				outline: 0;
+				border-radius: 0;
+				transition: all 0.15s ease;
+				cursor: pointer;
+				img {
+					display: inline-block;
+					vertical-align: middle;
+				}
+				span {
+					display: inline-block;
+					vertical-align: middle;
+					width: 80px;
+					text-align: center;
+				}
+				&:hover,&.active {
+					background: darken($gc-bg-sub, 50%);
+					color: darken($gc-color-warn, 10%);
+				}
+			}
+			.btn-cancel {
+				width: 235px;
+				text-align: center;
+				line-height: 70px;
+				font-size: 18px;
+				cursor: pointer;
+				transition: all 0.15s ease;
+				background: lighten($gc-bg-main, 10%);
+				&:hover {
+					background: lighten($gc-bg-main, 20%);
+				}
+			}
+		}
+		.register-form {
+			color: $gc-color-warn;
+			font-size: 16px;
+			.form-control {
+				display: block;
+				width: 100%;
+				background: transparent;
+				border: solid 1px #2d4554;
+				color: #2d4554;
+				margin: 5px 0 15px;
+				line-height: 70px;
+				text-align: center;
+				outline: 0 none;
+				font-size: 16px;
+				padding: 0 1em;
+				border-radius: 4px;
+				&.ng-touched {
+					color: #fff;
+					text-align: center;
+				}
+				&:focus, &:active {
+					color: #fff;
+					border-color: #00e2b6;
+					text-align: left;
+				}
+			}
+			.form-submit {
+				display: block;
+				width: 60%;
+				background: #00e2b6;
+				color: #fff;
+				text-transform: uppercase;
+				text-align: center;
+				line-height: 40px;
+				font-size: 16px;
+				border: 0 none;
+				outline: 0 none;
+				border-radius: 4px;
+				transition: all 0.15s ease;
+				letter-spacing: 2px;
+				margin: 15px auto 20px;
+				&:disabled {
+					opacity: 0.5;
+				}
+				&:focus, &:active {
+					box-shadow: 2px inset #f00;
+				}
+			}
+			.list-checkbox {
+				color: $gc-color-primary;
+				font-size: 14px;
+				.item-checkbox {
+					display: inline-block;
+					margin: 4px 12px;
+					input {
+						margin-right: 4px;
+					}
+				}
+			}
+		}
 		.class-list-table {
 			width: 100%;
+			font-size: 18px;
+			text-align: center;
+			border-collapse: collapse;
+			td,th {
+				background: $gc-bg-sub;
+				text-align: center;
+				border: solid 4px $gc-bg-main;
+				padding: 6px 4px;
+			}
+			th {
+				text-transform: uppercase;
+				font-weight: 400;
+			}
+			a {
+				color: $gc-color-warn;
+				&:hover, &:focus {
+					text-decoration: none;
+				}
+			}
+			.class-teachers {
+				font-size: 14px;
+				.class-teacher {
+					background: $gc-bg-main;
+					padding: 4px 8px;
+					margin: 4px;
+					border-radius: 4px;
+					transition: all 0.15s ease;
+					color: $gc-color-accent;
+					cursor: default;
+					&:hover {
+						background: lighten($gc-bg-main, 10%);
+					}
+				}
+			}
+			.btn-remove {
+				background: darken($gc-color-warn, 20%);
+				color: $gc-color-primary;
+				outline: 0;
+				transition: all 0.15s ease;
+				cursor: pointer;
+				padding: 6px 12px;
+				border-radius: 6px;
+				&:hover, &:focus, &:active {
+					background: darken($gc-color-warn, 30%);
+				}
+			}
 		}
 	}
 }

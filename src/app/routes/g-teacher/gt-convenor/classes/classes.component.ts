@@ -48,7 +48,7 @@ export class ClassesComponent implements OnInit {
     });
   }
   getIndexOfUsers(users,user_id) {
-    let index = 0;
+    let index = -1;
     users.forEach((user, i) => {
       if(user._id == user_id) {
         index = i;
@@ -60,13 +60,13 @@ export class ClassesComponent implements OnInit {
   createNewClass() {
   	this.opened = true;
   	let newClass = {
-  		Name: 'New Class Name',
+  		Name: '',
   		DateTime: '',
-  		Users: []
+  		Teachers: []
   	};
 
     this.teachersList.forEach((teacher) => {
-      newClass.Users.push({ _id: teacher._id, use: false});
+      newClass.Teachers.push({ _id: teacher._id, use: false});
     });
   	this.selectClass(newClass);
   }
@@ -91,11 +91,11 @@ export class ClassesComponent implements OnInit {
     let data = {
       Name: this.selectedClass.Name,
       DateTime: new Date(this.selectedClass.DateTime).toString(),
-      Users: []
+      Teachers: []
 		};
-    this.selectedClass.Users.forEach(function (user) {
+    this.selectedClass.Teachers.forEach(function (user) {
       if(user.use) {
-        data.Users.push(user._id);
+        data.Teachers.push(user._id);
       }
     });
 
@@ -113,6 +113,10 @@ export class ClassesComponent implements OnInit {
 	  	// this.dataService.updateClass(data).subscribe)}
 
 	  }
+  }
+
+  cancelNewClass() {
+    this.opened = !this.opened;
   }
 
 

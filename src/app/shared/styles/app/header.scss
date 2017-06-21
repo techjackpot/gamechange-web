@@ -30,8 +30,8 @@
 				letter-spacing: 1.5px;
 				color: $gc-color-primary;
 				transition: all 0.15s ease;
-				&:hover, &:focus, &.active {
-					text-decoration: none;
+				text-decoration: none;
+				&:hover, &.active {
 					color: $gc-color-accent;
 				}
 			}

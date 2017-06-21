@@ -24,6 +24,11 @@ export class DataService {
     return this.authService.getUser()._id;
   }
 
+  getUser(data) {
+    return this.http.post(this.url + '/api/user/get', data, { headers: this.getHeaders() })
+      .map((response: Response) => response.json());
+  }
+
   getClassesList() {
 		return this.http.post(this.url + '/api/user/classes/list', {}, { headers: this.getHeaders() })
 			.map((response: Response) => response.json());
@@ -63,5 +68,22 @@ export class DataService {
           return user.Role == 'Student';
         });
       });
+  }
+
+  getClassStudents(data) {
+    return this.http.post(this.url + '/api/user/classes/get', data, { headers: this.getHeaders() })
+      .map((response: Response) => {
+        let classInfo = response.json().Class;
+        if(classInfo) {
+          return classInfo.Students;
+        } else {
+          return [];
+        }
+      });
+  }
+
+  updateClassStudents(data) {
+    return this.http.post(this.url + '/api/user/classes/update', data, { headers: this.getHeaders() })
+      .map((response: Response) => response.json());
   }
 }

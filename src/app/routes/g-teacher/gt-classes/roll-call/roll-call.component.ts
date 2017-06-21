@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { DataService } from '../../../../core/services/data.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-roll-call',
@@ -7,9 +9,10 @@ import { Component, OnInit } from '@angular/core';
 })
 export class RollCallComponent implements OnInit {
 
-  constructor() { }
+  constructor(private dataService: DataService, private router: Router) { }
 
   ngOnInit() {
+    if(!this.dataService.getCurrentClass()) this.router.navigate(['/classes']);
   }
 
 }

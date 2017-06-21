@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Routes, RouterModule } from '@angular/router';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ClassesComponent } from './classes/classes.component';
 import { StudentComponent } from './student/student.component';
 import { StudentsComponent } from './students/students.component';
@@ -16,7 +17,7 @@ const routes: Routes = [
       { path: '', redirectTo: 'choose', pathMatch: 'full' },
       { path: 'choose', component: ClassesComponent },
       { path: 'students', component: StudentsComponent },
-      { path: 'student', component: StudentComponent },
+      { path: 'student/:student_id', component: StudentComponent },
       { path: 'tasks', component: TasksComponent },
       { path: 'groups', component: GroupsComponent },
       { path: 'rollcall', component: RollCallComponent },
@@ -27,7 +28,9 @@ const routes: Routes = [
 @NgModule({
   imports: [
     CommonModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
+    FormsModule,
+    ReactiveFormsModule
   ],
   declarations: [ClassesComponent, StudentComponent, StudentsComponent, TasksComponent, GroupsComponent, RollCallComponent, GtClassesComponent],
   exports: [

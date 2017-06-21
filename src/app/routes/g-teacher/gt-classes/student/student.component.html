@@ -1,3 +1,6 @@
-<p>
-  student works!
-</p>
+<div class="student-info">
+	<p>This Student details page comes from <a [routerLink]="['/classes/students']">Class Management Page.</a></p>
+	<div class="info" *ngIf="Student">
+		<p>Name: {{Student.DisplayName}}</p>
+	</div>
+</div>

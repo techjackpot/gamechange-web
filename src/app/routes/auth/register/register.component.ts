@@ -22,7 +22,7 @@ export class RegisterComponent implements OnInit {
     // 	this.loading = false;
     }
     this.loading = false;
-  	this.model = { firstname: '', lastname: '', email: '', password: '', confirm_password: '', role: 'Choose' }
+  	this.model = { firstname: '', lastname: '', email: '', password: '', confirm_password: '', role: '' }
   }
 
   ngOnInit() {

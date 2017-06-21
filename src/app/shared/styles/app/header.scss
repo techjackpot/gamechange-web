@@ -36,15 +36,13 @@
 				}
 			}
 			ul.top-menu {
-				&>li {
+				&>.top-menu-items>li {
 					display: inline-block;
-					margin-left: 45px;
+					margin-left: 40px;
 					position: relative;
-					&:first-child {
-						margin-left: 0;
-					}
 					&>ul {
 						position: absolute;
+						display: none;
 						top: 100%;
 						right: 0;
 						text-align: right;
@@ -60,6 +58,9 @@
 								font-weight: 300;
 							}
 						}
+					}
+					&>a.active + ul {
+						display: block;
 					}
 				}
 			}

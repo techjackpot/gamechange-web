@@ -4,7 +4,7 @@
 			<img src="../../../assets/img/logo.png" alt="logo" class="logo" />
 		</div>
 		<div class="topnav-menu profile-menu">
-			<ul class="top-menu menu-student">
+			<ul class="top-menu menu-user">
 				<li>
 					<span class="user-name">{{ getUserDisplayName() }}</span>
 					<a routerLink="/logout" routerLinkActive="active">Logout</a>
@@ -12,15 +12,11 @@
 			</ul>
 		</div>
 		<div class="topnav-menu">
-			<div *ngIf="isStudent()">
-				<app-header-student></app-header-student>
-			</div>
-			<div *ngIf="isTeacher()">
-				<app-header-teacher></app-header-teacher>
-			</div>
-			<div *ngIf="isConvenor()">
-				<app-header-convenor></app-header-convenor>
-			</div>
+			<ul class="top-menu menu-{{userRole | lowercase}}">
+				<app-header-student *ngIf="isStudent()" class="top-menu-items"></app-header-student>
+				<app-header-convenor *ngIf="isConvenor()" class="top-menu-items"></app-header-convenor>
+				<app-header-teacher *ngIf="isTeacher()" class="top-menu-items"></app-header-teacher>
+			</ul>
 		</div>
 	</div>
 </div>

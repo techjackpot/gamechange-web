@@ -23,7 +23,12 @@ export class AuthService {
   getToken() {
     let token = "";
     if (localStorage.getItem('token')) {
-      token = JSON.parse(localStorage.getItem('token'));
+      try {
+        token = JSON.parse(localStorage.getItem('token'));
+      } catch(e) {
+        this.logout();
+        location.href="/";
+      }
     }
     return token;
   }
@@ -31,13 +36,19 @@ export class AuthService {
   getUser():any {
     let user = "";
     if (localStorage.getItem('user')) {
-      user = JSON.parse(localStorage.getItem('user'));
+      try {
+        user = JSON.parse(localStorage.getItem('user'));
+      } catch(e) {
+        this.logout();
+        location.href="/";
+      }
     }
     return user;
   }
 
   getUserRole() {
-    return this.getUser().Role;
+    let user = this.getUser();
+    return user.IsConvenor?'Convenor':user.Role;
   }
   getUserDisplayName() {
     return this.getUser().DisplayName;
@@ -49,9 +60,11 @@ export class AuthService {
   }
 
   logout() {
-      // remove user from local storage to log user out
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    // remove user from local storage to log user out
+    // localStorage.removeItem('token');
+    // localStorage.removeItem('user');
+    // localStorage.removeItem('currentClass');
+    localStorage.clear();
   }
 
   isLoggedIn() {

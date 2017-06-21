@@ -1,0 +1,31 @@
+.page-gt-classes {
+	.tasks-wrapper {
+		.task-item {
+			.task-label {
+				line-height: 41px;
+				padding: 0 10px;
+				font-size: 18px;
+				background: $gc-bg-sub;
+				margin-bottom: 4px;
+				span {
+					color: $gc-color-primary;
+				}
+			}
+			.task-content {
+				background: $gc-bg-sub;
+				padding: 36px;
+				textarea {
+					width: 100%;
+					height: 240px;
+					padding: 20px;
+					background: $gc-bg-main;
+					border: 0 none;
+					resize: none;
+					&:active, &:focus {
+						border: 0 none;
+					}
+				}
+			}
+		}
+	}
+}

@@ -18,10 +18,11 @@ export class RegisterComponent implements OnInit {
   constructor(private authService: AuthService, private router: Router) {
     if (this.authService.isLoggedIn()) {
       this.router.navigate(['/']);
-    } else {
-    	this.loading = false;
+    // } else {
+    // 	this.loading = false;
     }
-  	this.model = { firstname: '', lastname: '', email: '', password: '', confirm_password: '', role: 0 }
+    this.loading = false;
+  	this.model = { firstname: '', lastname: '', email: '', password: '', confirm_password: '', role: 'Choose' }
   }
 
   ngOnInit() {
@@ -45,7 +46,8 @@ export class RegisterComponent implements OnInit {
 					}
 				]
 			},
-      Role: form.value.role,
+      Role: form.value.role=='Convenor'?'Teacher':form.value.role,
+      IsConvenor: form.value.role=='Convenor'?true:false,
       DisplayName: form.value.firstname + ' ' + form.value.lastname,
       Name: {
         First: form.value.firstname,

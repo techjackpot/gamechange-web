@@ -1,0 +1,49 @@
+<div class="class-list">
+	<div class="class-actions">
+		<button (click)="createNewClass()" class="btn btn-register pull-right">Create New Class</button>
+		<div class="clearfix"></div>
+	</div>
+	<div class="edit-form-wrapper col-md-6 col-md-offset-3" *ngIf="opened && selectedClass">
+    <form (ngSubmit)="onSubmitClass(f)" #f="ngForm" class="form register-form">
+		  <div class="form-group">
+		    <label>Name</label>
+		    <input type="text" class="form-control" placeholder="Class Name" name="Name" [(ngModel)]="selectedClass.Name" required>
+		  </div>
+		  <div class="form-group">
+		    <label>Date Time</label>
+		    <input type="datetime-local" class="form-control" placeholder="" name="DateTime" [(ngModel)]="selectedClass.DateTime" required>
+		  </div>
+		  <div class="form-group">
+		    <label>Users</label>
+		    <div *ngIf="teachersList.length>0">
+		    	<label *ngFor="let user of teachersList;">
+		    		<input type="checkbox" name="User[]" value=true [(ngModel)]="selectedClass.Users[getIndexOfUsers(selectedClass.Users, user._id)].use" />{{ user.DisplayName }}
+		    	</label>
+		    </div>
+		  </div>
+      <button type="submit" [disabled]="!f.form.valid" class="btn btn-danger">Save & Register</button>
+    </form>
+	</div>
+	<table class="class-list-table" *ngIf="classesList.length>0">
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Date Time</th>
+				<th>Teacher/Convenor</th>
+				<th>Action</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr *ngFor="let classInfo of classesList;">
+				<td>{{ classInfo.Name }}</td>
+				<td>{{ classInfo.DateTime }}</td>
+				<td>
+					<div class="class-teachers" *ngIf="teachersList.length>0">
+						<span class="class-teacher" *ngFor="let user of classInfo.Users;">{{ teachersList[getIndexOfUsers(teachersList, user)]['DisplayName'] }}</span>
+					</div>
+				</td>
+				<td><button class="btn btn-danger" (click)="removeClass(classInfo);">Remove</button></td>
+			</tr>
+		</tbody>
+	</table>
+</div>

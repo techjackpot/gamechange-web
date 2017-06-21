@@ -11,6 +11,7 @@ export class HeaderComponent implements OnInit {
 
 	userRole = "Choose";
 
+
   constructor(private authService: AuthService) { }
 
   ngOnInit() {
@@ -28,7 +29,7 @@ export class HeaderComponent implements OnInit {
   	return this.userRole == 'Student';
   }
   isTeacher() {
-  	return this.userRole == 'Teacher';
+  	return this.userRole == 'Teacher' || this.userRole == 'Convenor';
   }
   isConvenor() {
   	return this.userRole == 'Convenor';

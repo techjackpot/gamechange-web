@@ -5,12 +5,18 @@ import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LogoutComponent } from './logout/logout.component';
+import { AuthComponent } from './auth.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
-  { path: 'login', component: LoginComponent },
-  { path: 'register', component: RegisterComponent },
-  { path: 'logout', component: LogoutComponent }
+  {
+    path: '', component: AuthComponent,
+    children: [
+      { path: '', redirectTo: 'login', pathMatch: 'full' },
+      { path: 'login', component: LoginComponent },
+      { path: 'register', component: RegisterComponent },
+      { path: 'logout', component: LogoutComponent }
+    ]
+  }
 ];
 
 @NgModule({
@@ -20,7 +26,7 @@ const routes: Routes = [
     FormsModule,
     ReactiveFormsModule
   ],
-  declarations: [LoginComponent, RegisterComponent, LogoutComponent],
+  declarations: [LoginComponent, RegisterComponent, LogoutComponent, AuthComponent],
   exports: [
   	RouterModule
   ]

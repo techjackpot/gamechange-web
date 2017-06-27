@@ -1,7 +1,7 @@
 <div class="convenor-class-list">
 	<div class="row" [class.active-wrapper]="opened">
 		<div class="edit-form-wrapper col-md-6">
-	    <form (ngSubmit)="onSubmitClass(f)" #f="ngForm" class="form register-form" *ngIf="opened && selectedClass">
+	    <form (ngSubmit)="onSubmitClass(f)" #f="ngForm" class="form class-form" *ngIf="opened && selectedClass">
 			  <div class="form-group">
 			    <label>Name</label>
 			    <input type="text" class="form-control" placeholder="Class Name" name="Name" [(ngModel)]="selectedClass.Name" required>

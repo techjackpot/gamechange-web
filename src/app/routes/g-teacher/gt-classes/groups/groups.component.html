@@ -1,283 +1,324 @@
-<div class="groups-list">
-	<div class="group-item">
-		<div class="group-info">
-			<div class="group-status">
-				<div class="group-name-wrapper"><span class="group-name-label">Group</span><span class="group-name">A</span></div>
-				<div class="group-score-wrapper"><span class="group-score-label">Score</span><span class="group-score">6.5</span></div>
-			</div>
-			<div class="group-member">
-				<div class="group-member-item">Zareen Attar · James Maclean</div>
-				<div class="group-member-item">Trevor Koh · John Brown</div>
-				<div class="group-member-item">Roshan Sherazi · Ian Wong</div>
-				<div class="group-member-item">Lucy Duke · Lucas Murphy</div>
-				<div class="group-member-item">Matt Novak · Ravi Narang</div>
-			</div>
+<div class="class-groups">
+	<div class="groups-control" *ngIf="Groups.length==0">
+		<div class="row">
+	    <form (ngSubmit)="onSubmitGroups(f)" #f="ngForm" class="form group-form col-md-4 col-md-offset-4">
+			  <div class="form-group">
+			    <label>Groups Count</label>
+			    <input type="number" class="form-control" placeholder="Group Count" name="Groups" [(ngModel)]="model.Groups" required>
+			  </div>
+			  <div class="form-group">
+			    <label>Members Count</label>
+			    <input type="number" class="form-control" placeholder="Member Count" name="Members" [(ngModel)]="model.Members" required>
+			  </div>
+			  <div class="form-group">
+	      	<button type="submit" [disabled]="!f.form.valid || model.Groups==0 || model.Members==0" class="btn-save">Create Groups</button>
+	      </div>
+		  </form>
 		</div>
-		<div class="group-member-photos">
-			<div class="group-member-photo">
-				<img src="" alt="Member 1" />
+	</div>
+	<div class="groups-list" *ngIf="Groups.length>0 && this.GroupsLoaded">
+		<div class="group-item" *ngFor="let group of Groups;" [dragula]='"nested-bag"'>
+			<div class="group-info">
+				<div class="group-status">
+					<div class="group-name-wrapper"><span class="group-name-label">Group</span><span class="group-name">{{ group.Title }}</span></div>
+					<div class="group-score-wrapper"><span class="group-score-label">Score</span><span class="group-score">6.5</span></div>
+				</div>
+				<div class="group-member">
+					<div class="group-member-item" *ngFor="let st of group.Students;">{{ studentList[getIndexOfUsers(studentList, st)].DisplayName }}</div>
+				</div>
 			</div>
-			<div class="group-member-photo">
-				<img src="" alt="Member 2" />
-			</div>
-			<div class="group-member-photo">
-				<img src="" alt="Member 3" />
-			</div>
-			<div class="group-member-photo">
-				<img src="" alt="Member 4" />
-			</div>
-			<div class="group-member-photo">
-				<img src="" alt="Member 5" />
-			</div>
-			<div class="group-member-photo">
-				<img src="" alt="Member 6" />
-			</div>
-			<div class="group-member-photo">
-				<img src="" alt="Member 7" />
-			</div>
-			<div class="group-member-photo">
-				<img src="" alt="Member 8" />
-			</div>
-			<div class="group-member-photo">
-				<img src="" alt="Member 9" />
-			</div>
-			<div class="group-member-photo">
-				<img src="" alt="Member 10" />
+			<div class="group-member-photos">
+				<div class="group-member-photo" *ngFor="let st of group.Students;">
+					<img src="" alt="{{ studentList[getIndexOfUsers(studentList, st)].DisplayName }}" />
+				</div>
 			</div>
 		</div>
 	</div>
-	<div class="group-item">
-		<div class="group-info">
-			<div class="group-status">
-				<div class="group-name-wrapper"><span class="group-name-label">Group</span><span class="group-name">B</span></div>
-				<div class="group-score-wrapper"><span class="group-score-label">Score</span><span class="group-score">7.0</span></div>
+
+
+
+	<div class="groups-list" *ngIf="Groups.length>0 && this.GroupsLoaded">
+		<h1 class="text-center">DEMO CONTENT</h1>
+		<div class="group-item">
+			<div class="group-info">
+				<div class="group-status">
+					<div class="group-name-wrapper"><span class="group-name-label">Group</span><span class="group-name">A</span></div>
+					<div class="group-score-wrapper"><span class="group-score-label">Score</span><span class="group-score">6.5</span></div>
+				</div>
+				<div class="group-member">
+					<div class="group-member-item">Zareen Attar · James Maclean</div>
+					<div class="group-member-item">Trevor Koh · John Brown</div>
+					<div class="group-member-item">Roshan Sherazi · Ian Wong</div>
+					<div class="group-member-item">Lucy Duke · Lucas Murphy</div>
+					<div class="group-member-item">Matt Novak · Ravi Narang</div>
+				</div>
 			</div>
-			<div class="group-member">
-				<div class="group-member-item">Zareen Attar · James Maclean</div>
-				<div class="group-member-item">Trevor Koh · John Brown</div>
-				<div class="group-member-item">Roshan Sherazi · Ian Wong</div>
-				<div class="group-member-item">Lucy Duke · Lucas Murphy</div>
-				<div class="group-member-item">Matt Novak · Ravi Narang</div>
-			</div>
-		</div>
-		<div class="group-member-photos">
-			<div class="group-member-photo">
-				<img src="" alt="Member 1" />
-			</div>
-			<div class="group-member-photo">
-				<img src="" alt="Member 2" />
-			</div>
-			<div class="group-member-photo">
-				<img src="" alt="Member 3" />
-			</div>
-			<div class="group-member-photo">
-				<img src="" alt="Member 4" />
-			</div>
-			<div class="group-member-photo">
-				<img src="" alt="Member 5" />
-			</div>
-			<div class="group-member-photo">
-				<img src="" alt="Member 6" />
-			</div>
-			<div class="group-member-photo">
-				<img src="" alt="Member 7" />
-			</div>
-			<div class="group-member-photo">
-				<img src="" alt="Member 8" />
-			</div>
-			<div class="group-member-photo">
-				<img src="" alt="Member 9" />
-			</div>
-			<div class="group-member-photo">
-				<img src="" alt="Member 10" />
-			</div>
-		</div>
-	</div>
-	<div class="group-item">
-		<div class="group-info">
-			<div class="group-status">
-				<div class="group-name-wrapper"><span class="group-name-label">Group</span><span class="group-name">C</span></div>
-				<div class="group-score-wrapper"><span class="group-score-label">Score</span><span class="group-score">9.0</span></div>
-			</div>
-			<div class="group-member">
-				<div class="group-member-item">Zareen Attar · James Maclean</div>
-				<div class="group-member-item">Trevor Koh · John Brown</div>
-				<div class="group-member-item">Roshan Sherazi · Ian Wong</div>
-				<div class="group-member-item">Lucy Duke · Lucas Murphy</div>
-				<div class="group-member-item">Matt Novak · Ravi Narang</div>
+			<div class="group-member-photos">
+				<div class="group-member-photo">
+					<img src="" alt="Member 1" />
+				</div>
+				<div class="group-member-photo">
+					<img src="" alt="Member 2" />
+				</div>
+				<div class="group-member-photo">
+					<img src="" alt="Member 3" />
+				</div>
+				<div class="group-member-photo">
+					<img src="" alt="Member 4" />
+				</div>
+				<div class="group-member-photo">
+					<img src="" alt="Member 5" />
+				</div>
+				<div class="group-member-photo">
+					<img src="" alt="Member 6" />
+				</div>
+				<div class="group-member-photo">
+					<img src="" alt="Member 7" />
+				</div>
+				<div class="group-member-photo">
+					<img src="" alt="Member 8" />
+				</div>
+				<div class="group-member-photo">
+					<img src="" alt="Member 9" />
+				</div>
+				<div class="group-member-photo">
+					<img src="" alt="Member 10" />
+				</div>
 			</div>
 		</div>
-		<div class="group-member-photos">
-			<div class="group-member-photo">
-				<img src="" alt="Member 1" />
+		<div class="group-item">
+			<div class="group-info">
+				<div class="group-status">
+					<div class="group-name-wrapper"><span class="group-name-label">Group</span><span class="group-name">B</span></div>
+					<div class="group-score-wrapper"><span class="group-score-label">Score</span><span class="group-score">7.0</span></div>
+				</div>
+				<div class="group-member">
+					<div class="group-member-item">Zareen Attar · James Maclean</div>
+					<div class="group-member-item">Trevor Koh · John Brown</div>
+					<div class="group-member-item">Roshan Sherazi · Ian Wong</div>
+					<div class="group-member-item">Lucy Duke · Lucas Murphy</div>
+					<div class="group-member-item">Matt Novak · Ravi Narang</div>
+				</div>
 			</div>
-			<div class="group-member-photo">
-				<img src="" alt="Member 2" />
-			</div>
-			<div class="group-member-photo">
-				<img src="" alt="Member 3" />
-			</div>
-			<div class="group-member-photo">
-				<img src="" alt="Member 4" />
-			</div>
-			<div class="group-member-photo">
-				<img src="" alt="Member 5" />
-			</div>
-			<div class="group-member-photo">
-				<img src="" alt="Member 6" />
-			</div>
-			<div class="group-member-photo">
-				<img src="" alt="Member 7" />
-			</div>
-			<div class="group-member-photo">
-				<img src="" alt="Member 8" />
-			</div>
-			<div class="group-member-photo">
-				<img src="" alt="Member 9" />
-			</div>
-			<div class="group-member-photo">
-				<img src="" alt="Member 10" />
-			</div>
-		</div>
-	</div>
-	<div class="group-item">
-		<div class="group-info">
-			<div class="group-status">
-				<div class="group-name-wrapper"><span class="group-name-label">Group</span><span class="group-name">D</span></div>
-				<div class="group-score-wrapper"><span class="group-score-label">Score</span><span class="group-score">3.5</span></div>
-			</div>
-			<div class="group-member">
-				<div class="group-member-item">Zareen Attar · James Maclean</div>
-				<div class="group-member-item">Trevor Koh · John Brown</div>
-				<div class="group-member-item">Roshan Sherazi · Ian Wong</div>
-				<div class="group-member-item">Lucy Duke · Lucas Murphy</div>
-				<div class="group-member-item">Matt Novak · Ravi Narang</div>
-			</div>
-		</div>
-		<div class="group-member-photos">
-			<div class="group-member-photo">
-				<img src="" alt="Member 1" />
-			</div>
-			<div class="group-member-photo">
-				<img src="" alt="Member 2" />
-			</div>
-			<div class="group-member-photo">
-				<img src="" alt="Member 3" />
-			</div>
-			<div class="group-member-photo">
-				<img src="" alt="Member 4" />
-			</div>
-			<div class="group-member-photo">
-				<img src="" alt="Member 5" />
-			</div>
-			<div class="group-member-photo">
-				<img src="" alt="Member 6" />
-			</div>
-			<div class="group-member-photo">
-				<img src="" alt="Member 7" />
-			</div>
-			<div class="group-member-photo">
-				<img src="" alt="Member 8" />
-			</div>
-			<div class="group-member-photo">
-				<img src="" alt="Member 9" />
-			</div>
-			<div class="group-member-photo">
-				<img src="" alt="Member 10" />
+			<div class="group-member-photos">
+				<div class="group-member-photo">
+					<img src="" alt="Member 1" />
+				</div>
+				<div class="group-member-photo">
+					<img src="" alt="Member 2" />
+				</div>
+				<div class="group-member-photo">
+					<img src="" alt="Member 3" />
+				</div>
+				<div class="group-member-photo">
+					<img src="" alt="Member 4" />
+				</div>
+				<div class="group-member-photo">
+					<img src="" alt="Member 5" />
+				</div>
+				<div class="group-member-photo">
+					<img src="" alt="Member 6" />
+				</div>
+				<div class="group-member-photo">
+					<img src="" alt="Member 7" />
+				</div>
+				<div class="group-member-photo">
+					<img src="" alt="Member 8" />
+				</div>
+				<div class="group-member-photo">
+					<img src="" alt="Member 9" />
+				</div>
+				<div class="group-member-photo">
+					<img src="" alt="Member 10" />
+				</div>
 			</div>
 		</div>
-	</div>
-	<div class="group-item">
-		<div class="group-info">
-			<div class="group-status">
-				<div class="group-name-wrapper"><span class="group-name-label">Group</span><span class="group-name">E</span></div>
-				<div class="group-score-wrapper"><span class="group-score-label">Score</span><span class="group-score">6.0</span></div>
+		<div class="group-item">
+			<div class="group-info">
+				<div class="group-status">
+					<div class="group-name-wrapper"><span class="group-name-label">Group</span><span class="group-name">C</span></div>
+					<div class="group-score-wrapper"><span class="group-score-label">Score</span><span class="group-score">9.0</span></div>
+				</div>
+				<div class="group-member">
+					<div class="group-member-item">Zareen Attar · James Maclean</div>
+					<div class="group-member-item">Trevor Koh · John Brown</div>
+					<div class="group-member-item">Roshan Sherazi · Ian Wong</div>
+					<div class="group-member-item">Lucy Duke · Lucas Murphy</div>
+					<div class="group-member-item">Matt Novak · Ravi Narang</div>
+				</div>
 			</div>
-			<div class="group-member">
-				<div class="group-member-item">Zareen Attar · James Maclean</div>
-				<div class="group-member-item">Trevor Koh · John Brown</div>
-				<div class="group-member-item">Roshan Sherazi · Ian Wong</div>
-				<div class="group-member-item">Lucy Duke · Lucas Murphy</div>
-				<div class="group-member-item">Matt Novak · Ravi Narang</div>
-			</div>
-		</div>
-		<div class="group-member-photos">
-			<div class="group-member-photo">
-				<img src="" alt="Member 1" />
-			</div>
-			<div class="group-member-photo">
-				<img src="" alt="Member 2" />
-			</div>
-			<div class="group-member-photo">
-				<img src="" alt="Member 3" />
-			</div>
-			<div class="group-member-photo">
-				<img src="" alt="Member 4" />
-			</div>
-			<div class="group-member-photo">
-				<img src="" alt="Member 5" />
-			</div>
-			<div class="group-member-photo">
-				<img src="" alt="Member 6" />
-			</div>
-			<div class="group-member-photo">
-				<img src="" alt="Member 7" />
-			</div>
-			<div class="group-member-photo">
-				<img src="" alt="Member 8" />
-			</div>
-			<div class="group-member-photo">
-				<img src="" alt="Member 9" />
-			</div>
-			<div class="group-member-photo">
-				<img src="" alt="Member 10" />
-			</div>
-		</div>
-	</div>
-	<div class="group-item">
-		<div class="group-info">
-			<div class="group-status">
-				<div class="group-name-wrapper"><span class="group-name-label">Group</span><span class="group-name">F</span></div>
-				<div class="group-score-wrapper"><span class="group-score-label">Score</span><span class="group-score">5.0</span></div>
-			</div>
-			<div class="group-member">
-				<div class="group-member-item">Zareen Attar · James Maclean</div>
-				<div class="group-member-item">Trevor Koh · John Brown</div>
-				<div class="group-member-item">Roshan Sherazi · Ian Wong</div>
-				<div class="group-member-item">Lucy Duke · Lucas Murphy</div>
-				<div class="group-member-item">Matt Novak · Ravi Narang</div>
+			<div class="group-member-photos">
+				<div class="group-member-photo">
+					<img src="" alt="Member 1" />
+				</div>
+				<div class="group-member-photo">
+					<img src="" alt="Member 2" />
+				</div>
+				<div class="group-member-photo">
+					<img src="" alt="Member 3" />
+				</div>
+				<div class="group-member-photo">
+					<img src="" alt="Member 4" />
+				</div>
+				<div class="group-member-photo">
+					<img src="" alt="Member 5" />
+				</div>
+				<div class="group-member-photo">
+					<img src="" alt="Member 6" />
+				</div>
+				<div class="group-member-photo">
+					<img src="" alt="Member 7" />
+				</div>
+				<div class="group-member-photo">
+					<img src="" alt="Member 8" />
+				</div>
+				<div class="group-member-photo">
+					<img src="" alt="Member 9" />
+				</div>
+				<div class="group-member-photo">
+					<img src="" alt="Member 10" />
+				</div>
 			</div>
 		</div>
-		<div class="group-member-photos">
-			<div class="group-member-photo">
-				<img src="" alt="Member 1" />
+		<div class="group-item">
+			<div class="group-info">
+				<div class="group-status">
+					<div class="group-name-wrapper"><span class="group-name-label">Group</span><span class="group-name">D</span></div>
+					<div class="group-score-wrapper"><span class="group-score-label">Score</span><span class="group-score">3.5</span></div>
+				</div>
+				<div class="group-member">
+					<div class="group-member-item">Zareen Attar · James Maclean</div>
+					<div class="group-member-item">Trevor Koh · John Brown</div>
+					<div class="group-member-item">Roshan Sherazi · Ian Wong</div>
+					<div class="group-member-item">Lucy Duke · Lucas Murphy</div>
+					<div class="group-member-item">Matt Novak · Ravi Narang</div>
+				</div>
 			</div>
-			<div class="group-member-photo">
-				<img src="" alt="Member 2" />
+			<div class="group-member-photos">
+				<div class="group-member-photo">
+					<img src="" alt="Member 1" />
+				</div>
+				<div class="group-member-photo">
+					<img src="" alt="Member 2" />
+				</div>
+				<div class="group-member-photo">
+					<img src="" alt="Member 3" />
+				</div>
+				<div class="group-member-photo">
+					<img src="" alt="Member 4" />
+				</div>
+				<div class="group-member-photo">
+					<img src="" alt="Member 5" />
+				</div>
+				<div class="group-member-photo">
+					<img src="" alt="Member 6" />
+				</div>
+				<div class="group-member-photo">
+					<img src="" alt="Member 7" />
+				</div>
+				<div class="group-member-photo">
+					<img src="" alt="Member 8" />
+				</div>
+				<div class="group-member-photo">
+					<img src="" alt="Member 9" />
+				</div>
+				<div class="group-member-photo">
+					<img src="" alt="Member 10" />
+				</div>
 			</div>
-			<div class="group-member-photo">
-				<img src="" alt="Member 3" />
+		</div>
+		<div class="group-item">
+			<div class="group-info">
+				<div class="group-status">
+					<div class="group-name-wrapper"><span class="group-name-label">Group</span><span class="group-name">E</span></div>
+					<div class="group-score-wrapper"><span class="group-score-label">Score</span><span class="group-score">6.0</span></div>
+				</div>
+				<div class="group-member">
+					<div class="group-member-item">Zareen Attar · James Maclean</div>
+					<div class="group-member-item">Trevor Koh · John Brown</div>
+					<div class="group-member-item">Roshan Sherazi · Ian Wong</div>
+					<div class="group-member-item">Lucy Duke · Lucas Murphy</div>
+					<div class="group-member-item">Matt Novak · Ravi Narang</div>
+				</div>
 			</div>
-			<div class="group-member-photo">
-				<img src="" alt="Member 4" />
+			<div class="group-member-photos">
+				<div class="group-member-photo">
+					<img src="" alt="Member 1" />
+				</div>
+				<div class="group-member-photo">
+					<img src="" alt="Member 2" />
+				</div>
+				<div class="group-member-photo">
+					<img src="" alt="Member 3" />
+				</div>
+				<div class="group-member-photo">
+					<img src="" alt="Member 4" />
+				</div>
+				<div class="group-member-photo">
+					<img src="" alt="Member 5" />
+				</div>
+				<div class="group-member-photo">
+					<img src="" alt="Member 6" />
+				</div>
+				<div class="group-member-photo">
+					<img src="" alt="Member 7" />
+				</div>
+				<div class="group-member-photo">
+					<img src="" alt="Member 8" />
+				</div>
+				<div class="group-member-photo">
+					<img src="" alt="Member 9" />
+				</div>
+				<div class="group-member-photo">
+					<img src="" alt="Member 10" />
+				</div>
 			</div>
-			<div class="group-member-photo">
-				<img src="" alt="Member 5" />
+		</div>
+		<div class="group-item">
+			<div class="group-info">
+				<div class="group-status">
+					<div class="group-name-wrapper"><span class="group-name-label">Group</span><span class="group-name">F</span></div>
+					<div class="group-score-wrapper"><span class="group-score-label">Score</span><span class="group-score">5.0</span></div>
+				</div>
+				<div class="group-member">
+					<div class="group-member-item">Zareen Attar · James Maclean</div>
+					<div class="group-member-item">Trevor Koh · John Brown</div>
+					<div class="group-member-item">Roshan Sherazi · Ian Wong</div>
+					<div class="group-member-item">Lucy Duke · Lucas Murphy</div>
+					<div class="group-member-item">Matt Novak · Ravi Narang</div>
+				</div>
 			</div>
-			<div class="group-member-photo">
-				<img src="" alt="Member 6" />
-			</div>
-			<div class="group-member-photo">
-				<img src="" alt="Member 7" />
-			</div>
-			<div class="group-member-photo">
-				<img src="" alt="Member 8" />
-			</div>
-			<div class="group-member-photo">
-				<img src="" alt="Member 9" />
-			</div>
-			<div class="group-member-photo">
-				<img src="" alt="Member 10" />
+			<div class="group-member-photos">
+				<div class="group-member-photo">
+					<img src="" alt="Member 1" />
+				</div>
+				<div class="group-member-photo">
+					<img src="" alt="Member 2" />
+				</div>
+				<div class="group-member-photo">
+					<img src="" alt="Member 3" />
+				</div>
+				<div class="group-member-photo">
+					<img src="" alt="Member 4" />
+				</div>
+				<div class="group-member-photo">
+					<img src="" alt="Member 5" />
+				</div>
+				<div class="group-member-photo">
+					<img src="" alt="Member 6" />
+				</div>
+				<div class="group-member-photo">
+					<img src="" alt="Member 7" />
+				</div>
+				<div class="group-member-photo">
+					<img src="" alt="Member 8" />
+				</div>
+				<div class="group-member-photo">
+					<img src="" alt="Member 9" />
+				</div>
+				<div class="group-member-photo">
+					<img src="" alt="Member 10" />
+				</div>
 			</div>
 		</div>
 	</div>

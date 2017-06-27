@@ -61,8 +61,8 @@ export class DataService {
     return JSON.parse(localStorage.getItem('currentClass'));
   }
 
-  getStudentList() {
-    return this.http.post(this.url + '/api/user/list', {}, { headers: this.getHeaders() })
+  getStudentList(data = []) {
+    return this.http.post(this.url + '/api/user/list', { ids: data }, { headers: this.getHeaders() })
       .map((response: Response) => {
         return response.json().Users.filter(function (user) {
           return user.Role == 'Student';
@@ -84,6 +84,45 @@ export class DataService {
 
   updateClassStudents(data) {
     return this.http.post(this.url + '/api/user/classes/update', data, { headers: this.getHeaders() })
+      .map((response: Response) => response.json());
+  }
+
+  getClassGroups(data) {
+    return this.http.post(this.url + '/api/user/classes/get', data, { headers: this.getHeaders() })
+      .map((response: Response) => {
+        let classInfo = response.json().Class;
+        if(classInfo) {
+          return classInfo.Groups;
+        } else {
+          return [];
+        }
+      });
+    // return this.http.post(this.url + '/api/classes/groups/list', data, { headers: this.getHeaders() })
+    //   .map((response: Response) => response.json());
+  }
+
+  getStudentListFromIds(data) {
+    return this.http.post(this.url + '/api/students/get', data, { headers: this.getHeaders() })
+      .map((response: Response) => response.json().Users);
+  }
+
+  createGroupsForClass(data) {
+    return this.http.post(this.url + '/api/classes/groups/create', data, { headers: this.getHeaders() })
+      .map((response: Response) => response.json());
+  }
+
+  getGroupsForClass(data) {
+    return this.http.post(this.url + '/api/classes/groups/get', data, { headers: this.getHeaders() })
+      .map((response: Response) => response.json());
+  }
+
+  createNewTask(data) {
+    return this.http.post(this.url + '/api/tasks/create', data, { headers: this.getHeaders() })
+      .map((response: Response) => response.json());
+  }
+
+  getClassTasks(data) {
+    return this.http.post(this.url + '/api/tasks/list', data, { headers: this.getHeaders() })
       .map((response: Response) => response.json());
   }
 }

@@ -72,6 +72,7 @@ export class StudentsComponent implements OnInit {
   }
 
   removeStudentFromClass(student_id) {
+    if(!confirm("Do you really wanna kick off this student?")) return;
     this.studentList[this.getIndexOfUsers(this.studentList, student_id)].use = false;
     this.refreshAssignedStudents();
   }

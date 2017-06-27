@@ -9,6 +9,7 @@ import { TasksComponent } from './tasks/tasks.component';
 import { GroupsComponent } from './groups/groups.component';
 import { RollCallComponent } from './roll-call/roll-call.component';
 import { GtClassesComponent } from './gt-classes.component';
+import { DragulaModule } from 'ng2-dragula';
 
 const routes: Routes = [
   {
@@ -30,7 +31,8 @@ const routes: Routes = [
     CommonModule,
     RouterModule.forChild(routes),
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    DragulaModule
   ],
   declarations: [ClassesComponent, StudentComponent, StudentsComponent, TasksComponent, GroupsComponent, RollCallComponent, GtClassesComponent],
   exports: [

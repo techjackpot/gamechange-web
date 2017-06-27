@@ -1,13 +1,33 @@
 <div class="tasks-wrapper">
 	<div class="widget-label">Today's task</div>
+	<div class="task-item task-create-form">
+		<h1>Create new Task</h1>
+	  <form (ngSubmit)="onSubmitTask(f)" #f="ngForm" class="form task-form">
+			<div class="task-label">
+				<span>Name</span>
+				<input type="text" class="task-name-field" placeholder="Task Name..." name="task-name" [(ngModel)]="model.title" required />
+        <select name="task-group" class="task-group-field" required [(ngModel)]="model.group">
+          <option value="-1" selected>Select Groups</option>
+          <option value="0">All Groups</option>
+          <option *ngFor="let g of Groups" [value]="g._id">Group {{g.Title}} Only</option>
+        </select>
+	      <button type="submit" [disabled]="!f.form.valid || model.group==-1 || model.title=='' || model.content==''" class="btn-save pull-right">Create Task</button>
+			</div>
+			<div class="task-content">
+				<textarea class="task-content-field" name="task-content" placeholder="Enter task information here" [(ngModel)]="model.content"></textarea>
+			</div>
+		</form>
+	</div>
 
-	<div class="task-item">
+	<h1>Task List</h1>
+	<div class="task-item" *ngFor="let tk of Tasks;">
 		<div class="task-label">
-			<span>TASK 1</span>
-			<!--<select></select>-->
+			<span>{{ tk.Title }}</span>
+			<span *ngIf="tk.group!=null"> -- For Group {{ Groups[getIndexOfGroups(Groups,tk.Group)].Title }}</span>
+			<span *ngIf="tk.group==null"> -- For All Group</span>
 		</div>
 		<div class="task-content">
-			<textarea placeholder="Enter task information here"></textarea>
+			<div class="task-content-div">{{ tk.Content }}</div>
 		</div>
 	</div>
 </div>

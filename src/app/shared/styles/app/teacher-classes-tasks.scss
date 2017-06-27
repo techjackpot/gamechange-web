@@ -1,6 +1,49 @@
 .page-gt-classes {
 	.tasks-wrapper {
+		.task-form {
+			.task-name-field {
+				background: transparent;
+				line-height: 20px;
+				border: solid 1px lighten($gc-bg-main, 10%);
+				padding: 4px 8px;
+				font-size: 14px;
+				margin-left: 8px;
+				outline: 0 none;
+			}
+			.task-group-field {
+				background: transparent;
+				line-height: 20px;
+				border: solid 1px lighten($gc-bg-main, 10%);
+				padding: 4px 8px;
+				font-size: 14px;
+				margin-left: 8px;
+				outline: 0 none;
+			}
+
+			.btn-save {
+				display: block;
+				width: 240px;
+				background: #00e2b6;
+				color: $gc-color-primary;
+				text-transform: uppercase;
+				text-align: center;
+				line-height: 28px;
+				font-size: 14px;
+				border: 0 none;
+				outline: 0 none;
+				border-radius: 4px;
+				transition: all 0.15s ease;
+				letter-spacing: 1px;
+				&:disabled {
+					opacity: 0.5;
+				}
+				&:focus, &:active {
+					box-shadow: 2px inset #f00;
+				}
+			}
+		}
 		.task-item {
+			margin-bottom: 18px;
 			.task-label {
 				line-height: 41px;
 				padding: 0 10px;
@@ -14,18 +57,24 @@
 			.task-content {
 				background: $gc-bg-sub;
 				padding: 36px;
-				textarea {
+				textarea, .task-content-div {
 					width: 100%;
 					height: 240px;
 					padding: 20px;
 					background: $gc-bg-main;
 					border: 0 none;
 					resize: none;
-					&:active, &:focus {
+					outline: 0 none;
+					&:not(.task-content-div):active, &:not(.task-content-div):focus {
 						border: 0 none;
+						outline: 1px dotted #0a0;
+					}
+					&.task-content-div {
+						height: auto;
 					}
 				}
 			}
+
 		}
 	}
 }

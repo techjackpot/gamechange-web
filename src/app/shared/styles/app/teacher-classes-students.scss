@@ -1,6 +1,53 @@
 .page-gt-classes {
 	.students-wrapper {
 		margin: 0 0 30px 0;
+		.list-checkbox {
+			margin: 14px 0 8px;
+			color: $gc-color-primary;
+			font-size: 14px;
+			.item-checkbox {
+				display: inline-block;
+				margin: 4px 12px;
+				input {
+					margin-right: 4px;
+				}
+			}
+		}
+		.btn-save {
+			display: block;
+			width: 60%;
+			background: #00e2b6;
+			color: $gc-color-primary;
+			text-transform: uppercase;
+			text-align: center;
+			line-height: 40px;
+			font-size: 16px;
+			border: 0 none;
+			outline: 0 none;
+			border-radius: 4px;
+			transition: all 0.15s ease;
+			letter-spacing: 2px;
+			margin: 15px auto 20px;
+			&:disabled {
+				opacity: 0.5;
+			}
+			&:focus, &:active {
+				box-shadow: 2px inset #f00;
+			}
+		}
+		.btn-edit {
+			display: inline-block;
+			padding: 2px 20px;
+			margin: 0 0 0 25px;
+			text-decoration: none;
+			cursor: pointer;
+			color: $gc-color-primary;
+			background: lighten($gc-bg-main, 10%);
+			line-height: 25px;
+			&:hover {
+				background: lighten($gc-bg-main, 20%);
+			}
+		}
 		.students-table {
 			width: 100%;
 			font-size: 18px;

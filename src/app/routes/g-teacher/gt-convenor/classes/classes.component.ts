@@ -72,6 +72,7 @@ export class ClassesComponent implements OnInit {
   }
 
   removeClass(classInfo) {
+    if(!confirm("Do you really wanna remove this class?")) return;
   	this.dataService.deleteClass(classInfo).subscribe(
   		response => {
 		    let idx = this.getIndexOfClasses(classInfo._id);

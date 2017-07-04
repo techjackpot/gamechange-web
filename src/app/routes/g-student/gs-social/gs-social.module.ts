@@ -9,7 +9,7 @@ const routes: Routes = [
   {
     path: '', component: GsSocialComponent,
     children: [
-      { path: '', redirectTo: 'groups', pathMatch: 'full' },
+      { path: '', redirectTo: 'friends', pathMatch: 'full' },
       { path: 'groups', component: GroupsComponent },
       { path: 'friends', component: FriendsComponent }
     ]

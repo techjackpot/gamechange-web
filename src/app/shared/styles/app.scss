@@ -13,10 +13,10 @@
 @import "app/footer";
 
 // Teacher Pages
-@import "app/teacher-classes-classes";
-@import "app/teacher-classes-students";
-@import "app/teacher-classes-tasks";
-@import "app/teacher-classes-groups";
-@import "app/teacher-classes-roll-call";
+@import "app/teacher.scss";
+
 // Convenor Pages
-@import "app/teacher-convenor-classes";
+@import "app/convenor.scss";
+
+// Student Pages
+@import "app/student.scss";

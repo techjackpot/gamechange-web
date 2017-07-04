@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { DataService } from '../../../../core/services/data.service';
+import { DragulaService } from "ng2-dragula";
 import { NgForm } from '@angular/forms';
 
 @Component({
@@ -16,13 +17,47 @@ export class GroupsComponent implements OnInit {
   model;
   GroupsLoaded = false;
 
-  constructor(private dataService: DataService, private router: Router) {
+  constructor(private dataService: DataService, private router: Router, private dragulaService: DragulaService) {
     this.model = {
       Groups: 2, Members: 2
       //Groups: 6, Members: 10
     };
+
+    dragulaService.setOptions('students-bag', {
+      moves: function (el, source, handle, sibling) {
+        if(source.children.length <= 1) return false;
+        return true;
+      },
+      accepts: function (el, target, source, sibling) {
+        return true; // elements can be dropped in any of the `containers` by default
+      },
+      revertOnSpill: true
+    });
+
+    // dragulaService.drop.subscribe((value) => {
+    //   console.log(`drop: ${value[0]}`);
+    //   console.log(value);
+    //   this.onDrop(value.slice(1));
+    // });
+    dragulaService.dropModel.subscribe((value) => {
+      this.onDropModel(value.slice(1));
+    });
+  }
+  
+  private onDropModel(args) {
+    let [el, target, source] = args;
+    // do something else
+    if(target == source) {
+      return false;
+    }
+    console.log(el.id, target.id, source.id);
+
+    this.dataService.updateGroupStudent({ student_id: el.id, from_group: source.id, to_group: target.id, class_id: this.currentClass._id }).subscribe((response) => {
+
+    });
   }
 
+  
   ngOnInit() {
     if(!this.dataService.getCurrentClass()) this.router.navigate(['/classes']);
     this.currentClass = Object.assign( { _id: '' }, this.dataService.getCurrentClass() );
@@ -80,4 +115,7 @@ export class GroupsComponent implements OnInit {
     });
   }
 
+  getProfilePictureUrl(url) {
+    return this.dataService.getProfilePictureUrl(url);
+  }
 }

@@ -75,6 +75,14 @@ export class StudentsComponent implements OnInit {
     if(!confirm("Do you really wanna kick off this student?")) return;
     this.studentList[this.getIndexOfUsers(this.studentList, student_id)].use = false;
     this.refreshAssignedStudents();
+    let data = {
+      '_id': this.currentClass._id,
+      'Students': this.assignedStudents
+    }
+    this.dataService.updateClassStudents(data).subscribe(
+      response => {
+      }
+    );
   }
 
 }

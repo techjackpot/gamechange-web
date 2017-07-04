@@ -1,3 +1,36 @@
-<p>
-  friends works!
-</p>
+<div class="friends-list">
+	<div *ngIf="friendList.length>0">
+		<table class="friends-table">
+			<thead>
+				<th width="70%">Name</th>
+				<th>Action</th>
+			</thead>
+			<tbody>
+				<tr *ngFor="let friend of friendList;">
+					<td class="friend-name-wrapper" [class.unapproved]="!friend.Approved">
+						<div *ngIf="friend.Approved == false">
+							<span class="friend-name pull-left">{{ getFriendName(friend) }}</span>
+							<span class="request-date pull-right">{{ friend.createdAt | date: 'short' }}</span>
+							<div class="clearfix"></div>
+						</div>
+						<div *ngIf="friend.Approved == true">
+							<span class="friend-name">{{ getFriendName(friend) }}</span>
+						</div>
+					</td>
+					<td class="action-cell">
+						<div *ngIf="friend.Approved == false">
+							<span class="friend-action action-accept" (click)="acceptFriend(friend)">Accept</span><span class="friend-action action-reject" (click)="rejectFriend(friend)">Reject</span>
+						</div>
+						<div *ngIf="friend.Approved == true">
+							<span class="friend-action action-remove" (click)="removeFriend(friend)">Remove</span>
+						</div>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div *ngIf="friendList.length==0">
+		<h1 class="text-warn">You don't have any friends or friend request.</h1>
+		<h2 class="text-accent">Go to Class and add friends.</h2>
+	</div>
+</div>

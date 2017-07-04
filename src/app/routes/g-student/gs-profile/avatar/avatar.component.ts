@@ -6,11 +6,11 @@ import { Http, Headers, Response, RequestOptions } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss']
+  selector: 'app-avatar',
+  templateUrl: './avatar.component.html',
+  styleUrls: ['./avatar.component.scss']
 })
-export class HomeComponent implements OnInit {
+export class AvatarComponent implements OnInit {
 
   me;
 
@@ -22,10 +22,6 @@ export class HomeComponent implements OnInit {
 
   getProfilePictureUrl(url) {
   	return this.dataService.getProfilePictureUrl(url);
-  }
-
-  overlayClicked() {
-  	this.router.navigate(['/profile/avatar']);
   }
 
 	fileChange(event) {

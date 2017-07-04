@@ -30,12 +30,12 @@ export class TasksComponent implements OnInit {
     this.dataService.getGroupsForClass(this.currentClass).subscribe(
       response => {
       	that.Groups = response.Groups;
+        this.dataService.getClassTasks({ class_id: this.currentClass._id }).subscribe(
+          response => {
+            this.Tasks = response.Tasks;
+          }
+        );
       }
-    );
-    this.dataService.getClassTasks({ class_id: this.currentClass._id }).subscribe(
-    	response => {
-    		this.Tasks = response.Tasks;
-    	}
     );
   }
 

@@ -1,0 +1,37 @@
+.page-gs-class {
+	.tasks-wrapper {
+		.task-item {
+			margin-bottom: 18px;
+			.task-label {
+				line-height: 41px;
+				padding: 0 10px;
+				font-size: 18px;
+				background: $gc-bg-sub;
+				margin-bottom: 4px;
+				span {
+					color: $gc-color-primary;
+				}
+			}
+			.task-content {
+				background: $gc-bg-sub;
+				padding: 36px;
+				textarea, .task-content-div {
+					width: 100%;
+					height: 240px;
+					padding: 20px;
+					background: $gc-bg-main;
+					border: 0 none;
+					resize: none;
+					outline: 0 none;
+					&:not(.task-content-div):active, &:not(.task-content-div):focus {
+						border: 0 none;
+						outline: 1px dotted #0a0;
+					}
+					&.task-content-div {
+						height: auto;
+					}
+				}
+			}
+		}
+	}
+}

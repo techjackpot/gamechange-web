@@ -50,6 +50,15 @@ export class AuthService {
     let user = this.getUser();
     return user.IsConvenor?'Convenor':user.Role;
   }
+
+  veryfiyRole(role) {
+    let user = this.getUser();
+    if(user.Role != role) {
+      this.logout();
+      location.href="/";
+    }
+  }
+
   getUserDisplayName() {
     return this.getUser().DisplayName;
   }
@@ -83,6 +92,14 @@ export class AuthService {
   register(data) {
     return this.http.post(this.url + '/api/register', data, { headers: this.getHeaders() })
       .map((response: Response) => response.json());
+  }
+
+  updateUserData() {
+    this.userInfo().subscribe(
+      user => {
+        localStorage.setItem('user', JSON.stringify(user.UserInfo));
+      }
+    );
   }
 
   /*

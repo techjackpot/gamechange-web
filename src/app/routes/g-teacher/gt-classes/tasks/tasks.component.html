@@ -23,8 +23,8 @@
 	<div class="task-item" *ngFor="let tk of Tasks;">
 		<div class="task-label">
 			<span>{{ tk.Title }}</span>
-			<span *ngIf="tk.group!=null"> -- For Group {{ Groups[getIndexOfGroups(Groups,tk.Group)].Title }}</span>
-			<span *ngIf="tk.group==null"> -- For All Group</span>
+			<span *ngIf="tk.Group!=null"> -- For Group {{ Groups[getIndexOfGroups(Groups,tk.Group)].Title }}</span>
+			<span *ngIf="tk.Group==null"> -- For All Group</span>
 		</div>
 		<div class="task-content">
 			<div class="task-content-div">{{ tk.Content }}</div>

@@ -1,3 +1,21 @@
-<p>
-  tasks works!
-</p>
+<div class="tasks-wrapper">
+	<div class="widget-label">Today's task</div>
+	<div *ngIf="loadComplete">
+		<div class="task-item" *ngFor="let tk of Tasks;">
+			<div class="task-label">
+				<span>{{ tk.Title }}</span>
+				<span *ngIf="tk.Group!=null"> | For Group {{ tk.Group.Title }}</span>
+				<span *ngIf="tk.Group==null"> | For All Group</span>
+				<span> | {{ tk.Class.Name }}</span>
+			</div>
+			<div class="task-content">
+				<div class="task-content-div">{{ tk.Content }}</div>
+			</div>
+		</div>
+	</div>
+	<div *ngIf="loadComplete">
+		<div *ngIf="Tasks.length==0">
+			<h2>No Tasks</h2>
+		</div>
+	</div>
+</div>

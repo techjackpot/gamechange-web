@@ -21,6 +21,11 @@ export class DataService {
   }
 
   getTeacherID() {
+    this.authService.veryfiyRole("Teacher");
+    return this.authService.getUser()._id;
+  }
+  getStudentID() {
+    this.authService.veryfiyRole("Student");
     return this.authService.getUser()._id;
   }
 
@@ -123,6 +128,70 @@ export class DataService {
 
   getClassTasks(data) {
     return this.http.post(this.url + '/api/tasks/list', data, { headers: this.getHeaders() })
+      .map((response: Response) => response.json());
+  }
+
+  getAttendClasses(data) {
+    return this.http.post(this.url + '/api/students/getclass', data, { headers: this.getHeaders() })
+      .map((response: Response) => response.json());
+  }
+
+  getCurrentGroup(data) {
+    return this.http.post(this.url + '/api/students/getgroup', data, { headers: this.getHeaders() })
+      .map((response: Response) => response.json());
+  }
+
+  getStudentTasks(data) {
+    return this.http.post(this.url + '/api/students/gettask', data, { headers: this.getHeaders() })
+      .map((response: Response) => response.json());
+  }
+
+  getStudentFriends(data) {
+    return this.http.post(this.url + '/api/students/getfriend', data, { headers: this.getHeaders() })
+      .map((response: Response) => response.json());
+  }
+
+  sendFriendRequest(data) {
+    return this.http.post(this.url + '/api/students/sendfriendrequest', data, { headers: this.getHeaders() })
+      .map((response: Response) => response.json());
+  }
+
+  approveFriendRequest(data) {
+    return this.http.post(this.url + '/api/students/acceptrequest', data, { headers: this.getHeaders() })
+      .map((response: Response) => response.json());
+  }
+
+  removeFriendRequest(data) {
+    return this.http.post(this.url + '/api/students/removefriend', data, { headers: this.getHeaders() })
+      .map((response: Response) => response.json());
+  }
+
+  uploadProfilePicture(data) {
+    let headers = this.getHeaders();
+    headers.append('enctype', 'multipart/form-data');
+    headers.append('Accept', 'application/json');
+    return this.http.post(this.url + '/api/user/uploadprofilepicture', data, { headers: headers})
+      .map((response: Response) => response.json());
+
+      // this.http.post(`${this.apiEndPoint}`, formData, { headers: headers })
+      //   .map(res => res.json())
+      //   .catch(error => Observable.throw(error))
+      //   .subscribe(
+      //       data => console.log('success'),
+      //       error => console.log(error)
+      //   )
+  }
+
+  getProfilePictureUrl(url) {
+    if(url) {
+      return this.url + '/' + url;
+    } else {
+      return 'assets/img/avatar.png';
+    }
+  }
+
+  updateGroupStudent(data) {
+    return this.http.post(this.url + '/api/classes/groups/movestudent', data, { headers: this.getHeaders() })
       .map((response: Response) => response.json());
   }
 }

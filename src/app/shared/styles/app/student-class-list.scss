@@ -1,0 +1,105 @@
+.page-gs-class {
+	.classes-table {
+		width: 100%;
+		border-collapse: collapse;
+		td, th {
+			background: $gc-bg-sub;
+			border: solid 4px $gc-bg-main;
+			padding: 1em;
+		}
+		th {
+			text-transform: uppercase;
+			font-weight: 400;
+			text-align: center;
+			color: $gc-color-warn;
+			font-size: 18px;
+		}
+		a {
+			color: $gc-color-warn;
+			&:hover, &:focus {
+				text-decoration: none;
+			}
+		}
+		.view-member-action {
+			cursor: pointer;
+			transition: all 0.15s ease;
+			text-align: center;
+			&:hover {
+				background: $gc-color-warn;
+			}
+		}
+	}
+	.students-table {
+		width: 100%;
+		border-collapse: collapse;
+		font-size: 16px;
+		td {
+			background: $gc-bg-sub;
+			border: solid 8px $gc-bg-main;
+			padding: 1em;
+			text-align: center;
+		}
+		.img-td {
+			padding: 0;
+			width: 130px;
+			img {
+				width: 130px;
+				height: 130px;
+			}
+		}
+		.student-name {
+			font-size: 38px;
+			color: $gc-color-accent;
+		}
+		.in-group {
+			display: block;
+			font-size: 34px;
+			letter-spacing: 4px;
+			font-weight: bold;
+			&:not(.ingroupyes) {
+				.in-group-no {
+					color: $gc-color-warn;
+				}
+			}
+			&.ingroupyes {
+				.in-group-yes {
+					color: $gc-color-warn;
+				}
+			}
+		}
+		.add-friend {
+			color: $gc-color-warn;
+	    cursor: pointer;
+	    font-size: 150px;
+	    line-height: 75px;
+	    font-weight: bold;
+	    display: block;
+	    overflow: hidden;
+		}
+		.friend-status {
+			transition: all 0.15s ease;
+		}
+		.friend-status-waiting {
+			background: $gc-color-warn;
+		}
+		.friend-status-approved {
+			background: $gc-color-accent;
+		}
+	}
+	.class-info {
+		margin-bottom: 1em;
+		.class-name {
+			padding: 1em;
+		}
+		.back-to-list {
+			background: $gc-color-warn;
+			color: $gc-color-primary;
+			padding: 1em;
+			cursor: pointer;
+			transition: all 0.15s ease;
+			&:hover {
+				background: darken($gc-color-warn, 10%);
+			}
+		}
+	}
+}

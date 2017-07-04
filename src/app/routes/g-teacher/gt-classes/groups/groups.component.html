@@ -17,19 +17,19 @@
 		</div>
 	</div>
 	<div class="groups-list" *ngIf="Groups.length>0 && this.GroupsLoaded">
-		<div class="group-item" *ngFor="let group of Groups;" [dragula]='"nested-bag"'>
+		<div class="group-item" *ngFor="let group of Groups;">
 			<div class="group-info">
 				<div class="group-status">
 					<div class="group-name-wrapper"><span class="group-name-label">Group</span><span class="group-name">{{ group.Title }}</span></div>
-					<div class="group-score-wrapper"><span class="group-score-label">Score</span><span class="group-score">6.5</span></div>
+					<div class="group-score-wrapper"><span class="group-score-label">Score</span><span class="group-score">0.0</span></div>
 				</div>
 				<div class="group-member">
 					<div class="group-member-item" *ngFor="let st of group.Students;">{{ studentList[getIndexOfUsers(studentList, st)].DisplayName }}</div>
 				</div>
 			</div>
-			<div class="group-member-photos">
-				<div class="group-member-photo" *ngFor="let st of group.Students;">
-					<img src="" alt="{{ studentList[getIndexOfUsers(studentList, st)].DisplayName }}" />
+			<div class="group-member-photos" [dragula]='"students-bag"' [dragulaModel]='group.Students' id="{{ group._id }}">
+				<div class="group-member-photo" *ngFor="let st of group.Students;" id="{{ st }}">
+					<img src="{{ getProfilePictureUrl(studentList[getIndexOfUsers(studentList, st)].DisplayPicture) }}" alt="{{ studentList[getIndexOfUsers(studentList, st)].DisplayName }}" />
 				</div>
 			</div>
 		</div>
@@ -37,6 +37,7 @@
 
 
 
+	<!--
 	<div class="groups-list" *ngIf="Groups.length>0 && this.GroupsLoaded">
 		<h1 class="text-center">DEMO CONTENT</h1>
 		<div class="group-item">
@@ -322,4 +323,5 @@
 			</div>
 		</div>
 	</div>
+	-->
 </div>

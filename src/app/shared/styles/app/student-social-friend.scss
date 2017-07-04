@@ -1,0 +1,59 @@
+.friends-table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 16px;
+	td {
+		background: $gc-bg-sub;
+		border: solid 8px $gc-bg-main;
+		padding: 1em;
+		text-align: center;
+	}
+	.friend-name-wrapper {
+		position: relative;
+		.friend-name {
+			display: block;
+			text-align: center;
+			font-size: 16px;
+			color: $gc-color-primary;
+		}
+		&.unapproved:before {
+			content: '';
+			display: block;
+			position: absolute;
+			left: 0;
+			top: 0;
+			height: 100%;
+			width: 8px;
+			background: $gc-color-warn;
+		}
+	}
+	.action-cell {
+		padding: 0;
+		height: 100%;
+		position: relative;
+		.friend-action {
+			cursor: pointer;
+			display: block;
+			width: 100%;
+			height: 100%;
+			vertical-align: top;
+			background: $gc-color-warn;
+			padding-top: 1em;
+			padding-bottom: 1em;
+			transition: all 0.15s ease;
+			&.action-accept, &.action-reject {
+				width: 50%;
+				display: inline-block;
+			}
+			&.action-accept {
+				background: $gc-color-accent;
+				&:hover {
+					background: darken($gc-color-accent, 20%);
+				}
+			}
+			&:hover {
+				background: darken($gc-color-warn, 20%);
+			}
+		}
+	}
+}

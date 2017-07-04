@@ -62,7 +62,8 @@ export class ClassesComponent implements OnInit {
   	let newClass = {
   		Name: '',
   		DateTime: '',
-  		Teachers: []
+  		Teachers: [],
+      Room: ''
   	};
 
     this.teachersList.forEach((teacher) => {
@@ -92,7 +93,8 @@ export class ClassesComponent implements OnInit {
     let data = {
       Name: this.selectedClass.Name,
       DateTime: new Date(this.selectedClass.DateTime).toString(),
-      Teachers: []
+      Teachers: [],
+      Room: this.selectedClass.Room
 		};
     this.selectedClass.Teachers.forEach(function (user) {
       if(user.use) {

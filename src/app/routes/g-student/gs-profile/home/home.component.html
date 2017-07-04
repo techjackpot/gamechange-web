@@ -1,3 +1,52 @@
-<p>
-  home works!
-</p>
+<div class="home-profile">
+	<div class="brief-area">
+		<div class="avatar-area" [class.no-avatar]="!me.DisplayPicture">
+			<img src="{{ getProfilePictureUrl(me.DisplayPicture) }}" class="avatar" *ngIf="me.DisplayPicture" />
+			<!--<div class="overlay" (click)="overlayClicked()"></div>-->
+			<div class="overlay"><input type="file" class="input-avatar" accept="image/*" (change)="fileChange($event)" /></div>
+		</div>
+		<div class="student-info">
+			<div class="student-info-item">
+				<span class="info-item-name">Name</span>
+				<span class="info-item-content" contenteditable>{{ me.DisplayName }}</span>
+			</div>
+			<div class="student-info-item">
+				<span class="info-item-name">Title</span>
+				<span class="info-item-content" contenteditable></span>
+			</div>
+			<div class="student-info-item">
+				<span class="info-item-name">Class</span>
+				<span class="info-item-content">Wednesday 3pm</span>
+			</div>
+			<div class="student-info-item">
+				<span class="info-item-name">Total Points</span>
+				<span class="info-item-content">53</span>
+			</div>
+			<div class="student-info-item">
+				<span class="info-item-name">Points Spent</span>
+				<span class="info-item-content">47</span>
+			</div>
+			<div class="student-info-item">
+				<span class="info-item-name">Class Rank</span>
+				<span class="info-item-content">4</span>
+			</div>
+			<div class="student-info-item">
+				<span class="info-item-name">Points Behind</span>
+				<span class="info-item-content">7</span>
+			</div>
+			<div class="student-info-item">
+				<span class="info-item-name">Weekly Average</span>
+				<span class="info-item-content">4.5/6.0</span>
+			</div>
+			<div class="student-info-item">
+				<span class="info-item-name">Strongest Category</span>
+				<span class="info-item-content">YMCA</span>
+			</div>
+			<div class="student-info-item">
+				<span class="info-item-name">Weakest Category</span>
+				<span class="info-item-content">Individual</span>
+			</div>
+		</div>
+		<div class="clearfix"></div>
+	</div>
+</div>

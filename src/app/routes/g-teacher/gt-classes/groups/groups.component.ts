@@ -23,7 +23,9 @@ export class GroupsComponent implements OnInit {
       //Groups: 6, Members: 10
     };
 
-    dragulaService.setOptions('students-bag', {
+    const bag: any = this.dragulaService.find('students-bag');
+    if (bag !== undefined ) this.dragulaService.destroy('students-bag');
+    this.dragulaService.setOptions('students-bag', {
       moves: function (el, source, handle, sibling) {
         if(source.children.length <= 1) return false;
         return true;
@@ -39,7 +41,7 @@ export class GroupsComponent implements OnInit {
     //   console.log(value);
     //   this.onDrop(value.slice(1));
     // });
-    dragulaService.dropModel.subscribe((value) => {
+    this.dragulaService.dropModel.subscribe((value) => {
       this.onDropModel(value.slice(1));
     });
   }
@@ -50,7 +52,7 @@ export class GroupsComponent implements OnInit {
     if(target == source) {
       return false;
     }
-    console.log(el.id, target.id, source.id);
+    //console.log(el.id, target.id, source.id);
 
     this.dataService.updateGroupStudent({ student_id: el.id, from_group: source.id, to_group: target.id, class_id: this.currentClass._id }).subscribe((response) => {
 

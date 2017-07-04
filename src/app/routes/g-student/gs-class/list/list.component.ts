@@ -19,6 +19,10 @@ export class ListComponent implements OnInit {
 
   constructor(private router: Router, private dataService: DataService, private authService: AuthService) { }
 
+  getProfilePictureUrl(url) {
+    return this.dataService.getProfilePictureUrl(url);
+  }
+  
   getIndexOfUsers(users,user_id) {
     let index = -1;
     users.forEach((user, i) => {

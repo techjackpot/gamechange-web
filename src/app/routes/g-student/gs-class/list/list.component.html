@@ -29,7 +29,7 @@
 	<table class="students-table">
 		<tbody>
 			<tr *ngFor="let student of selectedClass.Students;">
-				<td class="img-td"><img src="" alt="{{ studentList[getIndexOfUsers(studentList,student.student_id)].DisplayName }}"></td>
+				<td class="img-td"><img src="{{ getProfilePictureUrl(studentList[getIndexOfUsers(studentList,student.student_id)].DisplayPicture) }}" alt="{{ studentList[getIndexOfUsers(studentList,student.student_id)].DisplayName }}"></td>
 				<td><span class="student-name">{{ studentList[getIndexOfUsers(studentList,student.student_id)].DisplayName }}</span></td>
 				<td><span>In Group</span><span class="in-group" [class.ingroupyes]="student.inGroup"><span class="in-group-yes">Y</span><span>/</span><span class="in-group-no">N</span></span></td>
 				<td class="friend-status friend-status-{{checkFriendStatus(student.student_id)}}">

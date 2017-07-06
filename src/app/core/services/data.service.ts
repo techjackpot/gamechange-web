@@ -44,6 +44,11 @@ export class DataService {
   		.map((response: Response) => response.json());
   }
 
+  updateClassInfo(data) {
+    return this.http.post(this.url + '/api/user/classes/update', data, { headers: this.getHeaders() })
+      .map((response: Response) => response.json());
+  }
+
   deleteClass(data) {
   	return this.http.post(this.url + '/api/user/classes/delete', data, { headers: this.getHeaders() })
   		.map((response: Response) => response.json());
@@ -192,6 +197,11 @@ export class DataService {
 
   updateGroupStudent(data) {
     return this.http.post(this.url + '/api/classes/groups/movestudent', data, { headers: this.getHeaders() })
+      .map((response: Response) => response.json());
+  }
+
+  resetClassGroups(data) {
+    return this.http.post(this.url + '/api/classes/groups/reset', data, { headers: this.getHeaders() })
       .map((response: Response) => response.json());
   }
 }

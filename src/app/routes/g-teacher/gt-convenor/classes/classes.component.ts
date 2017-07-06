@@ -17,6 +17,7 @@ export class ClassesComponent implements OnInit {
 	selectedClass;
 
 	opened = false;
+  updating = false;
 
   constructor(private dataService: DataService) { }
 
@@ -58,7 +59,6 @@ export class ClassesComponent implements OnInit {
   }
 
   createNewClass() {
-  	this.opened = true;
   	let newClass = {
   		Name: '',
   		DateTime: '',
@@ -70,6 +70,28 @@ export class ClassesComponent implements OnInit {
       newClass.Teachers.push({ _id: teacher._id, use: false});
     });
   	this.selectClass(newClass);
+    this.updating = false;
+    this.opened = true;
+  }
+
+  editClass(classInfo) {
+
+    let tDateTime = new Date(classInfo.DateTime);
+    let newClass = {
+      Name: classInfo.Name,
+      DateTime: (new Date(tDateTime.getTime()-tDateTime.getTimezoneOffset()*1000*60).toISOString()).slice(0,16),
+      Teachers: [],
+      Room: classInfo.Room,
+      _id: classInfo._id
+    };
+
+    this.teachersList.forEach((teacher) => {
+      newClass.Teachers.push({ _id: teacher._id, use: (classInfo.Teachers.indexOf(teacher._id) >= 0)?true:false });
+    });
+
+    this.selectClass(newClass);
+    this.updating = true;
+    this.opened = true;
   }
 
   removeClass(classInfo) {
@@ -89,7 +111,7 @@ export class ClassesComponent implements OnInit {
   	);
   }
 
-  onSubmitClass(form: NgForm) {
+  onSubmitCreateClass(form: NgForm) {
     let data = {
       Name: this.selectedClass.Name,
       DateTime: new Date(this.selectedClass.DateTime).toString(),
@@ -105,7 +127,7 @@ export class ClassesComponent implements OnInit {
   	if(!this.selectedClass._id) {
 	    this.dataService.createNewClass(data).subscribe(
 	      response => {
-	      	this.classesList.push(response.Classes);
+	      	this.classesList.push(response.Class);
 	      	this.opened = false;
 	      },
 	      (error) => {
@@ -117,11 +139,38 @@ export class ClassesComponent implements OnInit {
 
 	  }
   }
+  onSubmitUpdateClass(form: NgForm) {
+    let data = {
+      Name: this.selectedClass.Name,
+      DateTime: new Date(this.selectedClass.DateTime).toString(),
+      Teachers: [],
+      Room: this.selectedClass.Room,
+      _id: this.selectedClass._id
+    };
+
+    this.selectedClass.Teachers.forEach(function (user) {
+      if(user.use) {
+        data.Teachers.push(user._id);
+      }
+    });
+
+    if(this.selectedClass._id) {
+      this.dataService.updateClassInfo(data).subscribe(
+        response => {
+          this.classesList.splice(this.getIndexOfClasses(data._id), 1, response.Class);
+          this.opened = false;
+        },
+        (error) => {
+          console.log(error);
+        }
+      );
+    } else {
+      // this.dataService.updateClass(data).subscribe)}
+
+    }
+  }
 
   cancelNewClass() {
     this.opened = !this.opened;
   }
-
-
-
 }

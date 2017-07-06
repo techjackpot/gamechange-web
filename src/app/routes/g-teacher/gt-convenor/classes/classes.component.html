@@ -1,7 +1,7 @@
 <div class="convenor-class-list">
 	<div class="row" [class.active-wrapper]="opened">
 		<div class="edit-form-wrapper col-md-6">
-	    <form (ngSubmit)="onSubmitClass(f)" #f="ngForm" class="form class-form" *ngIf="opened && selectedClass">
+	    <form #f="ngForm" class="form class-form" *ngIf="opened && selectedClass">
 			  <div class="form-group">
 			    <label>Name</label>
 			    <input type="text" class="form-control" placeholder="Class Name" name="Name" [(ngModel)]="selectedClass.Name" required>
@@ -11,18 +11,19 @@
 			    <input type="datetime-local" class="form-control" placeholder="" name="DateTime" [(ngModel)]="selectedClass.DateTime" required>
 			  </div>
 			  <div class="form-group">
-			    <label>Date Time</label>
+			    <label>Room</label>
 			    <input type="text" class="form-control" placeholder="Room Info ..." name="Room" [(ngModel)]="selectedClass.Room">
 			  </div>
 			  <div class="form-group">
 			    <label>Teachers</label>
 			    <div *ngIf="teachersList.length>0" class="list-checkbox">
 			    	<label *ngFor="let teacher of teachersList;" class="item-checkbox">
-			    		<input type="checkbox" name="Teacher[]" value=true [(ngModel)]="selectedClass.Teachers[getIndexOfUsers(selectedClass.Teachers, teacher._id)].use" />{{ teacher.DisplayName }}
+			    		<input type="checkbox" name="Teacher-{{ teacher._id }}" [(ngModel)]="selectedClass.Teachers[getIndexOfUsers(selectedClass.Teachers, teacher._id)].use" />{{ teacher.DisplayName }}
 			    	</label>
 			    </div>
 			  </div>
-	      <button type="submit" [disabled]="!f.form.valid" class="btn form-submit">Save & Register</button>
+	      <button type="submit" *ngIf="!updating" [disabled]="!f.form.valid" class="btn form-submit" (click)="onSubmitCreateClass(f)">Save & Register</button>
+	      <button type="submit" *ngIf="updating" [disabled]="!f.form.valid" class="btn form-submit" (click)="onSubmitUpdateClass(f)">Save & Register</button>
 	    </form>
 		</div>
 		<div class="class-actions col-md-6">
@@ -51,7 +52,10 @@
 					</div>
 				</td>
 				<td>{{ classInfo.Room }}</td>
-				<td><div class="btn-remove" (click)="removeClass(classInfo);">Remove</div></td>
+				<td>
+					<div class="btn-edit" (click)="editClass(classInfo);">Edit</div>
+					<div class="btn-remove" (click)="removeClass(classInfo);">Remove</div>
+				</td>
 			</tr>
 		</tbody>
 	</table>

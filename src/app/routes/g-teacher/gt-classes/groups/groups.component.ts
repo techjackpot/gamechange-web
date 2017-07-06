@@ -12,6 +12,7 @@ import { NgForm } from '@angular/forms';
 export class GroupsComponent implements OnInit {
 
 	Groups = [];
+  Tasks = [];
   currentClass = null;
 	studentList = [];
   model;
@@ -119,5 +120,19 @@ export class GroupsComponent implements OnInit {
 
   getProfilePictureUrl(url) {
     return this.dataService.getProfilePictureUrl(url);
+  }
+
+  resetGroups() {
+    let data = {
+      _id: this.currentClass._id
+    };
+    this.dataService.resetClassGroups(data).subscribe((response) => {
+      this.Groups = [];
+      this.Tasks = [];
+
+      this.dataService.setCurrentClass(response.Class);
+      this.currentClass = response.Class;
+      this.router.navigate(['/classes/chooseclass']);
+    });
   }
 }

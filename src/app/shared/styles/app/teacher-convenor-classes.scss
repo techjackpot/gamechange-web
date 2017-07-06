@@ -144,7 +144,7 @@
 					}
 				}
 			}
-			.btn-remove {
+			.btn-remove, .btn-edit {
 				background: darken($gc-color-warn, 20%);
 				color: $gc-color-primary;
 				outline: 0;
@@ -152,6 +152,8 @@
 				cursor: pointer;
 				padding: 6px 12px;
 				border-radius: 6px;
+				display: inline-block;
+				margin: 0 8px;
 				&:hover, &:focus, &:active {
 					background: darken($gc-color-warn, 30%);
 				}

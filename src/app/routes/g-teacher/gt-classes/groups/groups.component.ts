@@ -12,7 +12,6 @@ import { NgForm } from '@angular/forms';
 export class GroupsComponent implements OnInit {
 
 	Groups = [];
-  Tasks = [];
   currentClass = null;
 	studentList = [];
   model;
@@ -98,8 +97,6 @@ export class GroupsComponent implements OnInit {
 
     let gid = 0;
     let that = this;
-    console.log(this.studentList);
-    console.log(this.currentClass);
 
     this.studentList.forEach(function (student) {
       groups[gid++].push(student._id);
@@ -123,16 +120,17 @@ export class GroupsComponent implements OnInit {
   }
 
   resetGroups() {
-    let data = {
-      _id: this.currentClass._id
-    };
-    this.dataService.resetClassGroups(data).subscribe((response) => {
-      this.Groups = [];
-      this.Tasks = [];
+      if(confirm("Do you really want to reset GROUPS? Tasks will also be reset once group is clear.")) {
+      let data = {
+        _id: this.currentClass._id
+      };
+      this.dataService.resetClassGroups(data).subscribe((response) => {
+        this.Groups = [];
 
-      this.dataService.setCurrentClass(response.Class);
-      this.currentClass = response.Class;
-      this.router.navigate(['/classes/chooseclass']);
-    });
+        this.dataService.setCurrentClass(response.Class);
+        this.currentClass = response.Class;
+        this.router.navigate(['/classes/chooseclass']);
+      });
+    }
   }
 }

@@ -18,7 +18,7 @@ export class CreatecardComponent implements OnInit {
 	valueList = {
 		types: ["Special", "Common", "Defence", "Offence"],
 		rarity: ["Common", "Uncommon", "Rare"],
-		keywords: ["Add Points", "Subtract Points", "Add Gold", "Subtract Gold", "Add Cards", "Subtract Cards", "Defend Cards", "Perform Action", "Complete Task", "Persist", "Activation Time", "Add Friend"],
+		keywords: { "Auto": ["Add Points", "Subtract Points", "Add Gold", "Subtract Gold", "Add Cards", "Subtract Cards"], "Manual": ["Defend Cards", "Perform Action", "Complete Task", "Persist", "Activation Time", "Add Friend"] },
 		targets: ["Self", "Friends", "Others"],
 		goldcosts: [1,2,3,4,5,6,7,8,9,10], 
 	}

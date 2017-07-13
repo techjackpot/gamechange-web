@@ -35,7 +35,7 @@ export class ViewcollectionComponent implements OnInit {
 
   ngOnInit() {
     this.me = this.authService.getUser();
-    this.dataService.getCards({ user_id: this.me._id }).subscribe( (response) => {
+    this.dataService.getCards({ Creator: this.me._id }).subscribe( (response) => {
     	this.cardList = response.Cards;
     })
   }
@@ -119,4 +119,28 @@ export class ViewcollectionComponent implements OnInit {
   	}
   }
 
+	getCardActions() {
+		let actionCount = this.valueList.rarity.indexOf(this.selectedCard.Rarity)+1;
+		let currentSize = this.selectedCard.Actions.length;
+		if(currentSize > actionCount) {
+			for(let i=0; i<currentSize-actionCount; i++) {
+				this.selectedCard.Actions.pop();
+			}
+		} else {
+			for(let i=0; i<actionCount-currentSize; i++) {
+				this.selectedCard.Actions.push({
+					Keyword: '',
+					Target: '',
+					TargetValue: 0,
+					KeywordValue: 0
+				});
+			}
+		}
+	}
+
+	onClickedDeleteCard(card) {
+		this.dataService.deleteCard({ card_id: card._id }).subscribe((response) => {
+			this.cardList.splice(this.getIndexOfCards(this.cardList, card._id), 1);
+		})
+	}
 }

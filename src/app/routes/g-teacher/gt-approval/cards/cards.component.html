@@ -1,0 +1,114 @@
+<div class="cards-collection">
+	<div class="card-list">
+		<div *ngIf="cardList.length>0">
+			<table class="cards-table">
+				<thead>
+					<tr>
+						<th>Creator</th>
+						<th>Created At</th>
+						<th>Title</th>
+						<th>-</th>
+						<th>-</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr *ngFor="let card of cardList;" [class.active]="selectedCard && (card._id == selectedCard._id)">
+						<td>{{ card.Creator.DisplayName }}</td>
+						<td>{{ card.createdAt | date: 'short' }}</td>
+						<td>{{ card.Title }}</td>
+						<td>
+							<button class="btn btn-preview" (click)="onClickedPreviewCard(card)">Preview</button>
+						</td>
+						<td>
+							<button class="btn btn-approve" (click)="onClickedApproveCard(card)">Approve</button>
+							<button class="btn btn-deny" (click)="onClickedDenyCard(card)">Deny</button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div *ngIf="cardList.length==0">
+			<h4 class="text-center">There are no pending cards to be approved.</h4>
+		</div>
+	</div>
+
+	<div class="card-selected card-form clearfix" *ngIf="selectedCard && previewMode">
+		<div class="card-preview-area col-md-6">
+			<div class="card-preview-wrapper">
+				<div class="card-tile-preview">
+					<h4 class="text-center"><label>Preview</label></h4>
+					<div class="card-tile {{ selectedCard.Type | lowercase }}">
+						<div class="card-title">
+							<span>{{ selectedCard.Title }}</span>
+						</div>
+						<div class="card-picture">
+							<img class="card-picture-preview" src="{{ getServerAssetUrl(selectedCard.Picture) }}">
+						</div>
+						<div class="card-description">
+							<span>{{ selectedCard.Description }}</span>
+						</div>
+						<div class="card-type">
+							<span>{{ selectedCard.Type }}</span>
+						</div>
+						<div class="card-goldcost">
+							<span>{{ selectedCard.GoldCost }}</span>
+						</div>
+					</div>
+				</div>
+	    </div>
+		</div>
+		<div class="card-creation-form col-md-6">
+		  <div class="form-group">
+		    <label>Title</label>
+		    <span>{{selectedCard.Title}}</span>
+		  </div>
+		  <div class="form-group">
+		    <label>Description</label>
+		    <span>{{selectedCard.Description}}</span>
+		  </div>
+		  <div class="form-group">
+		    <label>Type</label>
+		    <span>{{selectedCard.Type}}</span>
+		  </div>
+		  <div class="form-group">
+		    <label>Picture</label>
+		    <img src="{{ getServerAssetUrl(selectedCard.Picture) }}">
+		  </div>
+		  <div class="form-group">
+		    <label>Gold Cost</label>
+		    <span>{{selectedCard.GoldCost}}</span>
+		  </div>
+		  <div class="form-group">
+		    <label>Rarity</label>
+		    <span>{{selectedCard.Rarity}}</span>
+		  </div>
+		</div>
+		<div class="card-creation-form col-lg-12" *ngIf="selectedCard.Actions.length>0">
+			<h4 class="text-center"><label>Actions</label></h4>
+			<div class="col-md-4" *ngFor="let action of selectedCard.Actions; let ii=index;">
+				<div class="card-creation-action-form">
+				  <div class="form-group">
+				    <label>Keyword</label>
+	    			<span>{{action.Keyword}}</span>
+				  </div>
+				  <div class="form-group">
+				    <label>Target</label>
+	    			<span>{{action.Target}}</span>
+				  </div>
+				  <div class="form-group">
+				    <label>Target Value</label>
+	    			<span>{{action.TargetValue}}</span>
+				  </div>
+				  <div class="form-group">
+				    <label>Keyword Value</label>
+	    			<span>{{action.KeywordValue}}</span>
+				  </div>
+				  <div class="form-group" *ngIf="action.Keyword=='Perform Action'">
+				    <label>Action Description</label>
+	    			<span>{{action.Description}}</span>
+				  </div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

@@ -209,4 +209,12 @@ export class DataService {
     return this.http.post(this.url + '/api/cards/list', data, { headers: this.getHeaders() })
       .map((response: Response) => response.json());
   }
+  deleteCard(data) {
+    return this.http.post(this.url + '/api/cards/delete', data, { headers: this.getHeaders() })
+      .map((response: Response) => response.json());
+  }
+  approveCard(data) {
+    return this.http.post(this.url + '/api/cards/approve', data, { headers: this.getHeaders() })
+      .map((response: Response) => response.json());
+  }
 }

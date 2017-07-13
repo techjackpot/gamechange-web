@@ -23,7 +23,7 @@
 					text-decoration: none;
 				}
 			}
-			.btn-edit {
+			.btn-edit, .btn-approved {
 				background: darken($gc-color-warn, 20%);
 				color: $gc-color-primary;
 				outline: 0;
@@ -37,6 +37,12 @@
 					background: darken($gc-color-warn, 30%);
 				}
 			}
+			.btn-approved {
+				background: darken($gc-color-accent, 20%);
+				&:hover, &:focus, &:active {
+					background: darken($gc-color-accent, 30%);
+				}
+			}
 			tr.active {
 				td {
 					background: darken($gc-color-accent, 30%);
@@ -44,6 +50,9 @@
 			}
 		}
 		.card-form {
+			margin-top: 2em;
+			border-top: 1px solid $gc-color-accent;
+			padding-top: 2em;
 			.form-submit, .form-cancel {
 				display: block;
 				width: 30%;

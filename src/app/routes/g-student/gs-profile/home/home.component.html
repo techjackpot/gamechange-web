@@ -1,7 +1,7 @@
 <div class="home-profile">
 	<div class="brief-area">
 		<div class="avatar-area" [class.no-avatar]="!me.DisplayPicture">
-			<img src="{{ getProfilePictureUrl(me.DisplayPicture) }}" class="avatar" *ngIf="me.DisplayPicture" />
+			<img src="{{ getServerAssetUrl(me.DisplayPicture) }}" class="avatar" *ngIf="me.DisplayPicture" />
 			<!--<div class="overlay" (click)="overlayClicked()"></div>-->
 			<div class="overlay"><input type="file" class="input-avatar" accept="image/*" (change)="fileChange($event)" /></div>
 		</div>

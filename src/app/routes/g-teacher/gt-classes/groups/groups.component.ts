@@ -115,8 +115,8 @@ export class GroupsComponent implements OnInit {
     });
   }
 
-  getProfilePictureUrl(url) {
-    return this.dataService.getProfilePictureUrl(url);
+  getServerAssetUrl(url) {
+    return this.dataService.getServerAssetUrl(url);
   }
 
   resetGroups() {

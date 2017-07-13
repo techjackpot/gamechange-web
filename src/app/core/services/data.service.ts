@@ -187,11 +187,11 @@ export class DataService {
       //   )
   }
 
-  getProfilePictureUrl(url) {
+  getServerAssetUrl(url) {
     if(url) {
       return this.url + '/' + url;
     } else {
-      return 'assets/img/avatar.png';
+      return 'assets/images/avatar.png';
     }
   }
 
@@ -202,6 +202,11 @@ export class DataService {
 
   resetClassGroups(data) {
     return this.http.post(this.url + '/api/classes/groups/reset', data, { headers: this.getHeaders() })
+      .map((response: Response) => response.json());
+  }
+
+  getCards(data) {
+    return this.http.post(this.url + '/api/cards/list', data, { headers: this.getHeaders() })
       .map((response: Response) => response.json());
   }
 }

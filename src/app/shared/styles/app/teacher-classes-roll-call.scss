@@ -9,7 +9,7 @@
 					display: flex;
 					width: 100%;
 					height: 140px;
-					background: $gc-bg-sub url(/assets/img/roll-call-cards.png) no-repeat 330px center;
+					background: $gc-bg-sub url(/assets/images/roll-call-cards.png) no-repeat 330px center;
 					margin-bottom: 30px;
 					.profile-photo {
 						width: 140px;
@@ -46,13 +46,13 @@
 							margin-bottom: 5px;
 						}
 						.action-icon.accept {
-							background: url(/assets/img/check.png) no-repeat center center $gc-bg-main;
+							background: url(/assets/images/check.png) no-repeat center center $gc-bg-main;
 						}
 						.action-icon.cancel {
-							background: url(/assets/img/cancel.png) no-repeat center center $gc-bg-main;
+							background: url(/assets/images/cancel.png) no-repeat center center $gc-bg-main;
 						}
 						.action-icon.plus {
-							background: url(/assets/img/plus.png) no-repeat center center $gc-bg-main;
+							background: url(/assets/images/plus.png) no-repeat center center $gc-bg-main;
 						}
 						.options {
 							.action-icon {

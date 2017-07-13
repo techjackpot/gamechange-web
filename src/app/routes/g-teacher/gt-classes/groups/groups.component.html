@@ -33,7 +33,7 @@
 			</div>
 			<div class="group-member-photos" [dragula]='"students-bag"' [dragulaModel]='group.Students' id="{{ group._id }}">
 				<div class="group-member-photo" *ngFor="let st of group.Students;" id="{{ st }}">
-					<img src="{{ getProfilePictureUrl(studentList[getIndexOfUsers(studentList, st)].DisplayPicture) }}" alt="{{ studentList[getIndexOfUsers(studentList, st)].DisplayName }}" />
+					<img src="{{ getServerAssetUrl(studentList[getIndexOfUsers(studentList, st)].DisplayPicture) }}" alt="{{ studentList[getIndexOfUsers(studentList, st)].DisplayName }}" />
 				</div>
 			</div>
 		</div>

@@ -2,13 +2,13 @@
 	<div class="current-avatar avatar-wrapper pull-left">
 		<div class="avatar-status">Current</div>
 		<div class="avatar-area" [class.no-avatar]="!me.DisplayPicture">
-			<img src="{{ getProfilePictureUrl(me.DisplayPicture) }}" class="avatar" *ngIf="me.DisplayPicture" />
+			<img src="{{ getServerAssetUrl(me.DisplayPicture) }}" class="avatar" *ngIf="me.DisplayPicture" />
 		</div>
 	</div>
 	<div class="new-avatar avatar-wrapper pull-right">
 		<div class="avatar-status">New</div>
 		<div class="avatar-area" [class.no-avatar]="!me.DisplayPicture">
-			<img src="{{ getProfilePictureUrl(me.DisplayPicture) }}" class="avatar" *ngIf="me.DisplayPicture" />
+			<img src="{{ getServerAssetUrl(me.DisplayPicture) }}" class="avatar" *ngIf="me.DisplayPicture" />
 			<div class="overlay"><input type="file" class="input-avatar" accept="image/*" (change)="fileChange($event)" /></div>
 		</div>
 	</div>

@@ -20,8 +20,8 @@ export class AvatarComponent implements OnInit {
     this.me = this.authService.getUser();
   }
 
-  getProfilePictureUrl(url) {
-  	return this.dataService.getProfilePictureUrl(url);
+  getServerAssetUrl(url) {
+  	return this.dataService.getServerAssetUrl(url);
   }
 
 	fileChange(event) {

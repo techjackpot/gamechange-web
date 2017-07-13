@@ -19,8 +19,8 @@ export class ListComponent implements OnInit {
 
   constructor(private router: Router, private dataService: DataService, private authService: AuthService) { }
 
-  getProfilePictureUrl(url) {
-    return this.dataService.getProfilePictureUrl(url);
+  getServerAssetUrl(url) {
+    return this.dataService.getServerAssetUrl(url);
   }
   
   getIndexOfUsers(users,user_id) {

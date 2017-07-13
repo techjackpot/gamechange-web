@@ -1,10 +1,10 @@
 <div class="card-creation clearfix">
-  <form #f="ngForm" class="form class-form">
+  <form #f="ngForm" class="form card-form">
 		<div class="card-preview-area col-md-6">
 			<div class="card-preview-wrapper">
 				<div class="card-tile-preview">
 					<h4 class="text-center">Preview</h4>
-					<div class="card-tile">
+					<div class="card-tile {{ selectedCard.Type | lowercase }}">
 						<div class="card-title">
 							<span>{{ selectedCard.Title }}</span>
 						</div>
@@ -23,7 +23,7 @@
 					</div>
 				</div>
 
-	      <button type="submit" [disabled]="!f.form.valid" class="btn form-submit" (click)="onSubmitCreateCard(f)">Create New Card</button>
+	      <button type="submit" [disabled]="!f.form.valid || !selectedFile" class="btn form-submit" (click)="onSubmitCreateCard(f)">Save</button>
 	    </div>
 		</div>
 		<div class="card-creation-form col-md-6">
@@ -56,7 +56,7 @@
 		  </div>
 		  <div class="form-group">
 		    <label>Rarity</label>
-		    <select class="form-control" name="Type" [(ngModel)]="selectedCard.Rarity" required (change)="getCardActions()">
+		    <select class="form-control" name="Rarity" [(ngModel)]="selectedCard.Rarity" required (change)="getCardActions()">
           <option value="" selected>Choose Rarity ...</option>
           <option *ngFor="let r of valueList.rarity" [value]="r">{{r}}</option>
 		    </select>
@@ -98,6 +98,10 @@
 		          <option value="0" selected>None</option>
 		          <option *ngFor="let t of numberList" [value]="t">{{t}}</option>
 				    </select>
+				  </div>
+				  <div class="form-group" *ngIf="action.Keyword=='Perform Action'">
+				    <label>Action Description</label>
+				    <textarea class="form-control" placeholder="Action Description" name="ActionDescription-{{ii}}" [(ngModel)]="action.Description" required></textarea>
 				  </div>
 				</div>
 			</div>

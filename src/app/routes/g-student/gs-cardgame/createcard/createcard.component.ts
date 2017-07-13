@@ -1,4 +1,5 @@
 import { Component, OnInit, ElementRef } from '@angular/core';
+import { AuthService } from '../../../../core/services/auth.service';
 import { DataService } from '../../../../core/services/data.service';
 import { Router } from '@angular/router';
 import { NgForm } from '@angular/forms';
@@ -14,6 +15,7 @@ export class CreatecardComponent implements OnInit {
 
 	selectedCard;
 	selectedFile = null;
+  me;
 
 	valueList = {
 		types: ["Special", "Common", "Defence", "Offence"],
@@ -25,25 +27,30 @@ export class CreatecardComponent implements OnInit {
 
 	numberList = [1,2,3,4,5,6,7,8,9,10];
 
-  constructor(private dataService: DataService, private element: ElementRef) {
-  	this.selectedCard = {
-  		Title: '',
-  		Description: '',
-  		Type: '',
-  		Rarity: '',
-  		GoldCost: '0',
-  		Picture: '',
-  		Actions: []
-  	}
+  constructor(private dataService: DataService, private authService: AuthService, private element: ElementRef, private http: Http, private router: Router) {
+    this.me = this.authService.getUser();
   	// this.selectedCard = {
-  	// 	Title: 'test',
-  	// 	Description: 'test',
-  	// 	Type: 'Common',
+  	// 	Title: '',
+  	// 	Description: '',
+  	// 	Type: '',
   	// 	Rarity: '',
-  	// 	GoldCost: '5',
+  	// 	GoldCost: '0',
   	// 	Picture: '',
-  	// 	Actions: []
+  	// 	Actions: [],
+   //    Creator: this.me._id
   	// }
+    console.log(this.me);
+  	this.selectedCard = {
+  		Title: 'test',
+  		Description: 'test',
+  		Type: 'Common',
+  		Rarity: '',
+  		GoldCost: '5',
+      Picture: '',
+  		Actions: [],
+      Creator: this.me._id
+  	}
+    console.log(this.selectedCard);
   }
 
   ngOnInit() {
@@ -65,31 +72,27 @@ export class CreatecardComponent implements OnInit {
 	}
 
 	onSubmitCreateCard(form: NgForm) {
-		// console.log(this.selectedFile);
-		// console.log(form);
 
-		// if(!this.selectedFile) return ;
+    let formData: FormData = new FormData();
+    formData.append('Picture', this.selectedFile, this.selectedFile.name);
+    formData.append('cardData', JSON.stringify(this.selectedCard));
 
-  //   let formData: FormData = new FormData();
-  //   formData.append('Picture', this.selectedFile, this.selectedFile.name);
+    let headers = new Headers();
+    headers.set('Accept', 'application/json');
+  	headers.append('x-chaos-token', JSON.parse(localStorage.getItem('token')));
 
-  //   //let headers = this.dataService.getHeaders();
-  //   let headers = new Headers();
-  //   headers.set('Accept', 'application/json');
-  // 	headers.append('x-chaos-token', JSON.parse(localStorage.getItem('token')));
-  //   //headers.set('Accept', 'application/json');
-  //   let options = new RequestOptions({ headers: headers });
-  //   this.http.post(this.dataService.url + '/api/user/uploadprofilepicture', formData, options)
-  //     .map(res => res.json())
-  //     .catch(error => Observable.throw(error))
-  //     .subscribe(
-  //     data => {
-  //     	let url = data.URL;
-  //     },
-  //     error => console.log(error),
-  //     () => {
-  //     });
+    // let options = new RequestOptions({ headers: headers });
+    let options = { headers: headers };
+    this.http.post(this.dataService.url + '/api/cards/create', /*{
+        imageData: imageData,
+        formData: this.selectedCard
+      }*/ formData, options)
+    .map(res => res.json())
+    .subscribe((data) => {
+      this.router.navigate(['/cardgame/viewcollection']);
+    });
 	}
+
 	getCardActions() {
 		let actionCount = this.valueList.rarity.indexOf(this.selectedCard.Rarity)+1;
 		let currentSize = this.selectedCard.Actions.length;

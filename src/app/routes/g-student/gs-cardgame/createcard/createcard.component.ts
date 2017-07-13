@@ -29,28 +29,26 @@ export class CreatecardComponent implements OnInit {
 
   constructor(private dataService: DataService, private authService: AuthService, private element: ElementRef, private http: Http, private router: Router) {
     this.me = this.authService.getUser();
-  	// this.selectedCard = {
-  	// 	Title: '',
-  	// 	Description: '',
-  	// 	Type: '',
-  	// 	Rarity: '',
-  	// 	GoldCost: '0',
-  	// 	Picture: '',
-  	// 	Actions: [],
-   //    Creator: this.me._id
-  	// }
-    console.log(this.me);
   	this.selectedCard = {
-  		Title: 'test',
-  		Description: 'test',
-  		Type: 'Common',
+  		Title: '',
+  		Description: '',
+  		Type: '',
   		Rarity: '',
-  		GoldCost: '5',
-      Picture: '',
+  		GoldCost: '0',
+  		Picture: '',
   		Actions: [],
       Creator: this.me._id
   	}
-    console.log(this.selectedCard);
+  	// this.selectedCard = {
+  	// 	Title: 'test',
+  	// 	Description: 'test',
+  	// 	Type: 'Common',
+  	// 	Rarity: '',
+  	// 	GoldCost: '5',
+   //    Picture: '',
+  	// 	Actions: [],
+   //    Creator: this.me._id
+  	// }
   }
 
   ngOnInit() {

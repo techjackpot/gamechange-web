@@ -11,6 +11,8 @@ import { AuthService } from '../../../../core/services/auth.service';
 export class CardsComponent implements OnInit {
 
 	cardList = [];
+	pendingList = [];
+	approvedList = [];
 	me;
 	selectedCard = null;
 	previewMode = false;
@@ -19,8 +21,11 @@ export class CardsComponent implements OnInit {
 
   ngOnInit() {
     this.me = this.authService.getUser();
-    this.dataService.getCards({ Approved: false }).subscribe( (response) => {
-    	this.cardList = response.Cards;
+    this.dataService.getCards({ Approved: false}).subscribe( (response) => {
+    	this.pendingList = response.Cards;
+    })
+    this.dataService.getCards({ Approved: true}).subscribe( (response) => {
+    	this.approvedList = response.Cards;
     })
   }
 
@@ -47,8 +52,10 @@ export class CardsComponent implements OnInit {
   	this.selectedCard = null;
   	this.previewMode = false;
 
-  	this.dataService.approveCard({ card_id: card._id }).subscribe((response) => {
-			this.cardList.splice(this.getIndexOfCards(this.cardList, card._id), 1);
+  	this.dataService.approveCard({ card_id: card._id, Approved: true }).subscribe((response) => {
+			// this.cardList[this.getIndexOfCards(this.cardList, card._id)] = response.Card;
+			this.pendingList.splice(this.getIndexOfCards(this.pendingList, card._id), 1);
+			this.approvedList.push(response.Card);
   	})
   }
 
@@ -57,8 +64,19 @@ export class CardsComponent implements OnInit {
   	this.previewMode = false;
   	
 		this.dataService.deleteCard({ card_id: card._id }).subscribe((response) => {
-			this.cardList.splice(this.getIndexOfCards(this.cardList, card._id), 1);
+			this.pendingList.splice(this.getIndexOfCards(this.pendingList, card._id), 1);
 		})
+  }
+
+  onClickedUnapproveCard(card) {
+  	this.selectedCard = null;
+  	this.previewMode = false;
+
+  	this.dataService.approveCard({ card_id: card._id, Approved: false }).subscribe((response) => {
+			// this.cardList[this.getIndexOfCards(this.cardList, card._id)] = response.Card;
+			this.approvedList.splice(this.getIndexOfCards(this.approvedList, card._id), 1);
+			this.pendingList.push(response.Card);
+  	})
   }
 
 }

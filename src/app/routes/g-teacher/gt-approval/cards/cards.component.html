@@ -1,34 +1,80 @@
 <div class="cards-collection">
 	<div class="card-list">
-		<div *ngIf="cardList.length>0">
+		<h4>Pending Cards</h4>
+		<div *ngIf="pendingList.length>0">
 			<table class="cards-table">
 				<thead>
 					<tr>
 						<th>Creator</th>
 						<th>Created At</th>
 						<th>Title</th>
+						<th>Status</th>
 						<th>-</th>
 						<th>-</th>
 					</tr>
 				</thead>
 				<tbody>
-					<tr *ngFor="let card of cardList;" [class.active]="selectedCard && (card._id == selectedCard._id)">
+					<tr *ngFor="let card of pendingList;" [class.active]="selectedCard && (card._id == selectedCard._id)">
 						<td>{{ card.Creator.DisplayName }}</td>
 						<td>{{ card.createdAt | date: 'short' }}</td>
 						<td>{{ card.Title }}</td>
 						<td>
+							<div class="btn-approved" *ngIf="card.Approved">Approved</div>
+							<div class="btn-edit" *ngIf="!card.Approved">Pending</div>
+						</td>
+						<td>
 							<button class="btn btn-preview" (click)="onClickedPreviewCard(card)">Preview</button>
 						</td>
 						<td>
-							<button class="btn btn-approve" (click)="onClickedApproveCard(card)">Approve</button>
-							<button class="btn btn-deny" (click)="onClickedDenyCard(card)">Deny</button>
+							<button class="btn btn-approve" (click)="onClickedApproveCard(card)" *ngIf="!card.Approved">Approve</button>
+							<button class="btn btn-deny" (click)="onClickedDenyCard(card)" *ngIf="!card.Approved">Deny</button>
+							<button class="btn btn-deny" (click)="onClickedUnapproveCard(card)" *ngIf="card.Approved">Unapprove</button>
 						</td>
 					</tr>
 				</tbody>
 			</table>
 		</div>
-		<div *ngIf="cardList.length==0">
+		<div *ngIf="pendingList.length==0">
 			<h4 class="text-center">There are no pending cards to be approved.</h4>
+		</div>
+	</div>
+	<div class="card-list">
+		<h4>Approved Cards</h4>
+		<div *ngIf="approvedList.length>0">
+			<table class="cards-table">
+				<thead>
+					<tr>
+						<th>Creator</th>
+						<th>Created At</th>
+						<th>Title</th>
+						<th>Status</th>
+						<th>-</th>
+						<th>-</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr *ngFor="let card of approvedList;" [class.active]="selectedCard && (card._id == selectedCard._id)">
+						<td>{{ card.Creator.DisplayName }}</td>
+						<td>{{ card.createdAt | date: 'short' }}</td>
+						<td>{{ card.Title }}</td>
+						<td>
+							<div class="btn-approved" *ngIf="card.Approved">Approved</div>
+							<div class="btn-edit" *ngIf="!card.Approved">Pending</div>
+						</td>
+						<td>
+							<button class="btn btn-preview" (click)="onClickedPreviewCard(card)">Preview</button>
+						</td>
+						<td>
+							<button class="btn btn-approve" (click)="onClickedApproveCard(card)" *ngIf="!card.Approved">Approve</button>
+							<button class="btn btn-deny" (click)="onClickedDenyCard(card)" *ngIf="!card.Approved">Deny</button>
+							<button class="btn btn-deny" (click)="onClickedUnapproveCard(card)" *ngIf="card.Approved">Unapprove</button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div *ngIf="approvedList.length==0">
+			<h4 class="text-center">There are no approved cards yet.</h4>
 		</div>
 	</div>
 

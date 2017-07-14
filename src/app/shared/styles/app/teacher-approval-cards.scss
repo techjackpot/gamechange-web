@@ -1,4 +1,10 @@
 .page-gt-approval {
+	.card-list {
+		margin-top: 2em;
+		padding-bottom: 2em;
+		margin-bottom: 2em;
+		border-bottom: solid 1px $gc-color-accent;
+	}
 	.cards-collection {
 		.cards-table {
 			width: 100%;
@@ -23,7 +29,7 @@
 					text-decoration: none;
 				}
 			}
-			.btn-approve, .btn-deny, .btn-preview {
+			.btn-approve, .btn-deny, .btn-preview, .btn-approved {
 				background: darken($gc-color-warn, 20%);
 				color: $gc-color-primary;
 				outline: 0;
@@ -35,6 +41,12 @@
 				margin: 0 8px;
 				&:hover, &:focus, &:active {
 					background: darken($gc-color-warn, 30%);
+				}
+			}
+			.btn-approved {
+				background: darken($gc-color-accent, 20%);
+				&:hover, &:focus, &:active {
+					background: darken($gc-color-accent, 30%);
 				}
 			}
 			tr.active {

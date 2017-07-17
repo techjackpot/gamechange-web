@@ -7,12 +7,24 @@
 			    <input type="text" class="form-control" placeholder="Class Name" name="Name" [(ngModel)]="selectedClass.Name" required>
 			  </div>
 			  <div class="form-group">
-			    <label>Date Time</label>
+			    <label>Description</label>
+			    <textarea type="text" class="form-control" placeholder="Description" name="Description" [(ngModel)]="selectedClass.Description"></textarea>
+			  </div>
+			  <div class="form-group">
+			    <label>Start Date</label>
 			    <input type="datetime-local" class="form-control" placeholder="" name="DateTime" [(ngModel)]="selectedClass.DateTime" required>
 			  </div>
 			  <div class="form-group">
-			    <label>Room</label>
+			    <label>Total Weeks</label>
+			    <input type="number" class="form-control" placeholder="Total Weeks" name="TotalWeeks" min="1" step="1" [(ngModel)]="selectedClass.TotalWeeks" required>
+			  </div>
+			  <div class="form-group">
+			    <label>Location</label>
 			    <input type="text" class="form-control" placeholder="Room Info ..." name="Room" [(ngModel)]="selectedClass.Room">
+			  </div>
+			  <div class="form-group">
+			    <label>Subject</label>
+			    <input type="text" class="form-control" placeholder="Subject" name="Subject" [(ngModel)]="selectedClass.Subject">
 			  </div>
 			  <div class="form-group">
 			    <label>Teachers</label>

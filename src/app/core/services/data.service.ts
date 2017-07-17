@@ -4,11 +4,12 @@ import { Observable } from 'rxjs';
 import 'rxjs/Rx';
 import { Router } from '@angular/router';
 import { AuthService } from './auth.service';
+import { environment } from '../../../environments/environment';
 
 @Injectable()
 export class DataService {
 
-  url = 'http://localhost:3001';
+  url = environment.serverUrl;
 
   public currentClassChanged: EventEmitter<Object>;
 

@@ -3,11 +3,12 @@ import { Http, Headers, Response } from '@angular/http';
 import { Observable } from 'rxjs';
 import 'rxjs/Rx';
 import { Router } from '@angular/router';
+import { environment } from '../../../environments/environment';
 
 @Injectable()
 export class AuthService {
 
-  url = 'http://localhost:3001';
+  url = environment.serverUrl;
 
   constructor(private http: Http, private router: Router) { }
 

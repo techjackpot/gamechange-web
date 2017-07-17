@@ -61,9 +61,12 @@ export class ClassesComponent implements OnInit {
   createNewClass() {
   	let newClass = {
   		Name: '',
+      Description: '',
   		DateTime: '',
+      TotalWeeks: 0,
   		Teachers: [],
-      Room: ''
+      Room: '',
+      Subject: ''
   	};
 
     this.teachersList.forEach((teacher) => {
@@ -79,9 +82,12 @@ export class ClassesComponent implements OnInit {
     let tDateTime = new Date(classInfo.DateTime);
     let newClass = {
       Name: classInfo.Name,
+      Description: classInfo.Description,
       DateTime: (new Date(tDateTime.getTime()-tDateTime.getTimezoneOffset()*1000*60).toISOString()).slice(0,16),
+      TotalWeeks: classInfo.TotalWeeks,
       Teachers: [],
       Room: classInfo.Room,
+      Subject: classInfo.Subject,
       _id: classInfo._id
     };
 
@@ -114,9 +120,12 @@ export class ClassesComponent implements OnInit {
   onSubmitCreateClass(form: NgForm) {
     let data = {
       Name: this.selectedClass.Name,
+      Description: this.selectedClass.Description,
       DateTime: new Date(this.selectedClass.DateTime).toString(),
+      TotalWeeks: this.selectedClass.TotalWeeks,
       Teachers: [],
-      Room: this.selectedClass.Room
+      Room: this.selectedClass.Room,
+      Subject: this.selectedClass.Subject
 		};
     this.selectedClass.Teachers.forEach(function (user) {
       if(user.use) {
@@ -142,9 +151,12 @@ export class ClassesComponent implements OnInit {
   onSubmitUpdateClass(form: NgForm) {
     let data = {
       Name: this.selectedClass.Name,
+      Description: this.selectedClass.Description,
       DateTime: new Date(this.selectedClass.DateTime).toString(),
+      TotalWeeks: this.selectedClass.TotalWeeks,
       Teachers: [],
       Room: this.selectedClass.Room,
+      Subject: this.selectedClass.Subject,
       _id: this.selectedClass._id
     };
 

@@ -1,0 +1,34 @@
+.page-gs-cardgame {
+	.play-game-list {
+		.classes-table {
+			width: 100%;
+			border-collapse: collapse;
+			td, th {
+				background: $gc-bg-sub;
+				border: solid 4px $gc-bg-main;
+				padding: 1em;
+			}
+			th {
+				text-transform: uppercase;
+				font-weight: 400;
+				text-align: center;
+				color: $gc-color-warn;
+				font-size: 18px;
+			}
+			a {
+				color: $gc-color-warn;
+				&:hover, &:focus {
+					text-decoration: none;
+				}
+			}
+			.play-game-action {
+				cursor: pointer;
+				transition: all 0.15s ease;
+				text-align: center;
+				&:hover {
+					background: $gc-color-warn;
+				}
+			}
+		}
+	}
+}

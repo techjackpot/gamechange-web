@@ -1,5 +1,64 @@
 <div class="roll-calls-wrapper">
-	<div class="roll-call-list">
+	<div class="roll-call-status">
+		<div class=""><button class="btn btn-primary" (click)="startGameClicked()" [disabled]="currentClass.Status=='Started'">Start</button> <button class="btn btn-danger" (click)="stopGameClicked()" [disabled]="currentClass.Status=='Stopped'">Stop</button> <button class="btn btn-warning" (click)="rollCallClicked()" [disabled]="currentClass.Status!='Started'">Roll Call</button></div>
+		<div>Current Class Status: {{currentClass.Status}}</div>
+		<div>Current Week: {{currentClass.Weeks}} out of {{currentClass.TotalWeeks}}</div>
+	</div>
+	<div class="card-history-list" *ngIf="currentClass.CardHistory.length>0 && studentList.length>0 && cards.length>0">
+		<div *ngFor="let history of currentClass.CardHistory;" class="card-history">
+			<div *ngIf="!history.Resolved">
+				<div class="card-preview-area">
+					<div class="card-tile-preview">
+						<h4 class="text-center">
+							<span class="source">{{ studentList[getIndexOfUsers(studentList,history.Source)].DisplayName }}</span>
+						</h4>
+						<div class="card-tile {{ cards[getIndexOfCards(cards,history.Card)].Type | lowercase }}">
+							<div class="card-title">
+								<span>{{ cards[getIndexOfCards(cards,history.Card)].Title }}</span>
+							</div>
+							<div class="card-picture">
+								<img class="card-picture-preview" src="{{ getServerAssetUrl(cards[getIndexOfCards(cards,history.Card)].Picture) }}">
+							</div>
+							<div class="card-description">
+								<span>{{ cards[getIndexOfCards(cards,history.Card)].Description }}</span>
+							</div>
+							<div class="card-type">
+								<span>{{ cards[getIndexOfCards(cards,history.Card)].Type }}</span>
+							</div>
+							<div class="card-goldcost">
+								<span>{{ cards[getIndexOfCards(cards,history.Card)].GoldCost }}</span>
+							</div>
+						</div>
+						<div class="card-tile-actions" *ngFor="let action of cards[getIndexOfCards(cards,history.Card)].Actions; let ii=index;">
+							<div class="card-creation-action-form">
+							  <div class="form-group">
+							    <label>Keyword</label>
+				    			<span>{{action.Keyword}}</span>
+							  </div>
+							  <div class="form-group">
+							    <label>Target</label>
+				    			<span>{{action.Target}}</span>
+							  </div>
+							  <div class="form-group">
+							    <label>Target Value</label>
+				    			<span>{{action.TargetValue}}</span>
+							  </div>
+							  <div class="form-group">
+							    <label>Keyword Value</label>
+				    			<span>{{action.KeywordValue}}</span>
+							  </div>
+							  <div class="form-group" *ngIf="action.Keyword=='Perform Action'">
+							    <label>Action Description</label>
+				    			<span>{{action.Description}}</span>
+							  </div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--<div class="roll-call-list">
 		<div class="roll-call-item-wrapper">
 			<div class="roll-call-item">
 				<div class="profile-photo">
@@ -21,66 +80,6 @@
 					</div>
 				</div>
 			</div>
-			<div class="roll-call-item">
-				<div class="profile-photo">
-					<img src="" alt="Profile photo" />
-				</div>
-				<div class="roll-call-info">
-					<div class="student-info">
-						<div class="student-name">Aoi Iwata</div>
-						<div class="student-title">Lily</div>
-					</div>
-					<div class="options">
-						<div class="action-icon accept"></div>
-						<div class="action-icon plus"></div>
-					</div>
-					<div class="numbers">
-						<div class="action-icon">0</div>
-						<div class="action-icon">1</div>
-						<div class="action-icon">2</div>
-					</div>
-				</div>
-			</div>
-			<div class="roll-call-item">
-				<div class="profile-photo">
-					<img src="" alt="Profile photo" />
-				</div>
-				<div class="roll-call-info">
-					<div class="student-info">
-						<div class="student-name">James Maclean</div>
-						<div class="student-title">JM</div>
-					</div>
-					<div class="options">
-						<div class="action-icon accept"></div>
-						<div class="action-icon cancel"></div>
-					</div>
-					<div class="numbers">
-						<div class="action-icon">0</div>
-						<div class="action-icon">1</div>
-						<div class="action-icon">2</div>
-					</div>
-				</div>
-			</div>
-			<div class="roll-call-item">
-				<div class="profile-photo">
-					<img src="" alt="Profile photo" />
-				</div>
-				<div class="roll-call-info">
-					<div class="student-info">
-						<div class="student-name">Jhon Brown</div>
-						<div class="student-title">Lord Of The Sith</div>
-					</div>
-					<div class="options">
-						<div class="action-icon accept"></div>
-						<div class="action-icon cancel"></div>
-					</div>
-					<div class="numbers">
-						<div class="action-icon">0</div>
-						<div class="action-icon">1</div>
-						<div class="action-icon">2</div>
-					</div>
-				</div>
-			</div>
 		</div>
-	</div>
+	</div>-->
 </div>

@@ -69,4 +69,12 @@
 			}
 		}
 	}
+	.card-history-list {
+		.card-tile-preview {
+			display: flex;
+			.card-tile-actions {
+				margin: 0 30px;
+			}
+		}
+	}
 }

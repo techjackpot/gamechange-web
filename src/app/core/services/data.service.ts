@@ -218,4 +218,19 @@ export class DataService {
     return this.http.post(this.url + '/api/cards/approve', data, { headers: this.getHeaders() })
       .map((response: Response) => response.json());
   }
+
+  getAllCards(data) {
+    return this.http.post(this.url + '/api/cards/list', data, { headers: this.getHeaders() })
+      .map((response: Response) => response.json());
+  }
+
+  getGameInfo(data) {
+    return this.http.post(this.url + '/api/games/get', data, { headers: this.getHeaders() })
+      .map((response: Response) => response.json());
+  }
+
+  createGame(data) {
+    return this.http.post(this.url + '/api/games/create', data, { headers: this.getHeaders() })
+      .map((response: Response) => response.json());
+  }
 }

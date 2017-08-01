@@ -1,3 +1,27 @@
-<p>
-  playgame works!
-</p>
+<div class="play-game-list">
+	<div class="class-list">
+		<div *ngIf="attendClasses.length>0">
+			<table class="classes-table">
+				<thead>
+					<th>Class Info <!--: Name / Day / Time / Room / Total Weeks--></th>
+					<th>Group</th>
+					<th>Weeks</th>
+					<th>Status</th>
+					<th>Action</th>
+				</thead>
+				<tbody>
+					<tr *ngFor="let classInfo of attendClasses;">
+						<td>Name: {{ classInfo.Name }}<br/>Day/Time: {{ classInfo.DateTime | date: 'short' }}<br/>Location: {{ classInfo.Room }}<br/>Total Weeks: {{ classInfo.TotalWeeks }}</td>
+						<td><span *ngIf="classInfo.my_group!=null">Group {{ classInfo.my_group.Title }}</span><span *ngIf="classInfo.my_group==null">No Group</span></td>
+						<td>{{ classInfo.Weeks }}</td>
+						<td>{{ classInfo.Status }}</td>
+						<td [class.play-game-action]="classInfo.Status=='Started'" (click)="classInfo.Status!='Stopped' && playGame(classInfo)">{{ classInfo.Status=='Started'?'Play':'' }}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div *ngIf="attendClasses.length==0">
+			<h1>You don't have any classes/games.</h1>
+		</div>
+	</div>
+</div>

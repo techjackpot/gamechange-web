@@ -1,0 +1,73 @@
+<div class="playscreen" *ngIf="currentGame && cards">
+
+	<div class="cards-list pickup" *ngIf="currentGame.PickUp && currentGame.PickUp.length>0">
+		<div class="label">PickUp</div>
+		<div class="card-tile-wrapper-overlay">
+			<div *ngFor="let card_id of currentGame.PickUp;" class="card-tile-wrapper">
+				<a class="card-tile {{ getCardByCardId(card_id).Type | lowercase }}" (click)="onClickedPickUp(card_id)">
+					<div class="card-title">
+						<span>{{ getCardByCardId(card_id).Title }}</span>
+					</div>
+					<div class="card-picture">
+						<img class="card-picture-preview" src="{{ getServerAssetUrl(getCardByCardId(card_id).Picture) }}">
+					</div>
+					<div class="card-description">
+						<span>{{ getCardByCardId(card_id).Description }}</span>
+					</div>
+					<div class="card-goldcost">
+						<span>{{ getCardByCardId(card_id).GoldCost }}</span>
+					</div>
+				</a>
+			</div>
+		</div>
+	</div>
+
+	<div class="score-board">
+		<div class="score-board-item score-point"><span>Point</span><span class="value">{{ currentPlayer && currentPlayer.Point }}</span></div>
+		<div class="score-board-item score-gold"><span>Gold</span><span class="value">{{ currentPlayer && currentPlayer.Gold }}</span></div>
+	</div>
+
+	<div class="play-pane">
+		Game Pane
+	</div>
+
+	<div class="cards-list hand" *ngIf="currentPlayer.Hand && currentPlayer.Hand.length>0 || currentPlayer.Stack">
+		<div class="card-tile-wrapper-overlay">
+			<div class="card-placeholder stack card-tile-wrapper">
+				<div class="card-tile {{ getCardByCardId(currentPlayer.Stack[0]).Type | lowercase }}">
+					<div class="card-title">
+						<span>{{ getCardByCardId(currentPlayer.Stack[0]).Title }}</span>
+					</div>
+					<div class="card-picture">
+						<img class="card-picture-preview" src="{{ getServerAssetUrl(getCardByCardId(currentPlayer.Stack[0]).Picture) }}">
+					</div>
+					<div class="card-description">
+						<span>{{ getCardByCardId(currentPlayer.Stack[0]).Description }}</span>
+					</div>
+					<div class="card-goldcost">
+						<span>{{ getCardByCardId(currentPlayer.Stack[0]).GoldCost }}</span>
+					</div>
+				</div>
+			</div>
+			<div *ngIf="currentPlayer.Hand.length==0">
+				<h3>No cards left to play!</h3>
+			</div>
+			<div *ngFor="let card_id of currentPlayer.Hand;" class="card-tile-wrapper">
+				<a class="card-tile {{ getCardByCardId(card_id).Type | lowercase }}" (click)="onClickedHand(card_id)">
+					<div class="card-title">
+						<span>{{ getCardByCardId(card_id).Title }}</span>
+					</div>
+					<div class="card-picture">
+						<img class="card-picture-preview" src="{{ getServerAssetUrl(getCardByCardId(card_id).Picture) }}">
+					</div>
+					<div class="card-description">
+						<span>{{ getCardByCardId(card_id).Description }}</span>
+					</div>
+					<div class="card-goldcost">
+						<span>{{ getCardByCardId(card_id).GoldCost }}</span>
+					</div>
+				</a>
+			</div>
+		</div>
+	</div>
+</div>

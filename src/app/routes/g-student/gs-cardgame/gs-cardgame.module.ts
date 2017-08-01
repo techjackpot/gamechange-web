@@ -6,6 +6,7 @@ import { GsCardgameComponent } from './gs-cardgame.component';
 import { PlaygameComponent } from './playgame/playgame.component';
 import { ViewcollectionComponent } from './viewcollection/viewcollection.component';
 import { CreatecardComponent } from './createcard/createcard.component';
+import { PlayscreenComponent } from './playscreen/playscreen.component';
 
 const routes: Routes = [
   {
@@ -14,6 +15,7 @@ const routes: Routes = [
       { path: '', redirectTo: 'playgame', pathMatch: 'full' },
       { path: 'createcard', component: CreatecardComponent },
       { path: 'playgame', component: PlaygameComponent },
+      { path: 'playgame/:game_id', component: PlayscreenComponent },
       { path: 'viewcollection', component: ViewcollectionComponent }
     ]
   }
@@ -26,7 +28,7 @@ const routes: Routes = [
     FormsModule,
     ReactiveFormsModule,
   ],
-  declarations: [GsCardgameComponent, PlaygameComponent, ViewcollectionComponent, CreatecardComponent],
+  declarations: [GsCardgameComponent, PlaygameComponent, ViewcollectionComponent, CreatecardComponent, PlayscreenComponent],
   exports: [
   	RouterModule
 	]

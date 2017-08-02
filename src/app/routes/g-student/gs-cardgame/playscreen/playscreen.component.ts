@@ -38,6 +38,55 @@ export class PlayscreenComponent implements OnInit {
     }, 1000*10);
   }
 
+  chooseCard(collection, target) {
+    //rarity
+
+    let candidate = [];
+    let rand, rarity;
+    let candidate_card, pass=false;
+
+    while(candidate.length==0) {
+      rand = Math.floor(Math.random()*10);
+      rarity = rand<2?'Rare':(rand<5?'Uncommon':'Common');
+
+
+      collection.forEach((card_id) => {
+        if(this.cards[this.getIndexOfCards(this.cards,card_id)].Rarity == rarity) candidate.push(card_id);
+      });
+    }
+
+
+    while(!pass) {
+      candidate_card = candidate[Math.floor(Math.random()*candidate.length)];
+
+      if(target.indexOf(candidate_card)<0) {
+        pass = true;
+      } else {
+        rand = Math.floor(Math.random()*5);
+        if(rand < 2) {
+          pass = true;
+        } else if(rand < 4) {
+          pass = false;
+        } else {
+          candidate = [];
+          while(candidate.length==0) {
+            rand = Math.floor(Math.random()*10);
+            rarity = rand<2?'Rare':(rand<5?'Uncommon':'Common');
+
+
+            collection.forEach((card_id) => {
+              if(this.cards[this.getIndexOfCards(this.cards,card_id)].Rarity == rarity) candidate.push(card_id);
+            });
+          }
+
+        }
+      }
+    }
+
+    return candidate_card;
+
+  }
+
   getIndexOfCards(cards,card_id) {
     let index = -1;
     cards.forEach((card, i) => {
@@ -110,7 +159,7 @@ export class PlayscreenComponent implements OnInit {
         default:
           break;
       }
-      let bonus = { Point: 0, Gold: 0 };
+      let bonus = { Point: 0, Gold: 0, Cards: 0 };
       switch(action.Keyword) {
         case "Add Points":
           bonus.Point = action.KeywordValue;
@@ -125,19 +174,39 @@ export class PlayscreenComponent implements OnInit {
           bonus.Gold = -action.KeywordValue;
           break;
         case "Add Cards":
+          bonus.Cards = action.KeywordValue;
           break;
         case "Subtract Cards":
+          bonus.Cards = -action.KeywordValue;
           break;
         default:
           resolved = false;
           break;
       }
-      targets.forEach((player) => {
-        this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, this.me._id)].Point += bonus.Point;
-        this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, this.me._id)].Gold += bonus.Gold;
+      targets.forEach((player_id) => {
+        let player = this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, player_id)];
+        player.Point += bonus.Point;
+        player.Gold += bonus.Gold;
 
-        if(total_targets.indexOf(player)<0) {
-          total_targets.push(player);
+        if(bonus.Cards>0) {
+          player.Stack.splice(0,bonus.Cards).forEach((card_id) => {
+            player.Hand.push(card_id);
+          })
+          while(player.Stack.length<10) {
+            player.Stack.push(this.chooseCard(player.Collection, player.Stack));
+          }
+        } else if(bonus.Cards<0) {
+          let cnt = bonus.Cards;
+          while(player.Hand.length>=0 && cnt>0) {
+            player.Hand.splice(Math.floor(Math.random()*player.Hand.length),1);
+            cnt--;
+          }
+        }
+
+        this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, player_id)] = player;
+
+        if(total_targets.indexOf(player_id)<0) {
+          total_targets.push(player_id);
         }
       })
     });

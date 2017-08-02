@@ -216,9 +216,8 @@ export class RollCallComponent implements OnInit {
           if(Player.Hand.length<5) {
             let cnt = 5-Player.Hand.length;
             Player.Hand = Player.Hand.concat(Player.Stack.splice(0,cnt));
-            while(cnt>0) {
+            while(Player.Stack.length<10) {
               Player.Stack.push(this.chooseCard(Player.Collection, Player.Stack));
-              cnt--;
             }
             this.currentClass.Players[i]=Player;
           }

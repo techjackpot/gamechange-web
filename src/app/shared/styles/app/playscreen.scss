@@ -141,11 +141,23 @@
 			border: solid 2px $gc-color-warn;
 		}
 	}
+	.card-selected {
+		&:after {
+			content: '';
+			display: block;
+			position: absolute;
+			left: -5%;
+			top: -5%;
+			height: 110%;
+			width: 110%;
+			border: dotted 1px $gc-color-accent;
+		}
+	}
+
+
 
 	.play-pane {
-		height: 250px;
 		border: double 4px $gc-color-accent;
-		text-align: center;
-		line-height: 250px;
+		padding: 1em;
 	}
 }

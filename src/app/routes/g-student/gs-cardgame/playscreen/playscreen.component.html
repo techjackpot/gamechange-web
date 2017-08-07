@@ -28,7 +28,103 @@
 	</div>
 
 	<div class="play-pane">
-		Game Pane
+		<h4>Cards played against me</h4>
+		<div class="cards-list">
+			<div class="card-tile-wrapper-overlay">
+				<div *ngFor="let card_id of historyCardsAgainstMe;" class="card-tile-wrapper">
+					<a class="card-tile {{ getCardByCardId(card_id).Type | lowercase }}">
+						<div class="card-title">
+							<span>{{ getCardByCardId(card_id).Title }}</span>
+						</div>
+						<div class="card-picture">
+							<img class="card-picture-preview" src="{{ getServerAssetUrl(getCardByCardId(card_id).Picture) }}">
+						</div>
+						<div class="card-description">
+							<span>{{ getCardByCardId(card_id).Description }}</span>
+						</div>
+						<div class="card-goldcost">
+							<span>{{ getCardByCardId(card_id).GoldCost }}</span>
+						</div>
+					</a>
+				</div>
+			</div>
+		</div>
+		<h4>Cards played by me</h4>
+		<div class="cards-list">
+			<div class="card-tile-wrapper-overlay">
+				<div *ngFor="let card_id of historyCardsByMe;" class="card-tile-wrapper">
+					<a class="card-tile {{ getCardByCardId(card_id).Type | lowercase }}">
+						<div class="card-title">
+							<span>{{ getCardByCardId(card_id).Title }}</span>
+						</div>
+						<div class="card-picture">
+							<img class="card-picture-preview" src="{{ getServerAssetUrl(getCardByCardId(card_id).Picture) }}">
+						</div>
+						<div class="card-description">
+							<span>{{ getCardByCardId(card_id).Description }}</span>
+						</div>
+						<div class="card-goldcost">
+							<span>{{ getCardByCardId(card_id).GoldCost }}</span>
+						</div>
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="card-selected-view" *ngIf="selectedCard">
+		<h4>Selected Card</h4>
+		<div class="card-preview-area">
+			<div class="card-tile-preview">
+				<div>
+					<div class="card-tile {{ selectedCard.Type | lowercase }}">
+						<div class="card-title">
+							<span>{{ selectedCard.Title }}</span>
+						</div>
+						<div class="card-picture">
+							<img class="card-picture-preview" src="{{ getServerAssetUrl(selectedCard.Picture) }}">
+						</div>
+						<div class="card-description">
+							<span>{{ selectedCard.Description }}</span>
+						</div>
+						<div class="card-type">
+							<span>{{ selectedCard.Type }}</span>
+						</div>
+						<div class="card-goldcost">
+							<span>{{ selectedCard.GoldCost }}</span>
+						</div>
+					</div>
+					<div class="text-center card-play-actions">
+						<button class="btn btn-primary" (click)="onClickedCardPlay()">Play</button>
+						<button class="btn btn-danger" (click)="onClickedCardCancel()">Cancel</button>
+					</div>
+				</div>
+				<div class="card-tile-actions" *ngFor="let action of selectedCard.Actions; let ii=index;">
+					<div class="card-creation-action-form">
+					  <div class="form-group">
+					    <label>Keyword</label>
+		    			<span>{{action.Keyword}}</span>
+					  </div>
+					  <div class="form-group">
+					    <label>Target</label>
+		    			<span>{{action.Target}}</span>
+					  </div>
+					  <div class="form-group">
+					    <label>Target Value</label>
+		    			<span>{{action.TargetValue}}</span>
+					  </div>
+					  <div class="form-group">
+					    <label>Keyword Value</label>
+		    			<span>{{action.KeywordValue}}</span>
+					  </div>
+					  <div class="form-group" *ngIf="action.Keyword=='Perform Action'">
+					    <label>Action Description</label>
+		    			<span>{{action.Description}}</span>
+					  </div>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 
 	<div class="cards-list hand" *ngIf="currentPlayer.Hand && currentPlayer.Hand.length>0 || currentPlayer.Stack">
@@ -52,7 +148,7 @@
 			<div *ngIf="currentPlayer.Hand.length==0">
 				<h3>No cards left to play!</h3>
 			</div>
-			<div *ngFor="let card_id of currentPlayer.Hand;" class="card-tile-wrapper">
+			<div *ngFor="let card_id of currentPlayer.Hand;" class="card-tile-wrapper" [class.card-selected]="selectedCard && card_id==selectedCard._id">
 				<a class="card-tile {{ getCardByCardId(card_id).Type | lowercase }}" (click)="onClickedHand(card_id)">
 					<div class="card-title">
 						<span>{{ getCardByCardId(card_id).Title }}</span>

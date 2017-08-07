@@ -15,7 +15,7 @@
 						<td><span *ngIf="classInfo.my_group!=null">Group {{ classInfo.my_group.Title }}</span><span *ngIf="classInfo.my_group==null">No Group</span></td>
 						<td>{{ classInfo.Weeks }}</td>
 						<td>{{ classInfo.Status }}</td>
-						<td [class.play-game-action]="classInfo.Status=='Started'" (click)="classInfo.Status!='Stopped' && playGame(classInfo)">{{ classInfo.Status=='Started'?'Play':'' }}</td>
+						<td [class.play-game-action]="classInfo.Status=='Started'" (click)="classInfo.Status=='Started' && playGame(classInfo)">{{ classInfo.Status=='Started'?'Play':'' }}</td>
 					</tr>
 				</tbody>
 			</table>

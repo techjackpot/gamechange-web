@@ -6,7 +6,7 @@
 	</div>
 	<div class="card-history-list" *ngIf="currentClass.CardHistory.length>0 && studentList.length>0 && cards.length>0">
 		<div *ngFor="let history of currentClass.CardHistory;" class="card-history">
-			<div *ngIf="!history.Resolved">
+			<div *ngIf="history.UnResolved>0">
 				<div class="card-preview-area">
 					<div class="card-tile-preview">
 						<h4 class="text-center">
@@ -22,14 +22,11 @@
 							<div class="card-description">
 								<span>{{ cards[getIndexOfCards(cards,history.Card)].Description }}</span>
 							</div>
-							<div class="card-type">
-								<span>{{ cards[getIndexOfCards(cards,history.Card)].Type }}</span>
-							</div>
 							<div class="card-goldcost">
 								<span>{{ cards[getIndexOfCards(cards,history.Card)].GoldCost }}</span>
 							</div>
 						</div>
-						<div class="card-tile-actions" *ngFor="let action of cards[getIndexOfCards(cards,history.Card)].Actions; let ii=index;">
+						<div class="card-tile-actions" *ngFor="let action of cards[getIndexOfCards(cards,history.Card)].Actions; let ii=index;" [class.activated]="ii<history.Target.length">
 							<div class="card-creation-action-form">
 							  <div class="form-group">
 							    <label>Keyword</label>
@@ -52,6 +49,10 @@
 				    			<span>{{action.Description}}</span>
 							  </div>
 							</div>
+						</div>
+						<div class="confirm-actions">
+							<button class="btn btn-confirm" (click)="confirmCardAction(history)">Confirm</button>
+							<button class="btn btn-deny" (click)="denyCardAction(history)">Deny</button>
 						</div>
 					</div>
 				</div>

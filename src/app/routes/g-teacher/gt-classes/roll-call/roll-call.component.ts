@@ -214,7 +214,7 @@ export class RollCallComponent implements OnInit {
 
         this.currentClass.Players.forEach((Player, i) => {
           if(Player.Hand.length<5) {
-            let cnt = 5-Player.Hand.length;
+            let cnt = 1;//5-Player.Hand.length;
             Player.Hand = Player.Hand.concat(Player.Stack.splice(0,cnt));
             while(Player.Stack.length<10) {
               Player.Stack.push(this.chooseCard(Player.Collection, Player.Stack));
@@ -229,5 +229,129 @@ export class RollCallComponent implements OnInit {
         });
       });
   	}
+  }
+
+
+  getIndexOfPlayers(players, player_id) {
+    let index = -1;
+    players.forEach((player, i) => {
+      if(player.Player == player_id) {
+        index = i;
+      }
+    });
+    return index;
+  }
+  getIndexOfHistory(historys, history_id) {
+    let index = -1;
+    historys.forEach((history, i) => {
+      if(history._id == history_id) {
+        index = i;
+      }
+    });
+    return index;
+  }
+
+  confirmCardAction(history) {
+    if(confirm('Do you confirm this action?')) {
+      let card = this.cards[this.getIndexOfCards(this.cards, history.Card)];
+
+      let auto_progress = true, unresolved = history.UnResolved;
+      card.Actions.forEach((action, i) => {
+        if(i<card.Actions.length-unresolved) {
+          return true;
+        }
+        //"Add Points", "Subtract Points", "Add Gold", "Subtract Gold", "Add Cards", "Subtract Cards"
+        let bonus = { Point: 0, Gold: 0, Cards: 0 };
+        switch(action.Keyword) {
+          case "Add Points":
+            bonus.Point = action.KeywordValue;
+            break;
+          case "Subtract Points":
+            bonus.Point = -action.KeywordValue;
+            break;
+          case "Add Gold":
+            bonus.Gold = action.KeywordValue;
+            break;
+          case "Subtract Gold":
+            bonus.Gold = -action.KeywordValue;
+            break;
+          case "Add Cards":
+            bonus.Cards = action.KeywordValue;
+            break;
+          case "Subtract Cards":
+            bonus.Cards = -action.KeywordValue;
+            break;
+          default:
+            auto_progress = false;
+            break;
+        }
+        if(i==card.Actions.length-unresolved) {
+          auto_progress = true;
+        }
+        if(auto_progress) {
+          history.UnResolved--;
+
+          let targets = [];
+          switch(action.Target) {
+            case "Self":
+              targets.push(history.Source);
+              break;
+            case "Friends":
+            case "Others":
+              targets = (this.shuffle(this.currentClass.Students.filter((student) => student!=history.Source))).slice(0,action.TargetValue);
+              break;
+            default:
+              break;
+          }
+
+          history.Target.push(targets);
+          targets.forEach((player_id) => {
+            let player = this.currentClass.Players[this.getIndexOfPlayers(this.currentClass.Players, player_id)];
+            player.Point += bonus.Point;
+            player.Gold += bonus.Gold;
+
+            if(bonus.Cards>0) {
+              player.Stack.splice(0,bonus.Cards).forEach((card_id) => {
+                player.Hand.push(card_id);
+              })
+              while(player.Stack.length<10) {
+                player.Stack.push(this.chooseCard(player.Collection, player.Stack));
+              }
+            } else if(bonus.Cards<0) {
+              let cnt = bonus.Cards;
+              while(player.Hand.length>=0 && cnt>0) {
+                player.Hand.splice(Math.floor(Math.random()*player.Hand.length),1);
+                cnt--;
+              }
+            }
+
+            this.currentClass.Players[this.getIndexOfPlayers(this.currentClass.Players, player_id)] = player;
+          })
+        }
+      });
+
+      // total_targets.forEach((target) => {
+      //   this.currentGame.CardHistory.push({
+      //     Source: this.me._id,
+      //     Target: target,
+      //     Card: card_id,
+      //     Resolved: false
+      //   })
+      // })
+      this.currentClass.CardHistory[this.getIndexOfHistory(this.currentClass.CardHistory, history._id)] = history;
+
+      this.dataService.updateClassInfo({_id: this.currentClass._id, Players: this.currentClass.Players, CardHistory: this.currentClass.CardHistory}).subscribe((response) => {
+        console.log(response.Class);
+      });
+    }
+  }
+  denyCardAction(history) {
+    if(confirm('Do you decline this action?')) {
+      history.UnResolved = 0;
+      this.currentClass.CardHistory[this.getIndexOfHistory(this.currentClass.CardHistory, history._id)] = history;
+      this.dataService.updateClassInfo({_id: this.currentClass._id, CardHistory: this.currentClass.CardHistory}).subscribe((response) => {
+        console.log(response.Class);
+      });
+    }
   }
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { DataService } from '../../../../core/services/data.service';
 import { AuthService } from '../../../../core/services/auth.service';
@@ -15,27 +15,73 @@ export class PlayscreenComponent implements OnInit {
   cards = null;
   me = null;
 
+  selectedCard = null;
+
+  timer = null;
+
   currentPlayer = null;
+
+  historyCardsAgainstMe = [];
+  historyCardsByMe = [];
 
   constructor(private route: ActivatedRoute, private router: Router, private dataService: DataService, private authService: AuthService) { }
 
   ngOnInit() {
   	this.GameID = this.route.params["_value"].game_id;
     this.me = this.authService.getUser();
-  	this.dataService.getGameInfo({_id: this.GameID}).subscribe(response => {
-      this.currentGame = response.Class;
-      this.currentPlayer = this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, this.me._id)];
-  	});
-    this.dataService.getAllCards({Approved: true}).subscribe(response => {
-      this.cards = response.Cards;
-    });
 
-    setInterval(() => {
+
+    let p1 = new Promise((resolve, reject) => {
       this.dataService.getGameInfo({_id: this.GameID}).subscribe(response => {
         this.currentGame = response.Class;
         this.currentPlayer = this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, this.me._id)];
+        resolve();
+      });
+    });
+    let p2 = new Promise((resolve, reject) => {
+      this.dataService.getAllCards({Approved: true}).subscribe(response => {
+        this.cards = response.Cards;
+        resolve();
+      })
+    });
+
+    Promise.all([p1, p2]).then(() => {
+        this.updateCardHistory();
+    })
+
+    this.timer = setInterval(() => {
+      this.dataService.getGameInfo({_id: this.GameID}).subscribe(response => {
+        this.currentGame = response.Class;
+        this.currentPlayer = this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, this.me._id)];
+
+        this.updateCardHistory();
       });
     }, 1000*10);
+  }
+
+  updateCardHistory() {
+    this.historyCardsByMe = this.currentGame.CardHistory.filter((history) => {
+      return history.Source == this.me._id;
+    }).map((history) => {
+      return history.Card;
+    });
+
+    this.historyCardsAgainstMe = this.currentGame.CardHistory.filter((history) => {
+      for(let i=0;i<this.cards[this.getIndexOfCards(this.cards,history.Card)].Actions.length-history.UnResolved;i++) {
+        if(history.Target[i].indexOf(this.me._id)>=0) {
+          return true;
+        }
+      }
+      return false;
+    }).map((history) => {
+      return history.Card;
+    })
+  }
+
+  ngOnDestroy() {
+    if(this.timer) {
+      clearInterval(this.timer);
+    }
   }
 
   chooseCard(collection, target) {
@@ -138,27 +184,23 @@ export class PlayscreenComponent implements OnInit {
 
 
   onClickedHand(card_id) {
-    if(!confirm("Do you really want to play this card?")) return ;
-    let card = this.getCardByCardId(card_id);
+    this.selectedCard = this.getCardByCardId(card_id);
+  }
 
+  onClickedCardCancel() {
+    this.selectedCard = null;
+  }
+
+  onClickedCardPlay() {
+    let card = this.selectedCard;
+    this.selectedCard = null;
+    let card_id = card._id;
     this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, this.me._id)].Hand.splice(this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, this.me._id)].Hand.indexOf(card_id), 1);
 
     let total_targets = [];
-    let resolved = true;
+    let unresolved = card.Actions.length, auto_progress = true;
     card.Actions.forEach((action) => {
       //"Add Points", "Subtract Points", "Add Gold", "Subtract Gold", "Add Cards", "Subtract Cards"
-      let targets = [];
-      switch(action.Target) {
-        case "Self":
-          targets.push(this.me._id);
-          break;
-        case "Friends":
-        case "Others":
-          targets = (this.shuffle(this.currentGame.Students)).slice(0,action.TargetValue);
-          break;
-        default:
-          break;
-      }
       let bonus = { Point: 0, Gold: 0, Cards: 0 };
       switch(action.Keyword) {
         case "Add Points":
@@ -180,35 +222,49 @@ export class PlayscreenComponent implements OnInit {
           bonus.Cards = -action.KeywordValue;
           break;
         default:
-          resolved = false;
+          auto_progress = false;
           break;
       }
-      targets.forEach((player_id) => {
-        let player = this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, player_id)];
-        player.Point += bonus.Point;
-        player.Gold += bonus.Gold;
+      if(auto_progress) {
+        unresolved--;
 
-        if(bonus.Cards>0) {
-          player.Stack.splice(0,bonus.Cards).forEach((card_id) => {
-            player.Hand.push(card_id);
-          })
-          while(player.Stack.length<10) {
-            player.Stack.push(this.chooseCard(player.Collection, player.Stack));
-          }
-        } else if(bonus.Cards<0) {
-          let cnt = bonus.Cards;
-          while(player.Hand.length>=0 && cnt>0) {
-            player.Hand.splice(Math.floor(Math.random()*player.Hand.length),1);
-            cnt--;
-          }
+        let targets = [];
+        switch(action.Target) {
+          case "Self":
+            targets.push(this.me._id);
+            break;
+          case "Friends":
+          case "Others":
+            targets = (this.shuffle(this.currentGame.Students.filter((student) => student!=this.me._id))).slice(0,action.TargetValue);
+            break;
+          default:
+            break;
         }
 
-        this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, player_id)] = player;
+        total_targets.push(targets);
+        targets.forEach((player_id) => {
+          let player = this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, player_id)];
+          player.Point += bonus.Point;
+          player.Gold += bonus.Gold;
 
-        if(total_targets.indexOf(player_id)<0) {
-          total_targets.push(player_id);
-        }
-      })
+          if(bonus.Cards>0) {
+            player.Stack.splice(0,bonus.Cards).forEach((card_id) => {
+              player.Hand.push(card_id);
+            })
+            while(player.Stack.length<10) {
+              player.Stack.push(this.chooseCard(player.Collection, player.Stack));
+            }
+          } else if(bonus.Cards<0) {
+            let cnt = bonus.Cards;
+            while(player.Hand.length>=0 && cnt>0) {
+              player.Hand.splice(Math.floor(Math.random()*player.Hand.length),1);
+              cnt--;
+            }
+          }
+
+          this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, player_id)] = player;
+        })
+      }
     });
 
     // total_targets.forEach((target) => {
@@ -223,7 +279,8 @@ export class PlayscreenComponent implements OnInit {
       Source: this.me._id,
       Target: total_targets,
       Card: card_id,
-      Resolved: resolved
+      UnResolved: unresolved,
+      Week: this.currentGame.Weeks
     });
 
     this.dataService.updateClassInfo({_id: this.currentGame._id, Players: this.currentGame.Players, CardHistory: this.currentGame.CardHistory}).subscribe((response) => {
@@ -231,9 +288,17 @@ export class PlayscreenComponent implements OnInit {
     });
 
     this.currentPlayer = this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, this.me._id)];
+
+    this.updateCardHistory();
   }
   onClickedPickUp(card_id) {
     let card = this.getCardByCardId(card_id);
+
+    if(this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, this.me._id)].Gold < card.GoldCost) {
+      alert(`You don't have enough gold to buy this card`);
+      return false;
+    }
+
     if(!confirm("Do you really want to buy this card? It costs Gold " + card.GoldCost + ".")) return ;
     this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, this.me._id)].Stack.push(card_id);
     this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, this.me._id)].Gold -= card.GoldCost;

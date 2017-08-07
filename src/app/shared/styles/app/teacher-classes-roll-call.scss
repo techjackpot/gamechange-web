@@ -72,8 +72,57 @@
 	.card-history-list {
 		.card-tile-preview {
 			display: flex;
+			align-items: center;
+			.card-tile {
+				border: 0 none;
+				margin: 0 15px;
+			}
 			.card-tile-actions {
-				margin: 0 30px;
+				margin: 0 15px;
+				padding: 1em;
+				border-radius: 1em;
+				background: $gc-color-warn;
+				box-shadow: 0px 0px 32px $gc-bg-sub;
+				label {
+				}
+				span {
+					color: $gc-bg-main;
+					margin-left: 1em;
+				}
+				&.activated {
+					background: $gc-bg-main;
+					box-shadow: inset 0px 0px 64px $gc-bg-sub;
+					span {
+						text-decoration: underline;
+						color: $gc-color-primary;
+					}
+				}
+			}
+		}
+	}
+	.confirm-actions {
+		display: flex;
+		flex-direction: column;
+		margin-left: 15px;
+		.btn-confirm {
+			background: $gc-color-accent;
+			&:hover {
+				background: darken($gc-color-accent, 10%);
+			}
+		}
+		.btn-deny {
+			background: $gc-color-warn;
+			&:hover {
+				background: darken($gc-color-warn, 10%);
+			}
+		}
+		.btn-confirm, .btn-deny {
+			outline: 0 none;
+			transition: all 0.15s ease;
+			border-radius: 0;
+			padding: 1em 2em;
+			&:hover,&:active,&:focus {
+				color: $gc-color-primary;
 			}
 		}
 	}

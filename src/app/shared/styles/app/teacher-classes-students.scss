@@ -80,4 +80,59 @@
 			}
 		}
 	}
+
+	.marktypes-wrapper {
+		.marktypes-table {
+			width: 100%;
+			font-size: 18px;
+			text-align: center;
+			border-collapse: collapse;
+			td,th {
+				background: $gc-bg-sub;
+				text-align: center;
+				border: solid 4px $gc-bg-main;
+				padding: 6px 4px;
+			}
+			th {
+				text-transform: uppercase;
+				font-weight: 400;
+			}
+			a {
+				color: $gc-color-warn;
+				&:hover, &:focus {
+					text-decoration: none;
+				}
+			}
+			input[type=text] {
+				display: block;
+				width: 100%;
+				background: transparent;
+				border: solid 1px #2d4554;
+				color: #2d4554;
+				line-height: 2;
+				outline: 0 none;
+				font-size: 16px;
+				padding: 0 1em;
+				border-radius: 4px;
+				text-align: left;
+				&.ng-touched {
+					color: #fff;
+				}
+				&:focus, &:active {
+					color: #fff;
+					border-color: #00e2b6;
+				}
+				&.invalid {
+					border-color: $gc-color-warn;
+				}
+			}
+			.btn-add {
+				width: 100%;
+				font-size: 1em;
+				background: $gc-color-warn;
+				color: $gc-color-primary;
+				outline: 0 none;
+			}
+		}
+	}
 }

@@ -233,4 +233,27 @@ export class DataService {
     return this.http.post(this.url + '/api/games/create', data, { headers: this.getHeaders() })
       .map((response: Response) => response.json());
   }
+
+  getClassMarkTypes(data) {
+    return this.http.post(this.url + '/api/marks/gettypes', data, { headers: this.getHeaders() })
+      .map((response: Response) => response.json());
+  }
+  addMarkTypeToClass(data) {
+    return this.http.post(this.url + '/api/marks/addtype', data, { headers: this.getHeaders() })
+      .map((response: Response) => response.json());
+  }
+  removeMarkTypeFromClass(data) {
+    return this.http.post(this.url + '/api/marks/removetype', data, { headers: this.getHeaders() })
+      .map((response: Response) => response.json());
+  }
+
+  getStudentBook(data) {
+    return this.http.post(this.url + '/api/marks/getmarkhistory', data, { headers: this.getHeaders() })
+      .map((response: Response) => response.json());
+  }
+
+  updateStudentBook(data) {
+    return this.http.post(this.url + '/api/marks/updatemarkhistory', data, { headers: this.getHeaders() })
+      .map((response: Response) => response.json());
+  }
 }

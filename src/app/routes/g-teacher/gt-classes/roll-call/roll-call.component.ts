@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { DataService } from '../../../../core/services/data.service';
+import { AuthService } from '../../../../core/services/auth.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -12,10 +13,13 @@ import { Router } from '@angular/router';
 export class RollCallComponent implements OnInit {
 
   currentClass = null;
+  me = null;
   cards = [];
   studentList = [];
+  marktypes = [];
+  studentBook = [];
 
-  constructor(private dataService: DataService, private router: Router) { }
+  constructor(private dataService: DataService, private router: Router, private authService: AuthService) { }
 
 
   shuffle(source) {
@@ -66,11 +70,59 @@ export class RollCallComponent implements OnInit {
     return this.dataService.getServerAssetUrl(url);
   }
 
+  getIndexOfMarkHistory(markhistory, student_id) {
+    let index = -1;
+    markhistory.forEach((history, i) => {
+      if(history.Student == student_id) {
+        index = i;
+      }
+    });
+    return index;
+  }
+  getIndexOfMark(marks, marktype) {
+    let index = -1;
+    marks.forEach((mark, i) => {
+      if(mark.MarkType == marktype) {
+        index = i;
+      }
+    });
+    return index;
+  }
+
+  updateCurrentStudentBook() {
+    this.dataService.getStudentBook({ Class: this.currentClass._id, Week: this.currentClass.Weeks}).subscribe((response) => {
+      this.studentBook = this.currentClass.Students.map((student) => {
+        let index = this.getIndexOfMarkHistory(response.MarkHistory, student);
+        if(index<0) {
+          return {
+            Class: this.currentClass._id,
+            Staff: this.me._id,
+            Week: this.currentClass.Weeks,
+            Student: student,
+            Marks: this.marktypes.map((marktype) => { return { MarkType: marktype._id, Value: 0 }; } ),
+            Attendance: false,
+            Date: new Date().toJSON(),
+            Note: ''
+          };
+        } else {
+          return response.MarkHistory[index];
+        }
+      });
+    })
+  }
+
   ngOnInit() {
     if(!this.dataService.getCurrentClass()) this.router.navigate(['/classes']);
+    this.me = this.authService.getUser();
     this.currentClass = Object.assign( { _id: '' }, this.dataService.getCurrentClass() );
-    this.dataService.getGameInfo({_id: this.currentClass._id}).subscribe(response => {
-      this.currentClass = response.Class;
+    this.dataService.getClassMarkTypes({ Class: this.currentClass._id }).subscribe(response => {
+      this.marktypes = response.MarkTypes;
+
+      this.dataService.getGameInfo({_id: this.currentClass._id}).subscribe(response => {
+        this.currentClass = response.Class;
+
+        this.updateCurrentStudentBook();
+      });
     });
 
     this.dataService.getAllCards({Approved: true}).subscribe((response) => {
@@ -79,7 +131,8 @@ export class RollCallComponent implements OnInit {
 
     this.dataService.getStudentList().subscribe(response => {
       this.studentList = response;
-    })
+    });
+
   }
 
   chooseCard(collection, target) {
@@ -134,7 +187,6 @@ export class RollCallComponent implements OnInit {
   startGameClicked() {
   	if(confirm('Do you really want to start this game? It cannot be undone.')) {
       if(this.currentClass.Weeks == 1) {
-        console.log(this.cards);
         this.currentClass.Collection = this.cards.map((card) => card._id);
         let max = this.currentClass.Collection.length;
         let cnt = 20;
@@ -209,7 +261,7 @@ export class RollCallComponent implements OnInit {
   	if(confirm('Did you check everything before going to next week?')) {
       this.dataService.getGameInfo({_id: this.currentClass._id}).subscribe(response => {
         this.currentClass = response.Class;
-        this.currentClass.Weeks += 1;
+        this.currentClass.Weeks ++;
         this.currentClass.Status = 'RollCall';
 
         this.currentClass.Players.forEach((Player, i) => {
@@ -226,6 +278,8 @@ export class RollCallComponent implements OnInit {
         this.dataService.updateClassInfo({_id: this.currentClass._id, Players: this.currentClass.Players, Status: this.currentClass.Status, Weeks: this.currentClass.Weeks}).subscribe((response) => {
           this.currentClass = response.Class;
           this.dataService.setCurrentClass(this.currentClass);
+          
+          this.updateCurrentStudentBook();
         });
       });
   	}
@@ -341,7 +395,7 @@ export class RollCallComponent implements OnInit {
       this.currentClass.CardHistory[this.getIndexOfHistory(this.currentClass.CardHistory, history._id)] = history;
 
       this.dataService.updateClassInfo({_id: this.currentClass._id, Players: this.currentClass.Players, CardHistory: this.currentClass.CardHistory}).subscribe((response) => {
-        console.log(response.Class);
+        // console.log(response.Class);
       });
     }
   }
@@ -350,8 +404,14 @@ export class RollCallComponent implements OnInit {
       history.UnResolved = 0;
       this.currentClass.CardHistory[this.getIndexOfHistory(this.currentClass.CardHistory, history._id)] = history;
       this.dataService.updateClassInfo({_id: this.currentClass._id, CardHistory: this.currentClass.CardHistory}).subscribe((response) => {
-        console.log(response.Class);
+        // console.log(response.Class);
       });
     }
+  }
+
+  updateStudentBook() {
+    this.dataService.updateStudentBook({ data: this.studentBook }).subscribe((response) => {
+      this.studentBook = response.MarkHistory;
+    })
   }
 }

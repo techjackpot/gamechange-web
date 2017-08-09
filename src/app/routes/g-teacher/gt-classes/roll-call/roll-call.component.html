@@ -1,10 +1,32 @@
 <div class="roll-calls-wrapper">
 	<div class="roll-call-status">
+		<h3 class="widget-label text-center text-accent" style="margin-bottom: 1em;">Game Status</h3>
 		<div class=""><button class="btn btn-primary" (click)="startGameClicked()" [disabled]="currentClass.Status=='Started'">Start</button> <button class="btn btn-danger" (click)="stopGameClicked()" [disabled]="currentClass.Status=='Stopped'">Stop</button> <button class="btn btn-warning" (click)="rollCallClicked()" [disabled]="currentClass.Status!='Started'">Roll Call</button></div>
 		<div>Current Class Status: {{currentClass.Status}}</div>
 		<div>Current Week: {{currentClass.Weeks}} out of {{currentClass.TotalWeeks}}</div>
 	</div>
+	<div class="student-record-list">
+		<h3 class="widget-label text-center text-accent" style="margin-bottom: 1em;">Student Record Book</h3>
+		<table class="student-book" *ngIf="marktypes.length>0 && currentClass && studentList.length>0 && studentBook.length>0">
+			<tr>
+				<td></td>
+				<td>Attendance</td>
+				<td *ngFor="let marktype of marktypes;">{{ marktype.Name }}</td>
+				<td>Note</td>
+			</tr>
+			<tr *ngFor="let student_id of currentClass.Students;">
+				<td>{{ studentList[getIndexOfUsers(studentList, student_id)].DisplayName }}</td>
+				<td><input type="checkbox" [(ngModel)]="studentBook[getIndexOfMarkHistory(studentBook, student_id)].Attendance" /></td>
+				<td *ngFor="let marktype of marktypes;"><input type="text" [(ngModel)]="studentBook[getIndexOfMarkHistory(studentBook, student_id)].Marks[getIndexOfMark(studentBook[getIndexOfMarkHistory(studentBook, student_id)].Marks, marktype._id)].Value" /></td>
+				<td><input type="text" [(ngModel)]="studentBook[getIndexOfMarkHistory(studentBook, student_id)].Note" /></td>
+			</tr>
+		</table>
+		<div>
+      <button class="btn btn-update" (click)="updateStudentBook()">Update Student Book</button>
+    </div>
+	</div>
 	<div class="card-history-list" *ngIf="currentClass.CardHistory.length>0 && studentList.length>0 && cards.length>0">
+		<h3 class="widget-label text-center text-accent" style="margin-bottom: 1em;">UnResolved Cards</h3>
 		<div *ngFor="let history of currentClass.CardHistory;" class="card-history">
 			<div *ngIf="history.UnResolved>0">
 				<div class="card-preview-area">

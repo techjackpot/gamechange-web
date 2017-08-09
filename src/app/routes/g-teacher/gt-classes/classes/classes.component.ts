@@ -19,7 +19,7 @@ export class ClassesComponent implements OnInit {
     this.dataService.getClassesList().subscribe(
       response => {
       	let teacherId = this.dataService.getTeacherID();
-        this.assignedClasses = response.Classes.filter(function (classInfo) {
+        this.assignedClasses = (response.Classes || []).filter(function (classInfo) {
         	return classInfo.Teachers.indexOf(teacherId)>-1;
         });
       },

@@ -13,6 +13,13 @@ export class StudentsComponent implements OnInit {
 	studentList = [];
   assignedStudents = [];
   currentClass = null;
+  me;
+
+  marktypes = [];
+  selectedMarkType = {
+    Name: '',
+    Description: ''
+  };
 
   isEditMode = false;
 
@@ -31,6 +38,9 @@ export class StudentsComponent implements OnInit {
   ngOnInit() {
     if(!this.dataService.getCurrentClass()) this.router.navigate(['/classes']);
     this.currentClass = Object.assign( { _id: '' }, this.dataService.getCurrentClass() );
+    this.dataService.getClassMarkTypes({ Class: this.currentClass._id }).subscribe(response => {
+      this.marktypes = response.MarkTypes;
+    });
     this.dataService.getClassStudents(this.currentClass).subscribe(
       response => {
         this.assignedStudents = response;
@@ -83,6 +93,37 @@ export class StudentsComponent implements OnInit {
       response => {
       }
     );
+  }
+
+  addMarkTypeToClass() {
+    if(!this.selectedMarkType.Name) {
+      return false;
+    }
+    if(confirm('Do you want to add Mark Type to this class')) {
+      this.dataService.addMarkTypeToClass({ ...this.selectedMarkType, Class: this.currentClass._id }).subscribe((response) => {
+        this.marktypes.push(response.MarkType);
+      })
+      this.selectedMarkType.Name = '';
+      this.selectedMarkType.Description = '';
+    }
+  }
+
+  getIndexOfMarkTypes(marktypes,marktype_id) {
+    let index = -1;
+    marktypes.forEach((marktype, i) => {
+      if(marktype._id == marktype_id) {
+        index = i;
+      }
+    });
+    return index;
+  }
+
+  removeMarkTypeFromClass(marktype) {
+    if(confirm('Do you really want to remove this Mark Type?')) {
+      this.dataService.removeMarkTypeFromClass({ _id: marktype._id }).subscribe((response) => {
+        this.marktypes.splice(this.getIndexOfMarkTypes(this.marktypes, marktype._id), 1);
+      });
+    }
   }
 
 }

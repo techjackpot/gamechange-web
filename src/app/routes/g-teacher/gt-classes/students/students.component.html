@@ -49,3 +49,35 @@
 		<p>Students are removed only from the class. (Test Unit)</p>
 	</div>-->
 </div>
+
+<div class="marktypes-wrapper">
+		<div class="widget-label">Mark Types ( {{ marktypes && marktypes.length }} )</div>
+		<!-- <div *ngIf="marktypes.length>0"> -->
+			<table class="marktypes-table">
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Description</th>
+						<th>-</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr *ngFor="let marktype of marktypes;">
+						<td>{{ marktype.Name }}</td>
+						<td>{{ marktype.Description }}</td>
+						<td><a href="javascript:void(0);" class="link-remove" (click)="removeMarkTypeFromClass(marktype)">Remove</a></td>
+					</tr>
+					<tr *ngIf="marktypes.length==0">
+						<td colspan="3">
+							There are no Mark Types for this Class.
+						</td>
+					</tr>
+					<tr>
+						<td><input type="text" placeholder="Mark Type Name" [(ngModel)]="selectedMarkType.Name" [class.invalid]="!selectedMarkType.Name"></td>
+						<td><input type="text" placeholder="Description ..." [(ngModel)]="selectedMarkType.Description"></td>
+						<td><button class="btn btn-add" (click)="addMarkTypeToClass(marktype)">Add</button></td>
+					</tr>
+				</tbody>
+			</table>
+		<!-- </div> -->
+</div>

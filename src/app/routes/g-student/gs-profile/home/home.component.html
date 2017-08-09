@@ -49,4 +49,36 @@
 		</div>
 		<div class="clearfix"></div>
 	</div>
+
+	<h3 class="widget-label text-center text-accent" style="margin-bottom: 1em;">Attended Class</h3>
+	<div *ngIf="attendClasses.length>0">
+		<div class="class-list">
+			<div *ngFor="let classInfo of attendClasses;" class="btn-view-class" (click)="viewStatistics(classInfo)" [class.active-class]="selectedClass && classInfo._id==selectedClass._id">
+				{{ classInfo.Name }} - {{ classInfo.DateTime | date: 'short' }}
+			</div>
+		</div>
+	</div>
+	<div *ngIf="selectedClass">
+		<div class="class-info clearfix">
+			<table>
+				<thead>
+					<tr>
+						<td>Week #</td>
+						<td>Attendance</td>
+						<td *ngFor="let marktype of marktypes;">{{ marktype.Name }}</td>
+						<td>Note</td>
+					</tr>
+				</thead>
+				<tbody>
+					<tr *ngFor="let history of markHistory;">
+						<td>{{ history.Week }}</td>
+						<td>{{ history.Attendance?'/':'' }}</td>
+						<td *ngFor="let marktype of marktypes;">{{ history.Marks[getIndexOfMark(history.Marks, marktype._id)].Value || '' }}</td>
+						<td>{{ history.Note }}</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
 </div>

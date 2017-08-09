@@ -1,7 +1,7 @@
 <div class="roll-calls-wrapper">
 	<div class="roll-call-status">
 		<h3 class="widget-label text-center text-accent" style="margin-bottom: 1em;">Game Status</h3>
-		<div class=""><button class="btn btn-primary" (click)="startGameClicked()" [disabled]="currentClass.Status=='Started'">Start</button> <button class="btn btn-danger" (click)="stopGameClicked()" [disabled]="currentClass.Status=='Stopped'">Stop</button> <button class="btn btn-warning" (click)="rollCallClicked()" [disabled]="currentClass.Status!='Started'">Roll Call</button></div>
+		<div class=""><button class="btn btn-primary" (click)="startGameClicked()" [disabled]="currentClass.Status=='Started' || (currentClass.TotalWeeks==currentClass.Weeks && currentClass.Status=='Stopped')">Start</button> <button class="btn btn-danger" (click)="stopGameClicked()" [disabled]="currentClass.Status!='Started' || currentClass.TotalWeeks!=currentClass.Weeks">Stop</button> <button class="btn btn-warning" (click)="rollCallClicked()" [disabled]="currentClass.Status!='Started' || currentClass.TotalWeeks==currentClass.Weeks">Roll Call</button></div>
 		<div>Current Class Status: {{currentClass.Status}}</div>
 		<div>Current Week: {{currentClass.Weeks}} out of {{currentClass.TotalWeeks}}</div>
 	</div>
@@ -22,7 +22,7 @@
 			</tr>
 		</table>
 		<div>
-      <button class="btn btn-update" (click)="updateStudentBook()">Update Student Book</button>
+      <button class="btn btn-update" (click)="updateStudentBook()">Update Student Book{{loading}}</button>
     </div>
 	</div>
 	<div class="card-history-list" *ngIf="currentClass.CardHistory.length>0 && studentList.length>0 && cards.length>0">

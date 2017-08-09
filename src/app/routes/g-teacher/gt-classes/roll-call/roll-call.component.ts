@@ -18,6 +18,7 @@ export class RollCallComponent implements OnInit {
   studentList = [];
   marktypes = [];
   studentBook = [];
+  loading = '';
 
   constructor(private dataService: DataService, private router: Router, private authService: AuthService) { }
 
@@ -278,7 +279,7 @@ export class RollCallComponent implements OnInit {
         this.dataService.updateClassInfo({_id: this.currentClass._id, Players: this.currentClass.Players, Status: this.currentClass.Status, Weeks: this.currentClass.Weeks}).subscribe((response) => {
           this.currentClass = response.Class;
           this.dataService.setCurrentClass(this.currentClass);
-          
+
           this.updateCurrentStudentBook();
         });
       });
@@ -410,8 +411,10 @@ export class RollCallComponent implements OnInit {
   }
 
   updateStudentBook() {
+    this.loading = '...';
     this.dataService.updateStudentBook({ data: this.studentBook }).subscribe((response) => {
       this.studentBook = response.MarkHistory;
+      this.loading = '';
     })
   }
 }

@@ -21,6 +21,8 @@ export class RollCallComponent implements OnInit {
   loading = '';
   selectedBonusPlayer = null;
   playerBonusSet = { Card: null, Point: 0, Gold: 0 };
+  week_numbers = [];
+  week_studentbook = 1;
 
   loaded_cnt = 0;
   loaded() {
@@ -101,14 +103,14 @@ export class RollCallComponent implements OnInit {
   }
 
   updateCurrentStudentBook() {
-    this.dataService.getStudentBook({ Class: this.currentClass._id, Week: this.currentClass.Weeks}).subscribe((response) => {
+    this.dataService.getStudentBook({ Class: this.currentClass._id, Week: this.week_studentbook}).subscribe((response) => {
       this.studentBook = this.currentClass.Students.map((student) => {
         let index = this.getIndexOfMarkHistory(response.MarkHistory, student);
         if(index<0) {
           return {
             Class: this.currentClass._id,
             Staff: this.me._id,
-            Week: this.currentClass.Weeks,
+            Week: this.week_studentbook,
             Student: student,
             Marks: this.marktypes.map((marktype) => { return { MarkType: marktype._id, Value: 0 }; } ),
             Attendance: false,
@@ -119,6 +121,13 @@ export class RollCallComponent implements OnInit {
           return response.MarkHistory[index];
         }
       });
+    })
+  }
+  updateStudentBook() {
+    this.loading = '...';
+    this.dataService.updateStudentBook({ data: this.studentBook }).subscribe((response) => {
+      this.studentBook = response.MarkHistory;
+      this.loading = '';
     })
   }
 
@@ -132,6 +141,12 @@ export class RollCallComponent implements OnInit {
 
       this.dataService.getGameInfo({_id: this.currentClass._id}).subscribe(response => {
         this.currentClass = response.Class;
+
+        for(let i=1;i<=this.currentClass.Weeks;i++) {
+          this.week_numbers.push(i);
+        }
+        this.week_studentbook = this.currentClass.Weeks;
+        // this.week_numbers = Array(this.currentClass.Weeks).fill().map((x,i)=>i+1);
 
         console.log(this.currentClass);
 
@@ -436,15 +451,6 @@ export class RollCallComponent implements OnInit {
       });
     }
   }
-
-  updateStudentBook() {
-    this.loading = '...';
-    this.dataService.updateStudentBook({ data: this.studentBook }).subscribe((response) => {
-      this.studentBook = response.MarkHistory;
-      this.loading = '';
-    })
-  }
-
 
   resetBonusSet() {
     this.playerBonusSet = { Card: null, Point: 0, Gold: 0 };

@@ -1,11 +1,26 @@
 <div class="roll-calls-wrapper">
+	<div class="game-settings clearfix" *ngIf="currentClass.Weeks == 1">
+		<h3 class="widget-label text-center text-accent" style="margin-bottom: 1em;">Game Settings</h3>
+	  <div class="form-group col-sm-4">
+	    <label>User Collection Size</label>
+	    <input type="number" class="form-control" placeholder="User Collection Size" name="Groups" [(ngModel)]="currentClass.Player_CollectionSize" required>
+	  </div>
+	  <div class="form-group col-sm-4">
+	    <label>Stack Size</label>
+	    <input type="number" class="form-control" placeholder="Stack Size" name="Members" [(ngModel)]="currentClass.Player_StackSize" required>
+	  </div>
+	  <div class="form-group col-sm-4">
+	    <label>Hand Size</label>
+	    <input type="number" class="form-control" placeholder="Hand Size" name="Members" [(ngModel)]="currentClass.Player_HandSize" required>
+	  </div>
+	</div>
 	<div class="roll-call-status">
 		<h3 class="widget-label text-center text-accent" style="margin-bottom: 1em;">Game Status</h3>
 		<div class=""><button class="btn btn-primary" (click)="startGameClicked()" [disabled]="currentClass.Status=='Started' || (currentClass.TotalWeeks==currentClass.Weeks && currentClass.Status=='Stopped')">Start</button> <button class="btn btn-danger" (click)="stopGameClicked()" [disabled]="currentClass.Status!='Started' || currentClass.TotalWeeks!=currentClass.Weeks">Stop</button> <button class="btn btn-warning" (click)="rollCallClicked()" [disabled]="currentClass.Status!='Started' || currentClass.TotalWeeks==currentClass.Weeks">Roll Call</button></div>
 		<div>Current Class Status: {{currentClass.Status}}</div>
 		<div>Current Week: {{currentClass.Weeks}} out of {{currentClass.TotalWeeks}}</div>
 	</div>
-	<div class="student-record-list">
+	<div class="student-record-list" *ngIf="currentClass.Status=='Started'">
 		<h3 class="widget-label text-center text-accent" style="margin-bottom: 1em;">Student Record Book</h3>
 		<table class="student-book" *ngIf="marktypes.length>0 && currentClass && studentList.length>0 && studentBook.length>0">
 			<tr>

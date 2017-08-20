@@ -129,7 +129,7 @@
 
 	<div class="cards-list hand" *ngIf="currentPlayer.Hand && currentPlayer.Hand.length>0 || currentPlayer.Stack">
 		<div class="card-tile-wrapper-overlay">
-			<div class="card-placeholder stack card-tile-wrapper">
+			<div class="card-placeholder stack card-tile-wrapper" *ngIf="currentPlayer.Stack.length>0">
 				<div class="card-tile {{ getCardByCardId(currentPlayer.Stack[0]).Type | lowercase }}">
 					<div class="card-title">
 						<span>{{ getCardByCardId(currentPlayer.Stack[0]).Title }}</span>

@@ -122,6 +122,8 @@ export class RollCallComponent implements OnInit {
       this.dataService.getGameInfo({_id: this.currentClass._id}).subscribe(response => {
         this.currentClass = response.Class;
 
+        console.log(this.currentClass);
+
         this.updateCurrentStudentBook();
       });
     });
@@ -137,6 +139,8 @@ export class RollCallComponent implements OnInit {
   }
 
   chooseCard(collection, target) {
+    if(collection.length == 0) return null;
+
     //rarity
 
     let candidate = [];
@@ -192,25 +196,30 @@ export class RollCallComponent implements OnInit {
         let max = this.currentClass.Collection.length;
         let cnt = 20;
         let pickup = [];
-        while(cnt>0) {
-          pickup.push(this.chooseCard(this.currentClass.Collection, pickup));
-          cnt--;
+        if(this.currentClass.Collection.length>0) {
+          while(cnt>0) {
+            pickup.push(this.chooseCard(this.currentClass.Collection, pickup));
+            cnt--;
+          }
         }
         this.currentClass.PickUp = pickup;
         this.currentClass.Players = this.currentClass.Students.map((player) => {
 
-          let collection = (this.shuffle(this.currentClass.Collection)).slice(0,this.min(20, max)).map((card) => card);
+          let collection = (this.shuffle(this.currentClass.Collection)).slice(0,this.min(this.currentClass.Player_CollectionSize, max)).map((card) => card);
 
           //let stack = (this.shuffle(this.currentClass.Collection)).slice(0,this.min(10, max)).map((card) => card);
-          let cnt = 15;
+          let cnt = this.currentClass.Player_StackSize + this.currentClass.Player_HandSize;
           let stack = [];
           while(cnt>0) {
-            stack.push(this.chooseCard(collection, stack));
+            let t_card = this.chooseCard(collection, stack);
+            if(t_card) {
+              stack.push(t_card);
+            }
             cnt--;
           }
 
           //let hand = (this.shuffle(this.currentClass.Collection)).slice(0,this.min(5, max)).map((card) => card);
-          let hand = stack.splice(0,5);
+          let hand = stack.splice(0,this.currentClass.Player_HandSize);
 
           return {
             Collection: collection,
@@ -236,7 +245,7 @@ export class RollCallComponent implements OnInit {
         // });
         console.log(this.currentClass);
       }
-	  	this.dataService.updateClassInfo({_id: this.currentClass._id, Status: 'Started', Players: this.currentClass.Players, PickUp: this.currentClass.PickUp, Collection: this.currentClass.Collection}).subscribe((response) => {
+	  	this.dataService.updateClassInfo({_id: this.currentClass._id, Status: 'Started', Players: this.currentClass.Players, PickUp: this.currentClass.PickUp, Collection: this.currentClass.Collection, Player_CollectionSize: this.currentClass.Player_CollectionSize, Player_StackSize: this.currentClass.Player_StackSize, Player_HandSize: this.currentClass.Player_HandSize}).subscribe((response) => {
 	  		this.currentClass.Status = response.Class.Status;
 
         this.dataService.setCurrentClass(this.currentClass);
@@ -266,11 +275,13 @@ export class RollCallComponent implements OnInit {
         this.currentClass.Status = 'RollCall';
 
         this.currentClass.Players.forEach((Player, i) => {
-          if(Player.Hand.length<5) {
+          if(Player.Hand.length<this.currentClass.Player_HandSize) {
             let cnt = 1;//5-Player.Hand.length;
             Player.Hand = Player.Hand.concat(Player.Stack.splice(0,cnt));
-            while(Player.Stack.length<10) {
-              Player.Stack.push(this.chooseCard(Player.Collection, Player.Stack));
+            if(Player.Collection.length>0) {
+              while(Player.Stack.length<this.currentClass.Player_StackSize) {
+                Player.Stack.push(this.chooseCard(Player.Collection, Player.Stack));
+              }
             }
             this.currentClass.Players[i]=Player;
           }
@@ -369,8 +380,10 @@ export class RollCallComponent implements OnInit {
               player.Stack.splice(0,bonus.Cards).forEach((card_id) => {
                 player.Hand.push(card_id);
               })
-              while(player.Stack.length<10) {
-                player.Stack.push(this.chooseCard(player.Collection, player.Stack));
+              if(player.Collection.length>0) {
+                while(player.Stack.length<this.currentClass.Player_StackSize) {
+                  player.Stack.push(this.chooseCard(player.Collection, player.Stack));
+                }
               }
             } else if(bonus.Cards<0) {
               let cnt = bonus.Cards;

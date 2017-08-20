@@ -85,6 +85,8 @@ export class PlayscreenComponent implements OnInit {
   }
 
   chooseCard(collection, target) {
+    if(collection.length == 0) return null;
+
     //rarity
 
     let candidate = [];
@@ -251,8 +253,10 @@ export class PlayscreenComponent implements OnInit {
             player.Stack.splice(0,bonus.Cards).forEach((card_id) => {
               player.Hand.push(card_id);
             })
-            while(player.Stack.length<10) {
-              player.Stack.push(this.chooseCard(player.Collection, player.Stack));
+            if(player.Collection.length>0) {
+              while(player.Stack.length<this.currentGame.Player_StackSize) {
+                player.Stack.push(this.chooseCard(player.Collection, player.Stack));
+              }
             }
           } else if(bonus.Cards<0) {
             let cnt = bonus.Cards;

@@ -305,6 +305,7 @@ export class PlayscreenComponent implements OnInit {
 
     if(!confirm("Do you really want to buy this card? It costs Gold " + card.GoldCost + ".")) return ;
     this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, this.me._id)].Stack.push(card_id);
+    this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, this.me._id)].Hand.push(card_id);
     this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, this.me._id)].Gold -= card.GoldCost;
     let exist = false;
     this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, this.me._id)].Collection.forEach((card) => {

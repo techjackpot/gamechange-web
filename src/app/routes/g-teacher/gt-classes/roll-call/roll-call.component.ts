@@ -19,6 +19,16 @@ export class RollCallComponent implements OnInit {
   marktypes = [];
   studentBook = [];
   loading = '';
+  selectedBonusPlayer = null;
+  playerBonusSet = { Card: null, Point: 0, Gold: 0 };
+
+  loaded_cnt = 0;
+  loaded() {
+    if(this.loaded_cnt>=3) {
+      return true;
+    }
+    return false;
+  }
 
   constructor(private dataService: DataService, private router: Router, private authService: AuthService) { }
 
@@ -116,6 +126,7 @@ export class RollCallComponent implements OnInit {
     if(!this.dataService.getCurrentClass()) this.router.navigate(['/classes']);
     this.me = this.authService.getUser();
     this.currentClass = Object.assign( { _id: '' }, this.dataService.getCurrentClass() );
+
     this.dataService.getClassMarkTypes({ Class: this.currentClass._id }).subscribe(response => {
       this.marktypes = response.MarkTypes;
 
@@ -125,15 +136,18 @@ export class RollCallComponent implements OnInit {
         console.log(this.currentClass);
 
         this.updateCurrentStudentBook();
+        this.loaded_cnt++;
       });
     });
 
     this.dataService.getAllCards({Approved: true}).subscribe((response) => {
       this.cards = response.Cards;
+      this.loaded_cnt++;
     });
 
     this.dataService.getStudentList().subscribe(response => {
       this.studentList = response;
+      this.loaded_cnt++;
     });
 
   }
@@ -429,5 +443,32 @@ export class RollCallComponent implements OnInit {
       this.studentBook = response.MarkHistory;
       this.loading = '';
     })
+  }
+
+
+  resetBonusSet() {
+    this.playerBonusSet = { Card: null, Point: 0, Gold: 0 };
+  }
+  choosePlayerToGiveBonus(student_id) {
+    if(this.selectedBonusPlayer == student_id) {
+      this.selectedBonusPlayer = null;
+    } else {
+      this.selectedBonusPlayer = student_id;
+    }
+    this.resetBonusSet();
+  }
+  selectedPlayerBonusCard(card_id) {
+    this.playerBonusSet.Card = card_id;
+  }
+  givePlayerBonusSet() {
+    this.currentClass.Players[this.getIndexOfPlayers(this.currentClass.Players, this.selectedBonusPlayer)].Hand.push(this.playerBonusSet.Card);
+    this.currentClass.Players[this.getIndexOfPlayers(this.currentClass.Players, this.selectedBonusPlayer)].Point += this.playerBonusSet.Point;
+    this.currentClass.Players[this.getIndexOfPlayers(this.currentClass.Players, this.selectedBonusPlayer)].Gold += this.playerBonusSet.Gold;
+
+    this.dataService.updateClassInfo({_id: this.currentClass._id, Players: this.currentClass.Players}).subscribe((response) => {
+    });
+
+    this.selectedBonusPlayer = null;
+    this.resetBonusSet();
   }
 }

@@ -1,26 +1,24 @@
 .page-gt-classes {
-	.roll-calls-wrapper {
-		.game-settings {
-			.form-control {
-				display: block;
-				width: 100%;
-				background: transparent;
-				border: solid 1px #2d4554;
-				color: #2d4554;
-				margin: 5px 0 15px;
-				line-height: 70px;
-				text-align: center;
-				outline: 0 none;
-				font-size: 16px;
-				padding: 0 1em;
-				border-radius: 4px;
-				&:focus, &:active {
-					color: #fff;
-					border-color: #00e2b6;
-					text-align: left;
-				}
-			}
+	.form-control {
+		display: block;
+		width: 100%;
+		background: transparent;
+		border: solid 1px #2d4554;
+		color: #2d4554;
+		margin: 5px 0 15px;
+		line-height: 70px;
+		text-align: center;
+		outline: 0 none;
+		font-size: 16px;
+		padding: 0 1em;
+		border-radius: 4px;
+		&:focus, &:active {
+			color: #fff;
+			border-color: #00e2b6;
+			text-align: left;
 		}
+	}
+	.roll-calls-wrapper {
 		.roll-call-list {
 			.roll-call-item-wrapper {
 				display: block;
@@ -195,6 +193,84 @@
 			}
 			&.invalid {
 				border-color: $gc-color-warn;
+			}
+		}
+	}
+	.set-bonus-to-player {
+		.bonus-player-list {
+			max-width: 9999px;
+			overflow-x: auto;
+	    margin: 30px 0;
+	    padding: 10px 24px;
+	    box-shadow: inset 0px 0px 64px #02070c;
+			.players-list {
+				display: inline-flex;
+				.bonus-player {
+					border: dotted 1px $gc-color-primary;
+					width: 150px;
+					margin: 30px 10px;
+					cursor: pointer;
+					transition: all 0.15s ease;
+					&.selected {
+						border: solid 2px $gc-color-accent;
+						box-shadow: 0 0 6px $gc-color-accent;
+					}
+					.bonus-player-tile {
+						text-align: center;
+						position: relative;
+						padding-top: 100%;
+
+						img {
+							position: absolute;
+							display: block;
+							width: auto;
+							height: auto;
+							max-width: 100%;
+							max-height: 150px;
+							top: 0;
+							margin: 0 auto;
+						}
+						span {
+							display: block;
+							padding: 8px;
+						}
+					}
+				}
+			}
+		}
+		.player-bonus-set {
+			box-shadow: inset 0px 0px 64px #02070c;
+			.bonus-set-card-list {
+				max-width: 9999px;
+				overflow-x: auto;
+				margin: 30px 0;
+				padding: 10px 24px;
+				.bonus-cards-list {
+					display: inline-flex;
+					.bonus-card {
+						transform: scale(0.8);
+						margin: -30px -20px;
+						.card-tile {
+							border: 0 none;
+							margin: 0 15px;
+							transition: all 0.15s ease;
+							cursor: pointer;
+							&:hover,&.selected {
+								border: solid 2px $gc-color-accent;
+								box-shadow: 0 0 6px $gc-color-accent;
+							}
+						}
+					}
+				}
+			}
+		}
+		.btn-give-bonus {
+			color: $gc-color-primary;
+			background: $gc-color-warn;
+			padding: 10px 25px;
+			transition: all 0.15s ease;
+			&:hover {
+				background: darken($gc-color-warn, 10%);
 			}
 		}
 	}

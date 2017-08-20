@@ -192,7 +192,7 @@ export class DataService {
     if(url) {
       return this.url + '/' + url;
     } else {
-      return 'assets/images/avatar.png';
+      return 'assets/images/placeholder.png';
     }
   }
 

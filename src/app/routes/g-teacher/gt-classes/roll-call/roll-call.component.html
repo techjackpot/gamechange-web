@@ -1,17 +1,17 @@
-<div class="roll-calls-wrapper">
+<div class="roll-calls-wrapper" *ngIf="loaded()">
 	<div class="game-settings clearfix" *ngIf="currentClass.Weeks==1 && currentClass.Status=='Stopped'">
 		<h3 class="widget-label text-center text-accent" style="margin-bottom: 1em;">Game Settings</h3>
 	  <div class="form-group col-sm-4">
 	    <label>User Collection Size</label>
-	    <input type="number" class="form-control" placeholder="User Collection Size" name="Groups" [(ngModel)]="currentClass.Player_CollectionSize" required>
+	    <input type="number" class="form-control" placeholder="User Collection Size" name="CollectionSize" [(ngModel)]="currentClass.Player_CollectionSize" required>
 	  </div>
 	  <div class="form-group col-sm-4">
 	    <label>Stack Size</label>
-	    <input type="number" class="form-control" placeholder="Stack Size" name="Members" [(ngModel)]="currentClass.Player_StackSize" required>
+	    <input type="number" class="form-control" placeholder="Stack Size" name="StackSize" [(ngModel)]="currentClass.Player_StackSize" required>
 	  </div>
 	  <div class="form-group col-sm-4">
 	    <label>Hand Size</label>
-	    <input type="number" class="form-control" placeholder="Hand Size" name="Members" [(ngModel)]="currentClass.Player_HandSize" required>
+	    <input type="number" class="form-control" placeholder="Hand Size" name="HandSize" [(ngModel)]="currentClass.Player_HandSize" required>
 	  </div>
 	</div>
 	<div class="roll-call-status">
@@ -96,28 +96,55 @@
 			</div>
 		</div>
 	</div>
-	<!--<div class="roll-call-list">
-		<div class="roll-call-item-wrapper">
-			<div class="roll-call-item">
-				<div class="profile-photo">
-					<img src="" alt="Profile photo" />
-				</div>
-				<div class="roll-call-info">
-					<div class="student-info">
-						<div class="student-name">Zareen Attar</div>
-						<div class="student-title">God Of All Thing</div>
-					</div>
-					<div class="options">
-						<div class="action-icon accept"></div>
-						<div class="action-icon cancel"></div>
-					</div>
-					<div class="numbers">
-						<div class="action-icon">0</div>
-						<div class="action-icon">1</div>
-						<div class="action-icon">2</div>
-					</div>
+	<div class="set-bonus-to-player" *ngIf="currentClass.Weeks!=1 || currentClass.Status!='Stopped'">
+		<h3 class="widget-label text-center text-accent" style="margin-bottom: 1em;">Add Bonus to Player</h3>
+		<div class="bonus-player-list">
+			<div>Choose Player</div>
+			<div class="players-list">
+				<div class="bonus-player" *ngFor="let student of currentClass.Students;" (click)="choosePlayerToGiveBonus(student)" [class.selected]="selectedBonusPlayer==student">
+					<div class="bonus-player-tile"><img src="{{ getServerAssetUrl(studentList[getIndexOfUsers(studentList,student)].DisplayPicture) }}"><span>{{ studentList[getIndexOfUsers(studentList,student)].DisplayName }}</span></div>
 				</div>
 			</div>
 		</div>
-	</div>-->
+		<div class="player-bonus-set" *ngIf="selectedBonusPlayer">
+			<div class="bonus-set-card-list">
+				<div>Choose Card</div>
+				<div class="bonus-cards-list" *ngIf="cards.length>0">
+					<div class="bonus-card" *ngFor="let card of cards">
+						<div class="card-preview-area">
+							<div class="card-tile-preview">
+								<div class="card-tile {{ cards[getIndexOfCards(cards,card._id)].Type | lowercase }}" (click)="selectedPlayerBonusCard(card._id)" [class.selected]="playerBonusSet.Card==card._id">
+									<div class="card-title">
+										<span>{{ cards[getIndexOfCards(cards,card._id)].Title }}</span>
+									</div>
+									<div class="card-picture">
+										<img class="card-picture-preview" src="{{ getServerAssetUrl(cards[getIndexOfCards(cards,card._id)].Picture) }}">
+									</div>
+									<div class="card-description">
+										<span>{{ cards[getIndexOfCards(cards,card._id)].Description }}</span>
+									</div>
+									<div class="card-goldcost">
+										<span>{{ cards[getIndexOfCards(cards,card._id)].GoldCost }}</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="bonus-set-point-gold clearfix">
+			  <div class="form-group col-sm-4">
+			    <label>Bonus Point</label>
+			    <input type="number" class="form-control" placeholder="Bonus Point" name="BonusPoint" [(ngModel)]="playerBonusSet.Point" required>
+			  </div>
+			  <div class="form-group col-sm-4">
+			    <label>Bonus Gold</label>
+			    <input type="number" class="form-control" placeholder="Bonus Gold" name="BonusGold" [(ngModel)]="playerBonusSet.Gold" required>
+			  </div>
+			  <div class="col-sm-4 text-center">
+			  	<div class="btn btn-give-bonus" (click)="givePlayerBonusSet()">Give Bonus</div>
+			  </div>
+			</div>
+		</div>
+	</div>
 </div>

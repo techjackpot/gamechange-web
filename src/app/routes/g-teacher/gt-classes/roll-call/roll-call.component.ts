@@ -301,6 +301,8 @@ export class RollCallComponent implements OnInit {
       this.dataService.getGameInfo({_id: this.currentClass._id}).subscribe(response => {
         this.currentClass = response.Class;
         this.currentClass.Weeks ++;
+        this.week_numbers.push(this.currentClass.Weeks);
+        this.week_studentbook = this.currentClass.Weeks;
         this.currentClass.Status = 'RollCall';
 
         this.currentClass.Players.forEach((Player, i) => {

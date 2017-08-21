@@ -175,7 +175,7 @@
 				text-decoration: none;
 			}
 		}
-		input[type=text] {
+		input[type=number], input[type=text] {
 			display: block;
 			text-align: center;
 			width: 100%;
@@ -193,6 +193,23 @@
 			}
 			&.invalid {
 				border-color: $gc-color-warn;
+			}
+		}
+		input[type=text] {
+			text-align: left;
+		}
+		.profile_info {
+			display: flex;
+			align-items: center;
+			img {
+				height: 50px;
+				width: auto;
+				max-width: 80px;
+				flex-grow: 0;
+			}
+			span {
+				margin: 0 0.5em;
+				flex-grow: 1;
 			}
 		}
 	}

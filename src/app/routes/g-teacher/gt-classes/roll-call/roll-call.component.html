@@ -34,9 +34,9 @@
 				<td>Note</td>
 			</tr>
 			<tr *ngFor="let student_id of currentClass.Students;">
-				<td>{{ studentList[getIndexOfUsers(studentList, student_id)].DisplayName }}</td>
+				<td><div class="profile_info"><img src="{{ getServerAssetUrl(studentList[getIndexOfUsers(studentList, student_id)].DisplayPicture) }}"><span>{{ studentList[getIndexOfUsers(studentList, student_id)].DisplayName }}</span></div></td>
 				<td><input type="checkbox" [(ngModel)]="studentBook[getIndexOfMarkHistory(studentBook, student_id)].Attendance" /></td>
-				<td *ngFor="let marktype of marktypes;"><input type="text" [(ngModel)]="studentBook[getIndexOfMarkHistory(studentBook, student_id)].Marks[getIndexOfMark(studentBook[getIndexOfMarkHistory(studentBook, student_id)].Marks, marktype._id)].Value" /></td>
+				<td *ngFor="let marktype of marktypes;"><input type="number" [(ngModel)]="studentBook[getIndexOfMarkHistory(studentBook, student_id)].Marks[getIndexOfMark(studentBook[getIndexOfMarkHistory(studentBook, student_id)].Marks, marktype._id)].Value" (mouseup)="$event.target.select()" /></td>
 				<td><input type="text" [(ngModel)]="studentBook[getIndexOfMarkHistory(studentBook, student_id)].Note" /></td>
 			</tr>
 		</table>

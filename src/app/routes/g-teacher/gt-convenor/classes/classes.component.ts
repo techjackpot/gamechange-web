@@ -27,7 +27,7 @@ export class ClassesComponent implements OnInit {
         this.teachersList = response;
       },
       (error) => {
-        console.log(error);
+        // console.log(error);
       }
     );
     this.dataService.getClassesList().subscribe(
@@ -35,7 +35,7 @@ export class ClassesComponent implements OnInit {
         this.classesList = response.Classes;
       },
       (error) => {
-        console.log(error);
+        // console.log(error);
       }
     );
   }
@@ -112,7 +112,7 @@ export class ClassesComponent implements OnInit {
 		    return this.selectedClass;
   		},
   		(error) => {
-  			console.log(error);
+  			// console.log(error);
   		}
   	);
   }
@@ -140,7 +140,7 @@ export class ClassesComponent implements OnInit {
 	      	this.opened = false;
 	      },
 	      (error) => {
-	        console.log(error);
+	        // console.log(error);
 	      }
 	    );
 	  } else {
@@ -173,7 +173,7 @@ export class ClassesComponent implements OnInit {
           this.opened = false;
         },
         (error) => {
-          console.log(error);
+          // console.log(error);
         }
       );
     } else {

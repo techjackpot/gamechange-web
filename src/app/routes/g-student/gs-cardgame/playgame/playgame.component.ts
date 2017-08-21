@@ -42,7 +42,7 @@ export class PlaygameComponent implements OnInit {
 		this.router.navigate(['/cardgame/playgame/', classInfo._id]);
 	}
   viewLeaderboard(classInfo) {
-    console.log(classInfo);
+    // console.log(classInfo);
     this.selectedClass = classInfo;
     this.selectedClass.Players.sort(function(a, b) {
       return parseFloat(b.Point) - parseFloat(a.Point);

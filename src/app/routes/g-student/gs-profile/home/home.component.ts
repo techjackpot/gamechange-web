@@ -97,7 +97,7 @@ export class HomeComponent implements OnInit {
     this.dataService.getClassMarkTypes({ Class: this.selectedClass._id }).subscribe(response => {
       this.marktypes = response.MarkTypes;
 
-      console.log(this.marktypes);
+      // console.log(this.marktypes);
       this.markHistory = [];
 
       this.dataService.getStudentBook({ Class: this.selectedClass._id, Student: this.dataService.getStudentID() }).subscribe((response) => {
@@ -121,9 +121,9 @@ export class HomeComponent implements OnInit {
           }
           this.markHistory.push(obj);
         }
-        console.log(this.markHistory);
+        // console.log(this.markHistory);
       });
     });
-    console.log(this.selectedClass);
+    // console.log(this.selectedClass);
   }
 }

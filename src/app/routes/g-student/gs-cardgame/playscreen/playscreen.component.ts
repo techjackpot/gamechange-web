@@ -349,7 +349,7 @@ export class PlayscreenComponent implements OnInit {
     });
 
     this.dataService.updateClassInfo({_id: this.currentGame._id, Players: this.currentGame.Players, CardHistory: this.currentGame.CardHistory}).subscribe((response) => {
-      console.log(response.Class);
+      // console.log(response.Class);
     });
 
     this.currentPlayer = this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, this.me._id)];
@@ -378,7 +378,7 @@ export class PlayscreenComponent implements OnInit {
     this.currentGame.PickUp.splice(this.currentGame.PickUp.indexOf(card_id),1,this.currentGame.Collection[Math.floor(Math.random()*this.currentGame.Collection.length)]);
 
     this.dataService.updateClassInfo({_id: this.currentGame._id, PickUp: this.currentGame.PickUp, Players: this.currentGame.Players}).subscribe((response) => {
-      console.log(response.Class);
+      // console.log(response.Class);
     });
     
     this.currentPlayer = this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, this.me._id)];

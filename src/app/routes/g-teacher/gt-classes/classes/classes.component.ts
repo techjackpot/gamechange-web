@@ -24,7 +24,7 @@ export class ClassesComponent implements OnInit {
         });
       },
       (error) => {
-        console.log(error);
+        // console.log(error);
       }
     );
   }

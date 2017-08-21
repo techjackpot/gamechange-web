@@ -148,7 +148,7 @@ export class RollCallComponent implements OnInit {
         this.week_studentbook = this.currentClass.Weeks;
         // this.week_numbers = Array(this.currentClass.Weeks).fill().map((x,i)=>i+1);
 
-        console.log(this.currentClass);
+        // console.log(this.currentClass);
 
         this.updateCurrentStudentBook();
         this.loaded_cnt++;
@@ -272,7 +272,7 @@ export class RollCallComponent implements OnInit {
         //     Player: player
         //   };
         // });
-        console.log(this.currentClass);
+        // console.log(this.currentClass);
       }
 	  	this.dataService.updateClassInfo({_id: this.currentClass._id, Status: 'Started', Players: this.currentClass.Players, PickUp: this.currentClass.PickUp, Collection: this.currentClass.Collection, Player_CollectionSize: this.currentClass.Player_CollectionSize, Player_StackSize: this.currentClass.Player_StackSize, Player_HandSize: this.currentClass.Player_HandSize}).subscribe((response) => {
 	  		this.currentClass.Status = response.Class.Status;

@@ -15,7 +15,13 @@ export class PlayscreenComponent implements OnInit {
   cards = null;
   me = null;
 
+  list_friends = [];
+  list_others = [];
+
+  studentList = [];
+
   selectedCard = null;
+  selectedCardTargets = [[],[],[]];
 
   timer = null;
 
@@ -23,6 +29,8 @@ export class PlayscreenComponent implements OnInit {
 
   historyCardsAgainstMe = [];
   historyCardsByMe = [];
+
+  loaded = false;
 
   constructor(private route: ActivatedRoute, private router: Router, private dataService: DataService, private authService: AuthService) { }
 
@@ -35,6 +43,9 @@ export class PlayscreenComponent implements OnInit {
       this.dataService.getGameInfo({_id: this.GameID}).subscribe(response => {
         this.currentGame = response.Class;
         this.currentPlayer = this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, this.me._id)];
+
+        this.list_others = this.currentGame.Students.slice();
+        this.list_others.splice(this.list_others.indexOf(this.me._id), 1);
         resolve();
       });
     });
@@ -45,8 +56,28 @@ export class PlayscreenComponent implements OnInit {
       })
     });
 
-    Promise.all([p1, p2]).then(() => {
-        this.updateCardHistory();
+    let p3 = new Promise((resolve, reject) => {
+      this.dataService.getStudentList().subscribe(response => {
+        this.studentList = response;
+        resolve();
+      });
+    });
+
+    Promise.all([p1, p2, p3]).then(() => {
+      this.updateCardHistory();
+
+      this.dataService.getStudentFriends({ student_id: this.me._id }).subscribe( (response) => {
+        this.list_friends = response.Friends.filter((friend_connection) => {
+          return friend_connection.Approved;
+        }).map((fc) => {
+          return fc.From._id==this.me._id?fc.To._id:fc.From._id;
+        }).filter((friend) => {
+          return this.currentGame.Students.indexOf(friend)>=0;
+        });
+
+        this.loaded = true;
+      });
+        // console.log(this.cards, this.currentGame, this.currentPlayer);
     })
 
     this.timer = setInterval(() => {
@@ -68,7 +99,7 @@ export class PlayscreenComponent implements OnInit {
 
     this.historyCardsAgainstMe = this.currentGame.CardHistory.filter((history) => {
       for(let i=0;i<this.cards[this.getIndexOfCards(this.cards,history.Card)].Actions.length-history.UnResolved;i++) {
-        if(history.Target[i].indexOf(this.me._id)>=0) {
+        if(history.Target[i].indexOf(this.me._id)>=0 && this.cards[this.getIndexOfCards(this.cards,history.Card)].Actions[i].Target!='Self') {
           return true;
         }
       }
@@ -159,6 +190,20 @@ export class PlayscreenComponent implements OnInit {
     return index;
   }
 
+  getIndexOfStudents(students, student_id) {
+    let index = -1;
+    students.forEach((student, i) => {
+      if(student._id == student_id) {
+        index = i;
+      }
+    });
+    return index;
+  }
+
+  getPlayerByID(player_id) {
+    return this.studentList[this.getIndexOfStudents(this.studentList, player_id)];
+  }
+
   getServerAssetUrl(url) {
     return this.dataService.getServerAssetUrl(url);
   }
@@ -184,13 +229,25 @@ export class PlayscreenComponent implements OnInit {
     return copy;
   }
 
+  resetSelectedCardTargets() {
+    this.selectedCardTargets = [[],[],[]];
+    if(this.selectedCard) {
+      this.selectedCard.Actions.forEach((action, i) => {
+        if(action.Target=='Self') {
+          this.selectedCardTargets[i].push(this.me._id);
+        }
+      })
+    }
+  }
 
   onClickedHand(card_id) {
     this.selectedCard = this.getCardByCardId(card_id);
+    this.resetSelectedCardTargets();
   }
 
   onClickedCardCancel() {
     this.selectedCard = null;
+    this.resetSelectedCardTargets();
   }
 
   onClickedCardPlay() {
@@ -201,7 +258,7 @@ export class PlayscreenComponent implements OnInit {
 
     let total_targets = [];
     let unresolved = card.Actions.length, auto_progress = true;
-    card.Actions.forEach((action) => {
+    card.Actions.forEach((action, i) => {
       //"Add Points", "Subtract Points", "Add Gold", "Subtract Gold", "Add Cards", "Subtract Cards"
       let bonus = { Point: 0, Gold: 0, Cards: 0 };
       switch(action.Keyword) {
@@ -227,23 +284,27 @@ export class PlayscreenComponent implements OnInit {
           auto_progress = false;
           break;
       }
+
+
+      // let targets = [];
+      // switch(action.Target) {
+      //   case "Self":
+      //     targets.push(this.me._id);
+      //     break;
+      //   case "Friends":
+      //   case "Others":
+      //     targets = (this.shuffle(this.currentGame.Students.filter((student) => student!=this.me._id))).slice(0,action.TargetValue);
+      //     break;
+      //   default:
+      //     break;
+      // }
+      let targets = this.selectedCardTargets[i].slice();
+
+      total_targets.push(targets);
+
       if(auto_progress) {
         unresolved--;
 
-        let targets = [];
-        switch(action.Target) {
-          case "Self":
-            targets.push(this.me._id);
-            break;
-          case "Friends":
-          case "Others":
-            targets = (this.shuffle(this.currentGame.Students.filter((student) => student!=this.me._id))).slice(0,action.TargetValue);
-            break;
-          default:
-            break;
-        }
-
-        total_targets.push(targets);
         targets.forEach((player_id) => {
           let player = this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, player_id)];
           player.Point += bonus.Point;
@@ -321,5 +382,19 @@ export class PlayscreenComponent implements OnInit {
     });
     
     this.currentPlayer = this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, this.me._id)];
+  }
+
+  chooseTargetsPerAction(action_index, player_id) {
+    let exist = this.selectedCardTargets[action_index].indexOf(player_id);
+    if(exist>=0) {
+      this.selectedCardTargets[action_index].splice(exist, 1);
+    } else {
+      if(this.selectedCardTargets[action_index].length<this.selectedCard.Actions[action_index].TargetValue) {
+        this.selectedCardTargets[action_index].push(player_id);
+      }
+    }
+  }
+  isTargetPerAction(action_index, player_id) {
+    return this.selectedCardTargets[action_index].indexOf(player_id)>=0?true:false;
   }
 }

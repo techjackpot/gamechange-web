@@ -353,6 +353,7 @@ export class RollCallComponent implements OnInit {
       let card = this.cards[this.getIndexOfCards(this.cards, history.Card)];
 
       let auto_progress = true, unresolved = history.UnResolved;
+      
       card.Actions.forEach((action, i) => {
         if(i<card.Actions.length-unresolved) {
           return true;
@@ -386,22 +387,26 @@ export class RollCallComponent implements OnInit {
           auto_progress = true;
         }
         if(auto_progress) {
+          let targets = history.Target[history.Target.length-history.UnResolved];
+
           history.UnResolved--;
 
-          let targets = [];
-          switch(action.Target) {
-            case "Self":
-              targets.push(history.Source);
-              break;
-            case "Friends":
-            case "Others":
-              targets = (this.shuffle(this.currentClass.Students.filter((student) => student!=history.Source))).slice(0,action.TargetValue);
-              break;
-            default:
-              break;
-          }
+          // let targets = [];
+          // switch(action.Target) {
+          //   case "Self":
+          //     targets.push(history.Source);
+          //     break;
+          //   case "Friends":
+          //   case "Others":
+          //     targets = (this.shuffle(this.currentClass.Students.filter((student) => student!=history.Source))).slice(0,action.TargetValue);
+          //     break;
+          //   default:
+          //     break;
+          // }
 
-          history.Target.push(targets);
+          // history.Target.push(targets);
+
+
           targets.forEach((player_id) => {
             let player = this.currentClass.Players[this.getIndexOfPlayers(this.currentClass.Players, player_id)];
             player.Point += bonus.Point;
@@ -469,7 +474,9 @@ export class RollCallComponent implements OnInit {
     this.playerBonusSet.Card = card_id;
   }
   givePlayerBonusSet() {
-    this.currentClass.Players[this.getIndexOfPlayers(this.currentClass.Players, this.selectedBonusPlayer)].Hand.push(this.playerBonusSet.Card);
+    if(this.playerBonusSet.Card) {
+      this.currentClass.Players[this.getIndexOfPlayers(this.currentClass.Players, this.selectedBonusPlayer)].Hand.push(this.playerBonusSet.Card);
+    }
     this.currentClass.Players[this.getIndexOfPlayers(this.currentClass.Players, this.selectedBonusPlayer)].Point += this.playerBonusSet.Point;
     this.currentClass.Players[this.getIndexOfPlayers(this.currentClass.Players, this.selectedBonusPlayer)].Gold += this.playerBonusSet.Gold;
 

@@ -33,11 +33,66 @@
 	}
 	.card-tile-preview {
 		display: flex;
-		.card-tile-actions {
-			margin: 0 30px;
+		.card-tile-section {
+			flex-grow: 0;
+			.card-play-actions {
+				margin-top: 15px;
+			}
 		}
-		.card-play-actions {
-			margin-top: 15px;
+		.card-actions-section {
+			flex-grow: 1;
+			.card-tile-actions {
+				margin: 0 0 15px 30px;
+				display: flex;
+				border-left: solid 5px $gc-color-warn;
+				padding-left: 1em;
+				.card-creation-action-form {
+					flex-grow: 0;
+					margin-right: 20px;
+					.form-group {
+						margin-bottom: 0;
+						white-space: nowrap;
+						span {
+							color: $gc-color-warn;
+						}
+					}
+				}
+				.card-action-targets {
+					flex-grow: 1;
+					display: flex;
+					.card-action-target {
+						display: inline-flex;
+						margin:0 15px 15px 0;
+						align-items: center;
+						border: dotted 2px $gc-color-primary;
+						border-radius: 1em;
+						overflow: hidden;
+						cursor: pointer;
+						transition: all 0.15s ease;
+
+						&:hover {
+							border-color: $gc-color-warn;
+						}
+						&.selected {
+							border-style: solid;
+							border-color: $gc-color-warn;
+							background: $gc-color-warn;
+						}
+						img {
+							width: auto;
+							height: 40px;
+							max-width: 60px;
+						}
+						span {
+							font-size: 12px;
+							margin: 0 0.7em;
+						}
+						* {
+							user-select: none;
+						}
+					}
+				}
+			}
 		}
 	}
 	.link_leaderboard {

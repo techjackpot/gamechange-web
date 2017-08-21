@@ -202,7 +202,7 @@
 			overflow-x: auto;
 	    margin: 30px 0;
 	    padding: 10px 24px;
-	    box-shadow: inset 0px 0px 64px #02070c;
+	    box-shadow: inset 0px 0px 64px $gc-bg-sub;
 			.players-list {
 				display: inline-flex;
 				.bonus-player {
@@ -239,7 +239,7 @@
 			}
 		}
 		.player-bonus-set {
-			box-shadow: inset 0px 0px 64px #02070c;
+			box-shadow: inset 0px 0px 64px $gc-bg-sub;
 			.bonus-set-card-list {
 				max-width: 9999px;
 				overflow-x: auto;
@@ -255,6 +255,7 @@
 							margin: 0 15px;
 							transition: all 0.15s ease;
 							cursor: pointer;
+							border: solid 2px transparent;
 							&:hover,&.selected {
 								border: solid 2px $gc-color-accent;
 								box-shadow: 0 0 6px $gc-color-accent;

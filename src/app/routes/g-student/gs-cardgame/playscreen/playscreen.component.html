@@ -1,4 +1,4 @@
-<div class="playscreen" *ngIf="currentGame && cards">
+<div class="playscreen" *ngIf="loaded">
 
 	<div class="cards-list pickup" *ngIf="currentGame.PickUp && currentGame.PickUp.length>0">
 		<div class="label">PickUp</div>
@@ -76,7 +76,7 @@
 		<h4>Selected Card</h4>
 		<div class="card-preview-area">
 			<div class="card-tile-preview">
-				<div>
+				<div class="card-tile-section">
 					<div class="card-tile {{ selectedCard.Type | lowercase }}">
 						<div class="card-title">
 							<span>{{ selectedCard.Title }}</span>
@@ -87,9 +87,6 @@
 						<div class="card-description">
 							<span>{{ selectedCard.Description }}</span>
 						</div>
-						<div class="card-type">
-							<span>{{ selectedCard.Type }}</span>
-						</div>
 						<div class="card-goldcost">
 							<span>{{ selectedCard.GoldCost }}</span>
 						</div>
@@ -99,28 +96,47 @@
 						<button class="btn btn-danger" (click)="onClickedCardCancel()">Cancel</button>
 					</div>
 				</div>
-				<div class="card-tile-actions" *ngFor="let action of selectedCard.Actions; let ii=index;">
-					<div class="card-creation-action-form">
-					  <div class="form-group">
-					    <label>Keyword</label>
-		    			<span>{{action.Keyword}}</span>
-					  </div>
-					  <div class="form-group">
-					    <label>Target</label>
-		    			<span>{{action.Target}}</span>
-					  </div>
-					  <div class="form-group">
-					    <label>Target Value</label>
-		    			<span>{{action.TargetValue}}</span>
-					  </div>
-					  <div class="form-group">
-					    <label>Keyword Value</label>
-		    			<span>{{action.KeywordValue}}</span>
-					  </div>
-					  <div class="form-group" *ngIf="action.Keyword=='Perform Action'">
-					    <label>Action Description</label>
-		    			<span>{{action.Description}}</span>
-					  </div>
+				<div class="card-actions-section">
+					<div class="card-tile-actions" *ngFor="let action of selectedCard.Actions; let ii=index;">
+						<div class="card-creation-action-form">
+						  <div class="form-group">
+						    <label>Keyword</label>
+			    			<span>{{action.Keyword}}</span>
+						  </div>
+						  <div class="form-group">
+						    <label>Target</label>
+			    			<span>{{action.Target}}</span>
+						  </div>
+						  <div class="form-group">
+						    <label>Target Value</label>
+			    			<span>{{action.TargetValue}}</span>
+						  </div>
+						  <div class="form-group">
+						    <label>Keyword Value</label>
+			    			<span>{{action.KeywordValue}}</span>
+						  </div>
+						  <div class="form-group" *ngIf="action.Keyword=='Perform Action'">
+						    <label>Action Description</label>
+			    			<span>{{action.Description}}</span>
+						  </div>
+						</div>
+						<div class="card-action-targets">
+							<div *ngIf="action.Target=='Self'">
+								<div class="card-action-target selected">
+									<img src="{{ getServerAssetUrl(me.DisplayPicture) }}"><span>{{ me.DisplayName }}</span>
+								</div>
+							</div>
+							<div *ngIf="action.Target=='Friends'">
+								<div class="card-action-target" *ngFor="let player of list_friends;" (click)="chooseTargetsPerAction(ii, player)" [class.selected]="isTargetPerAction(ii, player)">
+									<img src="{{ getServerAssetUrl(getPlayerByID(player).DisplayPicture) }}"><span>{{ getPlayerByID(player).DisplayName }}</span>
+								</div>
+							</div>
+							<div *ngIf="action.Target=='Others'">
+								<div class="card-action-target" *ngFor="let player of list_others;" (click)="chooseTargetsPerAction(ii, player)" [class.selected]="isTargetPerAction(ii, player)">
+									<img src="{{ getServerAssetUrl(getPlayerByID(player).DisplayPicture) }}"><span>{{ getPlayerByID(player).DisplayName }}</span>
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -148,7 +164,7 @@
 			<div *ngIf="currentPlayer.Hand.length==0">
 				<h3>No cards left to play!</h3>
 			</div>
-			<div *ngFor="let card_id of currentPlayer.Hand;" class="card-tile-wrapper" [class.card-selected]="selectedCard && card_id==selectedCard._id">
+			<div *ngFor="let card_id of currentPlayer.Hand;" class="card-tile-wrapper" [class.card-selected]="selectedCard?card_id==selectedCard._id:false">
 				<a class="card-tile {{ getCardByCardId(card_id).Type | lowercase }}" (click)="onClickedHand(card_id)">
 					<div class="card-title">
 						<span>{{ getCardByCardId(card_id).Title }}</span>

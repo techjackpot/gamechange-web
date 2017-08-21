@@ -67,7 +67,7 @@
 								<span>{{ cards[getIndexOfCards(cards,history.Card)].GoldCost }}</span>
 							</div>
 						</div>
-						<div class="card-tile-actions" *ngFor="let action of cards[getIndexOfCards(cards,history.Card)].Actions; let ii=index;" [class.activated]="ii<history.Target.length">
+						<div class="card-tile-actions" *ngFor="let action of cards[getIndexOfCards(cards,history.Card)].Actions; let ii=index;" [class.activated]="ii<history.Target.length-history.UnResolved">
 							<div class="card-creation-action-form">
 							  <div class="form-group">
 							    <label>Keyword</label>

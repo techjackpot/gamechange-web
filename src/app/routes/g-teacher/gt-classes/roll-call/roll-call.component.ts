@@ -370,7 +370,7 @@ export class RollCallComponent implements OnInit {
           return true;
         }
         //"Add Points", "Subtract Points", "Add Gold", "Subtract Gold", "Add Cards", "Subtract Cards"
-        let bonus = { Point: 0, Gold: 0, Cards: 0 };
+        let bonus = { Point: 0, Gold: 0, Cards: 0, Defence: 0 };
         switch(action.Keyword) {
           case "Add Points":
             bonus.Point = action.KeywordValue;
@@ -390,6 +390,11 @@ export class RollCallComponent implements OnInit {
           case "Subtract Cards":
             bonus.Cards = -action.KeywordValue;
             break;
+          case "Defend Negative":
+            bonus.Defence = action.KeywordValue;
+            break;
+          case "Add Friend":
+            break;
           default:
             auto_progress = false;
             break;
@@ -397,31 +402,25 @@ export class RollCallComponent implements OnInit {
         if(i==card.Actions.length-unresolved) {
           auto_progress = true;
         }
+
         if(auto_progress) {
           let targets = history.Target[history.Target.length-history.UnResolved];
 
           history.UnResolved--;
 
-          // let targets = [];
-          // switch(action.Target) {
-          //   case "Self":
-          //     targets.push(history.Source);
-          //     break;
-          //   case "Friends":
-          //   case "Others":
-          //     targets = (this.shuffle(this.currentClass.Students.filter((student) => student!=history.Source))).slice(0,action.TargetValue);
-          //     break;
-          //   default:
-          //     break;
-          // }
-
-          // history.Target.push(targets);
-
-
           targets.forEach((player_id) => {
+            this.dataService.buildFriendConnection({ from: this.me._id, to: player_id }).subscribe((response) => {
+            });
             let player = this.currentClass.Players[this.getIndexOfPlayers(this.currentClass.Players, player_id)];
+            if(player.Defence>0 && (bonus.Point<0 || bonus.Gold<0 || bonus.Cards<0)) {
+              player.Defence --;
+              bonus.Point = 0;
+              bonus.Gold = 0;
+              bonus.Cards = 0;
+            }
             player.Point += bonus.Point;
             player.Gold += bonus.Gold;
+            player.Defence += bonus.Defence;
 
             if(bonus.Cards>0) {
               player.Stack.splice(0,bonus.Cards).forEach((card_id) => {
@@ -492,6 +491,7 @@ export class RollCallComponent implements OnInit {
     this.currentClass.Players[this.getIndexOfPlayers(this.currentClass.Players, this.selectedBonusPlayer)].Gold += this.playerBonusSet.Gold;
 
     this.dataService.updateClassInfo({_id: this.currentClass._id, Players: this.currentClass.Players}).subscribe((response) => {
+      this.currentClass = response.Class;
     });
 
     this.selectedBonusPlayer = null;

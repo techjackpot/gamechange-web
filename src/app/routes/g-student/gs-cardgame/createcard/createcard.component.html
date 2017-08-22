@@ -23,7 +23,7 @@
 					</div>
 				</div>
 
-	      <button type="submit" [disabled]="!f.form.valid || !selectedFile" class="btn form-submit" (click)="onSubmitCreateCard(f)">Save</button>
+	      <button type="submit" [disabled]="(!f.form.valid || !selectedFile) && !checkCardActions()" class="btn form-submit" (click)="onSubmitCreateCard(f)">Save</button>
 	    </div>
 		</div>
 		<div class="card-creation-form col-md-6">

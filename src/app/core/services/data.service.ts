@@ -162,6 +162,12 @@ export class DataService {
       .map((response: Response) => response.json());
   }
 
+  buildFriendConnection(data) {
+    return this.http.post(this.url + '/api/students/buildfriendconnection', data, { headers: this.getHeaders() })
+      .map((response: Response) => response.json());
+  }
+
+
   approveFriendRequest(data) {
     return this.http.post(this.url + '/api/students/acceptrequest', data, { headers: this.getHeaders() })
       .map((response: Response) => response.json());

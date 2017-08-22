@@ -25,6 +25,7 @@
 	<div class="score-board">
 		<div class="score-board-item score-point"><span>Point</span><span class="value">{{ currentPlayer && currentPlayer.Point }}</span></div>
 		<div class="score-board-item score-gold"><span>Gold</span><span class="value">{{ currentPlayer && currentPlayer.Gold }}</span></div>
+		<div class="score-board-item score-defence"><span>Defence</span><span class="value">{{ currentPlayer && currentPlayer.Defence }}</span></div>
 	</div>
 
 	<div class="play-pane">
@@ -132,8 +133,15 @@
 								</div>
 							</div>
 							<div *ngIf="action.Target=='Others'">
-								<div class="card-action-target" *ngFor="let player of list_others;" (click)="chooseTargetsPerAction(ii, player)" [class.selected]="isTargetPerAction(ii, player)">
-									<img src="{{ getServerAssetUrl(getPlayerByID(player).DisplayPicture) }}"><span>{{ getPlayerByID(player).DisplayName }}</span>
+								<div *ngIf="action.Keyword=='Add Friend'">
+									<div class="card-action-target" *ngFor="let player of array_diff(list_others,list_friends);" (click)="chooseTargetsPerAction(ii, player)" [class.selected]="isTargetPerAction(ii, player)">
+										<img src="{{ getServerAssetUrl(getPlayerByID(player).DisplayPicture) }}"><span>{{ getPlayerByID(player).DisplayName }}</span>
+									</div>
+								</div>
+								<div *ngIf="action.Keyword!='Add Friend'">
+									<div class="card-action-target" *ngFor="let player of list_others;" (click)="chooseTargetsPerAction(ii, player)" [class.selected]="isTargetPerAction(ii, player)">
+										<img src="{{ getServerAssetUrl(getPlayerByID(player).DisplayPicture) }}"><span>{{ getPlayerByID(player).DisplayName }}</span>
+									</div>
 								</div>
 							</div>
 						</div>

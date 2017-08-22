@@ -21,7 +21,7 @@ export class PlayscreenComponent implements OnInit {
   studentList = [];
 
   selectedCard = null;
-  selectedCardTargets = [[],[],[]];
+  selectedCardTargets = [[],[],[],[],[]];
 
   timer = null;
 
@@ -88,6 +88,11 @@ export class PlayscreenComponent implements OnInit {
         this.updateCardHistory();
       });
     }, 1000*10);
+
+  }
+
+  array_diff(a, b) {
+      return a.filter(function(i) {return b.indexOf(i) < 0;});
   }
 
   updateCardHistory() {
@@ -230,7 +235,7 @@ export class PlayscreenComponent implements OnInit {
   }
 
   resetSelectedCardTargets() {
-    this.selectedCardTargets = [[],[],[]];
+    this.selectedCardTargets = [[],[],[],[],[]];
     if(this.selectedCard) {
       this.selectedCard.Actions.forEach((action, i) => {
         if(action.Target=='Self') {
@@ -260,7 +265,7 @@ export class PlayscreenComponent implements OnInit {
     let unresolved = card.Actions.length, auto_progress = true;
     card.Actions.forEach((action, i) => {
       //"Add Points", "Subtract Points", "Add Gold", "Subtract Gold", "Add Cards", "Subtract Cards"
-      let bonus = { Point: 0, Gold: 0, Cards: 0 };
+      let bonus = { Point: 0, Gold: 0, Cards: 0, Defence: 0 };
       switch(action.Keyword) {
         case "Add Points":
           bonus.Point = action.KeywordValue;
@@ -280,24 +285,16 @@ export class PlayscreenComponent implements OnInit {
         case "Subtract Cards":
           bonus.Cards = -action.KeywordValue;
           break;
+        case "Defend Negative":
+          bonus.Defence = action.KeywordValue;
+          break;
+        case "Add Friend":
+          break;
         default:
           auto_progress = false;
           break;
       }
 
-
-      // let targets = [];
-      // switch(action.Target) {
-      //   case "Self":
-      //     targets.push(this.me._id);
-      //     break;
-      //   case "Friends":
-      //   case "Others":
-      //     targets = (this.shuffle(this.currentGame.Students.filter((student) => student!=this.me._id))).slice(0,action.TargetValue);
-      //     break;
-      //   default:
-      //     break;
-      // }
       let targets = this.selectedCardTargets[i].slice();
 
       total_targets.push(targets);
@@ -306,9 +303,21 @@ export class PlayscreenComponent implements OnInit {
         unresolved--;
 
         targets.forEach((player_id) => {
+
+          this.dataService.buildFriendConnection({ from: this.me._id, to: player_id }).subscribe((response) => {
+            this.list_friends.push(player_id);
+          });
+
           let player = this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, player_id)];
+          if(player.Defence>0 && (bonus.Point<0 || bonus.Gold<0 || bonus.Cards<0)) {
+            player.Defence --;
+            bonus.Point = 0;
+            bonus.Gold = 0;
+            bonus.Cards = 0;
+          }
           player.Point += bonus.Point;
           player.Gold += bonus.Gold;
+          player.Defence += bonus.Defence;
 
           if(bonus.Cards>0) {
             player.Stack.splice(0,bonus.Cards).forEach((card_id) => {

@@ -223,7 +223,7 @@ export class RollCallComponent implements OnInit {
       if(this.currentClass.Weeks == 1) {
         this.currentClass.Collection = this.cards.map((card) => card._id);
         let max = this.currentClass.Collection.length;
-        let cnt = 20;
+        let cnt = this.currentClass.Player_PickupPileSize;
         let pickup = [];
         if(this.currentClass.Collection.length>0) {
           while(cnt>0) {
@@ -274,7 +274,7 @@ export class RollCallComponent implements OnInit {
         // });
         // console.log(this.currentClass);
       }
-	  	this.dataService.updateClassInfo({_id: this.currentClass._id, Status: 'Started', Players: this.currentClass.Players, PickUp: this.currentClass.PickUp, Collection: this.currentClass.Collection, Player_CollectionSize: this.currentClass.Player_CollectionSize, Player_StackSize: this.currentClass.Player_StackSize, Player_HandSize: this.currentClass.Player_HandSize}).subscribe((response) => {
+	  	this.dataService.updateClassInfo({_id: this.currentClass._id, Status: 'Started', Players: this.currentClass.Players, PickUp: this.currentClass.PickUp, Collection: this.currentClass.Collection, Player_PickupPileSize: this.currentClass.Player_PickupPileSize, Player_CollectionSize: this.currentClass.Player_CollectionSize, Player_StackSize: this.currentClass.Player_StackSize, Player_HandSize: this.currentClass.Player_HandSize}).subscribe((response) => {
 	  		this.currentClass.Status = response.Class.Status;
 
         this.dataService.setCurrentClass(this.currentClass);
@@ -298,31 +298,42 @@ export class RollCallComponent implements OnInit {
   }
   rollCallClicked() {
   	if(confirm('Did you check everything before going to next week?')) {
-      this.dataService.getGameInfo({_id: this.currentClass._id}).subscribe(response => {
-        this.currentClass = response.Class;
-        this.currentClass.Weeks ++;
-        this.week_numbers.push(this.currentClass.Weeks);
-        this.week_studentbook = this.currentClass.Weeks;
-        this.currentClass.Status = 'RollCall';
+      this.dataService.getStudentBook({ Class: this.currentClass._id, Week: this.currentClass.Weeks }).subscribe((m_response) => {
+        let markHistory = m_response.MarkHistory;
+        this.dataService.getGameInfo({_id: this.currentClass._id}).subscribe(response => {
+          this.currentClass = response.Class;
+          this.currentClass.Weeks ++;
+          this.week_numbers.push(this.currentClass.Weeks);
+          this.week_studentbook = this.currentClass.Weeks;
+          this.currentClass.Status = 'RollCall';
 
-        this.currentClass.Players.forEach((Player, i) => {
-          if(Player.Hand.length<this.currentClass.Player_HandSize) {
-            let cnt = 1;//5-Player.Hand.length;
-            Player.Hand = Player.Hand.concat(Player.Stack.splice(0,cnt));
-            if(Player.Collection.length>0) {
-              while(Player.Stack.length<this.currentClass.Player_StackSize) {
-                Player.Stack.push(this.chooseCard(Player.Collection, Player.Stack));
+          this.currentClass.Players.forEach((Player, i) => {
+            if(Player.Hand.length<this.currentClass.Player_HandSize) {
+              let cnt = 1;//5-Player.Hand.length;
+              Player.Hand = Player.Hand.concat(Player.Stack.splice(0,cnt));
+              if(Player.Collection.length>0) {
+                while(Player.Stack.length<this.currentClass.Player_StackSize) {
+                  Player.Stack.push(this.chooseCard(Player.Collection, Player.Stack));
+                }
               }
             }
+            while(Player.Hand.length > this.currentClass.Player_HandSize) {
+              Player.Hand.splice(Math.floor(Math.random()*Player.Hand.length),1);
+            }
+            if(this.getIndexOfMarkHistory(markHistory, Player.Player)>=0) {
+              markHistory[this.getIndexOfMarkHistory(markHistory, Player.Player)].Marks.forEach((mark, ii) => {
+                Player.Gold += mark.Value;
+              });
+            }
             this.currentClass.Players[i]=Player;
-          }
-        });
-        
-        this.dataService.updateClassInfo({_id: this.currentClass._id, Players: this.currentClass.Players, Status: this.currentClass.Status, Weeks: this.currentClass.Weeks}).subscribe((response) => {
-          this.currentClass = response.Class;
-          this.dataService.setCurrentClass(this.currentClass);
+          });
+          
+          this.dataService.updateClassInfo({_id: this.currentClass._id, Players: this.currentClass.Players, Status: this.currentClass.Status, Weeks: this.currentClass.Weeks}).subscribe((response) => {
+            this.currentClass = response.Class;
+            this.dataService.setCurrentClass(this.currentClass);
 
-          this.updateCurrentStudentBook();
+            this.updateCurrentStudentBook();
+          });
         });
       });
   	}

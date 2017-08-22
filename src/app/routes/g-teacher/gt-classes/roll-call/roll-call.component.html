@@ -1,15 +1,19 @@
 <div class="roll-calls-wrapper" *ngIf="loaded()">
 	<div class="game-settings clearfix" *ngIf="currentClass.Weeks==1 && currentClass.Status=='Stopped'">
 		<h3 class="widget-label text-center text-accent" style="margin-bottom: 1em;">Game Settings</h3>
-	  <div class="form-group col-sm-4">
+	  <div class="form-group col-sm-3">
+	    <label>Pickup Pile Size</label>
+	    <input type="number" class="form-control" placeholder="Pickup Pile Size" name="PickupPileSize" [(ngModel)]="currentClass.Player_PickupPileSize" required>
+	  </div>
+	  <div class="form-group col-sm-3">
 	    <label>User Collection Size</label>
 	    <input type="number" class="form-control" placeholder="User Collection Size" name="CollectionSize" [(ngModel)]="currentClass.Player_CollectionSize" required>
 	  </div>
-	  <div class="form-group col-sm-4">
+	  <div class="form-group col-sm-3">
 	    <label>Stack Size</label>
 	    <input type="number" class="form-control" placeholder="Stack Size" name="StackSize" [(ngModel)]="currentClass.Player_StackSize" required>
 	  </div>
-	  <div class="form-group col-sm-4">
+	  <div class="form-group col-sm-3">
 	    <label>Hand Size</label>
 	    <input type="number" class="form-control" placeholder="Hand Size" name="HandSize" [(ngModel)]="currentClass.Player_HandSize" required>
 	  </div>

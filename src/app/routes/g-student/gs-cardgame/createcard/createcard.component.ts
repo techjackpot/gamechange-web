@@ -25,7 +25,7 @@ export class CreatecardComponent implements OnInit {
 		goldcosts: [1,2,3,4,5,6,7,8,9,10], 
 	}
 
-	numberList = [1,2,3,4,5,6,7,8,9,10];
+	numberList : any = [1,2,3,4,5,6,7,8,9,10];
 
   constructor(private dataService: DataService, private authService: AuthService, private element: ElementRef, private http: Http, private router: Router) {
     this.me = this.authService.getUser();
@@ -92,7 +92,32 @@ export class CreatecardComponent implements OnInit {
 	}
 
 	getCardActions() {
-		let actionCount = this.valueList.rarity.indexOf(this.selectedCard.Rarity)+1;
+
+    let actionCount = 0, limitValue = 0;
+
+    switch(this.selectedCard.Rarity) {
+      case 'Rare':
+        actionCount = 5;
+        limitValue = 10;
+        break;
+      case 'Uncommon':
+        actionCount = 3;
+        limitValue = 5;
+        break;
+      case 'Common':
+        actionCount = 2;
+        limitValue = 3;
+        break;
+      default:
+        break;
+    }
+    this.numberList = [];
+    for(let i=0;i<limitValue;i++) {
+      this.numberList.push(i+1);
+    }
+		// let actionCount = this.valueList.rarity.indexOf(this.selectedCard.Rarity)+1;
+
+
 		let currentSize = this.selectedCard.Actions.length;
 		if(currentSize > actionCount) {
 			for(let i=0; i<currentSize-actionCount; i++) {

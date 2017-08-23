@@ -85,6 +85,16 @@ export class PlayscreenComponent implements OnInit {
         this.currentGame = response.Class;
         this.currentPlayer = this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, this.me._id)];
 
+        this.dataService.getStudentFriends({ student_id: this.me._id }).subscribe( (response) => {
+          this.list_friends = response.Friends.filter((friend_connection) => {
+            return friend_connection.Approved;
+          }).map((fc) => {
+            return fc.From._id==this.me._id?fc.To._id:fc.From._id;
+          }).filter((friend) => {
+            return this.currentGame.Students.indexOf(friend)>=0;
+          });
+        });
+
         this.updateCardHistory();
       });
     }, 1000*10);

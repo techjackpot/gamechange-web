@@ -91,6 +91,15 @@ export class PlayscreenComponent implements OnInit {
 
   }
 
+  loadCurrentGameStatus() {
+    return new Promise((resolve, reject) => {
+      this.dataService.getGameInfo({_id: this.currentGame._id}).subscribe(response => {
+        this.currentGame = response.Class;
+        resolve();
+      });
+    })
+  }
+
   array_diff(a, b) {
       return a.filter(function(i) {return b.indexOf(i) < 0;});
   }
@@ -259,111 +268,118 @@ export class PlayscreenComponent implements OnInit {
     let card = this.selectedCard;
     this.selectedCard = null;
     let card_id = card._id;
-    this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, this.me._id)].Hand.splice(this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, this.me._id)].Hand.indexOf(card_id), 1);
 
-    let total_targets = [];
-    let unresolved = card.Actions.length, auto_progress = true;
-    card.Actions.forEach((action, i) => {
-      //"Add Points", "Subtract Points", "Add Gold", "Subtract Gold", "Add Cards", "Subtract Cards"
-      let bonus = { Point: 0, Gold: 0, Cards: 0, Defence: 0 };
-      switch(action.Keyword) {
-        case "Add Points":
-          bonus.Point = action.KeywordValue;
-          break;
-        case "Subtract Points":
-          bonus.Point = -action.KeywordValue;
-          break;
-        case "Add Gold":
-          bonus.Gold = action.KeywordValue;
-          break;
-        case "Subtract Gold":
-          bonus.Gold = -action.KeywordValue;
-          break;
-        case "Add Cards":
-          bonus.Cards = action.KeywordValue;
-          break;
-        case "Subtract Cards":
-          bonus.Cards = -action.KeywordValue;
-          break;
-        case "Defend Negative":
-          bonus.Defence = action.KeywordValue;
-          break;
-        case "Add Friend":
-          break;
-        default:
-          auto_progress = false;
-          break;
-      }
 
-      let targets = this.selectedCardTargets[i].slice();
+    this.loadCurrentGameStatus().then(() => {
+      this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, this.me._id)].Hand.splice(this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, this.me._id)].Hand.indexOf(card_id), 1);
 
-      total_targets.push(targets);
+      let total_targets = [];
+      let unresolved = card.Actions.length, auto_progress = true;
+      card.Actions.forEach((action, i) => {
+        //"Add Points", "Subtract Points", "Add Gold", "Subtract Gold", "Add Cards", "Subtract Cards"
+        let bonus = { Point: 0, Gold: 0, Cards: 0, Defence: 0, AddFriend: false };
+        switch(action.Keyword) {
+          case "Add Points":
+            bonus.Point = action.KeywordValue;
+            break;
+          case "Subtract Points":
+            bonus.Point = -action.KeywordValue;
+            break;
+          case "Add Gold":
+            bonus.Gold = action.KeywordValue;
+            break;
+          case "Subtract Gold":
+            bonus.Gold = -action.KeywordValue;
+            break;
+          case "Add Cards":
+            bonus.Cards = action.KeywordValue;
+            break;
+          case "Subtract Cards":
+            bonus.Cards = -action.KeywordValue;
+            break;
+          case "Defend Negative":
+            bonus.Defence = action.KeywordValue;
+            break;
+          case "Add Friend":
+            bonus.AddFriend = true;
+            break;
+          default:
+            auto_progress = false;
+            break;
+        }
 
-      if(auto_progress) {
-        unresolved--;
+        let targets = this.selectedCardTargets[i].slice();
 
-        targets.forEach((player_id) => {
+        total_targets.push(targets);
 
-          this.dataService.buildFriendConnection({ from: this.me._id, to: player_id }).subscribe((response) => {
-            this.list_friends.push(player_id);
-          });
+        if(auto_progress) {
+          unresolved--;
 
-          let player = this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, player_id)];
-          if(player.Defence>0 && (bonus.Point<0 || bonus.Gold<0 || bonus.Cards<0)) {
-            player.Defence --;
-            bonus.Point = 0;
-            bonus.Gold = 0;
-            bonus.Cards = 0;
-          }
-          player.Point += bonus.Point;
-          player.Gold += bonus.Gold;
-          player.Defence += bonus.Defence;
+          targets.forEach((player_id) => {
 
-          if(bonus.Cards>0) {
-            player.Stack.splice(0,bonus.Cards).forEach((card_id) => {
-              player.Hand.push(card_id);
-            })
-            if(player.Collection.length>0) {
-              while(player.Stack.length<this.currentGame.Player_StackSize) {
-                player.Stack.push(this.chooseCard(player.Collection, player.Stack));
+            if(bonus.AddFriend) {
+              this.dataService.buildFriendConnection({ from: this.me._id, to: player_id }).subscribe((response) => {
+                this.list_friends.push(player_id);
+              });
+            }
+
+            let player = this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, player_id)];
+            if(player.Defence>0 && (bonus.Point<0 || bonus.Gold<0 || bonus.Cards<0)) {
+              player.Defence --;
+              bonus.Point = 0;
+              bonus.Gold = 0;
+              bonus.Cards = 0;
+            }
+            player.Point += bonus.Point;
+            player.Gold += bonus.Gold;
+            player.Defence += bonus.Defence;
+
+            if(bonus.Cards>0) {
+              player.Stack.splice(0,bonus.Cards).forEach((card_id) => {
+                player.Hand.push(card_id);
+              })
+              if(player.Collection.length>0) {
+                while(player.Stack.length<this.currentGame.Player_StackSize) {
+                  player.Stack.push(this.chooseCard(player.Collection, player.Stack));
+                }
+              }
+            } else if(bonus.Cards<0) {
+              let cnt = bonus.Cards;
+              while(player.Hand.length>=0 && cnt>0) {
+                player.Hand.splice(Math.floor(Math.random()*player.Hand.length),1);
+                cnt--;
               }
             }
-          } else if(bonus.Cards<0) {
-            let cnt = bonus.Cards;
-            while(player.Hand.length>=0 && cnt>0) {
-              player.Hand.splice(Math.floor(Math.random()*player.Hand.length),1);
-              cnt--;
-            }
-          }
 
-          this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, player_id)] = player;
-        })
-      }
+            this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, player_id)] = player;
+          })
+        }
+      });
+
+      // total_targets.forEach((target) => {
+      //   this.currentGame.CardHistory.push({
+      //     Source: this.me._id,
+      //     Target: target,
+      //     Card: card_id,
+      //     Resolved: false
+      //   })
+      // })
+      this.currentGame.CardHistory.push({
+        Source: this.me._id,
+        Target: total_targets,
+        Card: card_id,
+        UnResolved: unresolved,
+        Week: this.currentGame.Weeks
+      });
+
+      this.dataService.updateClassInfo({_id: this.currentGame._id, Players: this.currentGame.Players, CardHistory: this.currentGame.CardHistory}).subscribe((response) => {
+        // this.currentGame = response.Class;
+      });
+
+      this.currentPlayer = this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, this.me._id)];
+
+      this.updateCardHistory();
     });
-
-    // total_targets.forEach((target) => {
-    //   this.currentGame.CardHistory.push({
-    //     Source: this.me._id,
-    //     Target: target,
-    //     Card: card_id,
-    //     Resolved: false
-    //   })
-    // })
-    this.currentGame.CardHistory.push({
-      Source: this.me._id,
-      Target: total_targets,
-      Card: card_id,
-      UnResolved: unresolved,
-      Week: this.currentGame.Weeks
-    });
-
-    this.dataService.updateClassInfo({_id: this.currentGame._id, Players: this.currentGame.Players, CardHistory: this.currentGame.CardHistory}).subscribe((response) => {
-      // console.log(response.Class);
-    });
-
-    this.currentPlayer = this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, this.me._id)];
-
-    this.updateCardHistory();
   }
   onClickedPickUp(card_id) {
     let card = this.getCardByCardId(card_id);
@@ -374,23 +390,27 @@ export class PlayscreenComponent implements OnInit {
     }
 
     if(!confirm("Do you really want to buy this card? It costs Gold " + card.GoldCost + ".")) return ;
-    this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, this.me._id)].Stack.push(card_id);
-    this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, this.me._id)].Hand.push(card_id);
-    this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, this.me._id)].Gold -= card.GoldCost;
-    let exist = false;
-    this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, this.me._id)].Collection.forEach((card) => {
-      if(card==card_id) exist = true;
-    });
-    if(!exist) {
-      this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, this.me._id)].Collection.push(card_id);
-    }
-    this.currentGame.PickUp.splice(this.currentGame.PickUp.indexOf(card_id),1,this.currentGame.Collection[Math.floor(Math.random()*this.currentGame.Collection.length)]);
 
-    this.dataService.updateClassInfo({_id: this.currentGame._id, PickUp: this.currentGame.PickUp, Players: this.currentGame.Players}).subscribe((response) => {
-      // console.log(response.Class);
+
+    this.loadCurrentGameStatus().then(() => {
+      this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, this.me._id)].Stack.push(card_id);
+      this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, this.me._id)].Hand.push(card_id);
+      this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, this.me._id)].Gold -= card.GoldCost;
+      let exist = false;
+      this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, this.me._id)].Collection.forEach((card) => {
+        if(card==card_id) exist = true;
+      });
+      if(!exist) {
+        this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, this.me._id)].Collection.push(card_id);
+      }
+      this.currentGame.PickUp.splice(this.currentGame.PickUp.indexOf(card_id),1,this.currentGame.Collection[Math.floor(Math.random()*this.currentGame.Collection.length)]);
+
+      this.dataService.updateClassInfo({_id: this.currentGame._id, PickUp: this.currentGame.PickUp, Players: this.currentGame.Players}).subscribe((response) => {
+        // console.log(response.Class);
+      });
+      
+      this.currentPlayer = this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, this.me._id)];
     });
-    
-    this.currentPlayer = this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, this.me._id)];
   }
 
   chooseTargetsPerAction(action_index, player_id) {

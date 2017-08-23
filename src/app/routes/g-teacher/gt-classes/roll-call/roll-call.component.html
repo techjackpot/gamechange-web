@@ -18,7 +18,7 @@
 	    <input type="number" class="form-control" placeholder="Hand Size" name="HandSize" [(ngModel)]="currentClass.Player_HandSize" required>
 	  </div>
 	</div>
-	<div class="game-settings" *ngIf="cards.length>0">
+	<div class="game-settings" *ngIf="!(currentClass.Weeks==1 && currentClass.Status=='Stopped')">
 		<div class="cards-list-container">
 			<div class="cards-list-wrapper">
 				<div>Current Game Collection</div>

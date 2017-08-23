@@ -311,6 +311,9 @@ export class RollCallComponent implements OnInit {
         //   };
         // });
         // console.log(this.currentClass);
+
+
+        this.leftCollectionCardList = this.leftCollectionCards();
       }
 	  	this.dataService.updateClassInfo({_id: this.currentClass._id, Status: 'Started', Players: this.currentClass.Players, PickUp: this.currentClass.PickUp, Collection: this.currentClass.Collection, Player_PickupPileSize: this.currentClass.Player_PickupPileSize, Player_CollectionSize: this.currentClass.Player_CollectionSize, Player_StackSize: this.currentClass.Player_StackSize, Player_HandSize: this.currentClass.Player_HandSize}).subscribe((response) => {
 	  		this.currentClass.Status = response.Class.Status;
@@ -420,7 +423,7 @@ export class RollCallComponent implements OnInit {
             return true;
           }
           //"Add Points", "Subtract Points", "Add Gold", "Subtract Gold", "Add Cards", "Subtract Cards"
-          let bonus = { Point: 0, Gold: 0, Cards: 0, Defence: 0 };
+          let bonus = { Point: 0, Gold: 0, Cards: 0, Defence: 0, AddFriend: false };
           switch(action.Keyword) {
             case "Add Points":
               bonus.Point = action.KeywordValue;
@@ -444,6 +447,7 @@ export class RollCallComponent implements OnInit {
               bonus.Defence = action.KeywordValue;
               break;
             case "Add Friend":
+              bonus.AddFriend = true;
               break;
             default:
               auto_progress = false;
@@ -459,8 +463,11 @@ export class RollCallComponent implements OnInit {
             history.UnResolved--;
 
             targets.forEach((player_id) => {
-              this.dataService.buildFriendConnection({ from: this.me._id, to: player_id }).subscribe((response) => {
-              });
+
+              if(bonus.AddFriend) {
+                this.dataService.buildFriendConnection({ from: this.me._id, to: player_id }).subscribe((response) => {});
+              }
+              
               let player = this.currentClass.Players[this.getIndexOfPlayers(this.currentClass.Players, player_id)];
               if(player.Defence>0 && (bonus.Point<0 || bonus.Gold<0 || bonus.Cards<0)) {
                 player.Defence --;

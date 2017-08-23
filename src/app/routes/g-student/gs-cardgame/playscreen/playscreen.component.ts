@@ -318,14 +318,17 @@ export class PlayscreenComponent implements OnInit {
             break;
         }
 
-        let targets = this.selectedCardTargets[i].slice();
+        let targets = this.selectedCardTargets[i].slice().map((player_id) => { return { Player: player_id, Confirmed: auto_progress }; });
+        console.log(targets);
 
         total_targets.push(targets);
 
         if(auto_progress) {
           unresolved--;
 
-          targets.forEach((player_id) => {
+          targets.forEach((target) => {
+
+            let player_id = target.Player;
 
             if(bonus.AddFriend) {
               this.dataService.buildFriendConnection({ from: this.me._id, to: player_id }).subscribe((response) => {

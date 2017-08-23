@@ -24,13 +24,10 @@ export class RollCallComponent implements OnInit {
   week_numbers = [];
   week_studentbook = 1;
 
-  loaded_cnt = 0;
-  loaded() {
-    if(this.loaded_cnt>=3) {
-      return true;
-    }
-    return false;
-  }
+  leftCollectionCardList = [];
+  selectedLeftCards = [];
+
+  loaded = false;
 
   constructor(private dataService: DataService, private router: Router, private authService: AuthService) { }
 
@@ -77,6 +74,33 @@ export class RollCallComponent implements OnInit {
       }
     });
     return index;
+  }
+
+  leftCollectionCards() {
+    return this.cards.filter((card) => this.currentClass.Collection.indexOf(card._id)<0 ).map( card => card._id );
+  }
+  selectLeftCard(card_id) {
+    let exist = this.selectedLeftCards.indexOf(card_id);
+    if(exist>=0) {
+      this.selectedLeftCards.splice(exist, 1);
+    } else {
+      this.selectedLeftCards.push(card_id);
+    }
+  }
+  addCardsToCollection() {
+
+    this.loadCurrentGameStatus().then(() => {
+      this.currentClass.Collection = this.currentClass.Collection.concat(this.selectedLeftCards);
+      this.leftCollectionCardList = this.leftCollectionCards();
+      this.selectedLeftCards = [];
+      this.dataService.updateClassInfo({_id: this.currentClass._id, Collection: this.currentClass.Collection}).subscribe((response) => {
+        this.currentClass = response.Class;
+      })
+    });
+
+  }
+  array_diff(a, b) {
+      return a.filter(function(i) {return b.indexOf(i) < 0;});
   }
 
   getServerAssetUrl(url) {
@@ -136,33 +160,47 @@ export class RollCallComponent implements OnInit {
     this.me = this.authService.getUser();
     this.currentClass = Object.assign( { _id: '' }, this.dataService.getCurrentClass() );
 
-    this.dataService.getClassMarkTypes({ Class: this.currentClass._id }).subscribe(response => {
-      this.marktypes = response.MarkTypes;
+    let p1 = new Promise((resolve, reject) => {
+      this.dataService.getClassMarkTypes({ Class: this.currentClass._id }).subscribe(response => {
+        this.marktypes = response.MarkTypes;
 
-      this.dataService.getGameInfo({_id: this.currentClass._id}).subscribe(response => {
-        this.currentClass = response.Class;
+        this.dataService.getGameInfo({_id: this.currentClass._id}).subscribe(response => {
+          this.currentClass = response.Class;
 
-        for(let i=1;i<=this.currentClass.Weeks;i++) {
-          this.week_numbers.push(i);
-        }
-        this.week_studentbook = this.currentClass.Weeks;
-        // this.week_numbers = Array(this.currentClass.Weeks).fill().map((x,i)=>i+1);
+          for(let i=1;i<=this.currentClass.Weeks;i++) {
+            this.week_numbers.push(i);
+          }
+          this.week_studentbook = this.currentClass.Weeks;
+          // this.week_numbers = Array(this.currentClass.Weeks).fill().map((x,i)=>i+1);
 
-        // console.log(this.currentClass);
+          // console.log(this.currentClass);
 
-        this.updateCurrentStudentBook();
-        this.loaded_cnt++;
+          this.updateCurrentStudentBook();
+
+          resolve();
+        });
+      });
+    });
+    let p2 = new Promise((resolve, reject) => {
+      this.dataService.getAllCards({Approved: true}).subscribe((response) => {
+        this.cards = response.Cards;
+
+        resolve();
+      });
+    })
+
+    let p3 = new Promise((resolve, reject) => {
+      this.dataService.getStudentList().subscribe(response => {
+        this.studentList = response;
+
+        resolve();
       });
     });
 
-    this.dataService.getAllCards({Approved: true}).subscribe((response) => {
-      this.cards = response.Cards;
-      this.loaded_cnt++;
-    });
 
-    this.dataService.getStudentList().subscribe(response => {
-      this.studentList = response;
-      this.loaded_cnt++;
+    Promise.all([p1, p2, p3]).then(() => {
+      this.leftCollectionCardList = this.leftCollectionCards();
+      this.loaded = true;
     });
 
   }
@@ -286,9 +324,10 @@ export class RollCallComponent implements OnInit {
   }
   stopGameClicked() {
   	if(confirm('Do you really want to stop this game? It cannot be resumed!')) {
-      this.dataService.getGameInfo({_id: this.currentClass._id}).subscribe(response => {
-        this.currentClass = response.Class;
+      // this.dataService.getGameInfo({_id: this.currentClass._id}).subscribe(response => {
+        // this.currentClass = response.Class;
         
+      this.loadCurrentGameStatus().then(() => {
         this.dataService.updateClassInfo({_id: this.currentClass._id, Status: 'Stopped'}).subscribe((response) => {
           this.currentClass = response.Class;
           this.dataService.setCurrentClass(this.currentClass);
@@ -300,8 +339,9 @@ export class RollCallComponent implements OnInit {
   	if(confirm('Did you check everything before going to next week?')) {
       this.dataService.getStudentBook({ Class: this.currentClass._id, Week: this.currentClass.Weeks }).subscribe((m_response) => {
         let markHistory = m_response.MarkHistory;
-        this.dataService.getGameInfo({_id: this.currentClass._id}).subscribe(response => {
-          this.currentClass = response.Class;
+        // this.dataService.getGameInfo({_id: this.currentClass._id}).subscribe(response => {
+          // this.currentClass = response.Class;
+        this.loadCurrentGameStatus().then(() => {
           this.currentClass.Weeks ++;
           this.week_numbers.push(this.currentClass.Weeks);
           this.week_studentbook = this.currentClass.Weeks;
@@ -339,6 +379,15 @@ export class RollCallComponent implements OnInit {
   	}
   }
 
+  loadCurrentGameStatus() {
+    return new Promise((resolve, reject) => {
+      this.dataService.getGameInfo({_id: this.currentClass._id}).subscribe(response => {
+        this.currentClass = response.Class;
+        resolve();
+      });
+    })
+  }
+
 
   getIndexOfPlayers(players, player_id) {
     let index = -1;
@@ -361,110 +410,115 @@ export class RollCallComponent implements OnInit {
 
   confirmCardAction(history) {
     if(confirm('Do you confirm this action?')) {
-      let card = this.cards[this.getIndexOfCards(this.cards, history.Card)];
+      this.loadCurrentGameStatus().then(() => {
+        let card = this.cards[this.getIndexOfCards(this.cards, history.Card)];
 
-      let auto_progress = true, unresolved = history.UnResolved;
-      
-      card.Actions.forEach((action, i) => {
-        if(i<card.Actions.length-unresolved) {
-          return true;
-        }
-        //"Add Points", "Subtract Points", "Add Gold", "Subtract Gold", "Add Cards", "Subtract Cards"
-        let bonus = { Point: 0, Gold: 0, Cards: 0, Defence: 0 };
-        switch(action.Keyword) {
-          case "Add Points":
-            bonus.Point = action.KeywordValue;
-            break;
-          case "Subtract Points":
-            bonus.Point = -action.KeywordValue;
-            break;
-          case "Add Gold":
-            bonus.Gold = action.KeywordValue;
-            break;
-          case "Subtract Gold":
-            bonus.Gold = -action.KeywordValue;
-            break;
-          case "Add Cards":
-            bonus.Cards = action.KeywordValue;
-            break;
-          case "Subtract Cards":
-            bonus.Cards = -action.KeywordValue;
-            break;
-          case "Defend Negative":
-            bonus.Defence = action.KeywordValue;
-            break;
-          case "Add Friend":
-            break;
-          default:
-            auto_progress = false;
-            break;
-        }
-        if(i==card.Actions.length-unresolved) {
-          auto_progress = true;
-        }
+        let auto_progress = true, unresolved = history.UnResolved;
+        
+        card.Actions.forEach((action, i) => {
+          if(i<card.Actions.length-unresolved) {
+            return true;
+          }
+          //"Add Points", "Subtract Points", "Add Gold", "Subtract Gold", "Add Cards", "Subtract Cards"
+          let bonus = { Point: 0, Gold: 0, Cards: 0, Defence: 0 };
+          switch(action.Keyword) {
+            case "Add Points":
+              bonus.Point = action.KeywordValue;
+              break;
+            case "Subtract Points":
+              bonus.Point = -action.KeywordValue;
+              break;
+            case "Add Gold":
+              bonus.Gold = action.KeywordValue;
+              break;
+            case "Subtract Gold":
+              bonus.Gold = -action.KeywordValue;
+              break;
+            case "Add Cards":
+              bonus.Cards = action.KeywordValue;
+              break;
+            case "Subtract Cards":
+              bonus.Cards = -action.KeywordValue;
+              break;
+            case "Defend Negative":
+              bonus.Defence = action.KeywordValue;
+              break;
+            case "Add Friend":
+              break;
+            default:
+              auto_progress = false;
+              break;
+          }
+          if(i==card.Actions.length-unresolved) {
+            auto_progress = true;
+          }
 
-        if(auto_progress) {
-          let targets = history.Target[history.Target.length-history.UnResolved];
+          if(auto_progress) {
+            let targets = history.Target[history.Target.length-history.UnResolved];
 
-          history.UnResolved--;
+            history.UnResolved--;
 
-          targets.forEach((player_id) => {
-            this.dataService.buildFriendConnection({ from: this.me._id, to: player_id }).subscribe((response) => {
-            });
-            let player = this.currentClass.Players[this.getIndexOfPlayers(this.currentClass.Players, player_id)];
-            if(player.Defence>0 && (bonus.Point<0 || bonus.Gold<0 || bonus.Cards<0)) {
-              player.Defence --;
-              bonus.Point = 0;
-              bonus.Gold = 0;
-              bonus.Cards = 0;
-            }
-            player.Point += bonus.Point;
-            player.Gold += bonus.Gold;
-            player.Defence += bonus.Defence;
+            targets.forEach((player_id) => {
+              this.dataService.buildFriendConnection({ from: this.me._id, to: player_id }).subscribe((response) => {
+              });
+              let player = this.currentClass.Players[this.getIndexOfPlayers(this.currentClass.Players, player_id)];
+              if(player.Defence>0 && (bonus.Point<0 || bonus.Gold<0 || bonus.Cards<0)) {
+                player.Defence --;
+                bonus.Point = 0;
+                bonus.Gold = 0;
+                bonus.Cards = 0;
+              }
+              player.Point += bonus.Point;
+              player.Gold += bonus.Gold;
+              player.Defence += bonus.Defence;
 
-            if(bonus.Cards>0) {
-              player.Stack.splice(0,bonus.Cards).forEach((card_id) => {
-                player.Hand.push(card_id);
-              })
-              if(player.Collection.length>0) {
-                while(player.Stack.length<this.currentClass.Player_StackSize) {
-                  player.Stack.push(this.chooseCard(player.Collection, player.Stack));
+              if(bonus.Cards>0) {
+                player.Stack.splice(0,bonus.Cards).forEach((card_id) => {
+                  player.Hand.push(card_id);
+                })
+                if(player.Collection.length>0) {
+                  while(player.Stack.length<this.currentClass.Player_StackSize) {
+                    player.Stack.push(this.chooseCard(player.Collection, player.Stack));
+                  }
+                }
+              } else if(bonus.Cards<0) {
+                let cnt = bonus.Cards;
+                while(player.Hand.length>=0 && cnt>0) {
+                  player.Hand.splice(Math.floor(Math.random()*player.Hand.length),1);
+                  cnt--;
                 }
               }
-            } else if(bonus.Cards<0) {
-              let cnt = bonus.Cards;
-              while(player.Hand.length>=0 && cnt>0) {
-                player.Hand.splice(Math.floor(Math.random()*player.Hand.length),1);
-                cnt--;
-              }
-            }
 
-            this.currentClass.Players[this.getIndexOfPlayers(this.currentClass.Players, player_id)] = player;
-          })
-        }
-      });
+              this.currentClass.Players[this.getIndexOfPlayers(this.currentClass.Players, player_id)] = player;
+            })
+          }
+        });
 
-      // total_targets.forEach((target) => {
-      //   this.currentGame.CardHistory.push({
-      //     Source: this.me._id,
-      //     Target: target,
-      //     Card: card_id,
-      //     Resolved: false
-      //   })
-      // })
-      this.currentClass.CardHistory[this.getIndexOfHistory(this.currentClass.CardHistory, history._id)] = history;
+        // total_targets.forEach((target) => {
+        //   this.currentGame.CardHistory.push({
+        //     Source: this.me._id,
+        //     Target: target,
+        //     Card: card_id,
+        //     Resolved: false
+        //   })
+        // })
+        this.currentClass.CardHistory[this.getIndexOfHistory(this.currentClass.CardHistory, history._id)] = history;
 
-      this.dataService.updateClassInfo({_id: this.currentClass._id, Players: this.currentClass.Players, CardHistory: this.currentClass.CardHistory}).subscribe((response) => {
-        // console.log(response.Class);
+        this.dataService.updateClassInfo({_id: this.currentClass._id, Players: this.currentClass.Players, CardHistory: this.currentClass.CardHistory}).subscribe((response) => {
+          // console.log(response.Class);
+        });
       });
     }
   }
   denyCardAction(history) {
     if(confirm('Do you decline this action?')) {
-      history.UnResolved = 0;
-      this.currentClass.CardHistory[this.getIndexOfHistory(this.currentClass.CardHistory, history._id)] = history;
-      this.dataService.updateClassInfo({_id: this.currentClass._id, CardHistory: this.currentClass.CardHistory}).subscribe((response) => {
-        // console.log(response.Class);
+
+      this.loadCurrentGameStatus().then(() => {
+        history.UnResolved = 0;
+        this.currentClass.CardHistory[this.getIndexOfHistory(this.currentClass.CardHistory, history._id)] = history;
+        this.dataService.updateClassInfo({_id: this.currentClass._id, CardHistory: this.currentClass.CardHistory}).subscribe((response) => {
+          // console.log(response.Class);
+        });
       });
     }
   }
@@ -480,21 +534,23 @@ export class RollCallComponent implements OnInit {
     }
     this.resetBonusSet();
   }
-  selectedPlayerBonusCard(card_id) {
+  selectPlayerBonusCard(card_id) {
     this.playerBonusSet.Card = card_id;
   }
   givePlayerBonusSet() {
-    if(this.playerBonusSet.Card) {
-      this.currentClass.Players[this.getIndexOfPlayers(this.currentClass.Players, this.selectedBonusPlayer)].Hand.push(this.playerBonusSet.Card);
-    }
-    this.currentClass.Players[this.getIndexOfPlayers(this.currentClass.Players, this.selectedBonusPlayer)].Point += this.playerBonusSet.Point;
-    this.currentClass.Players[this.getIndexOfPlayers(this.currentClass.Players, this.selectedBonusPlayer)].Gold += this.playerBonusSet.Gold;
+    this.loadCurrentGameStatus().then(() => {
+      if(this.playerBonusSet.Card) {
+        this.currentClass.Players[this.getIndexOfPlayers(this.currentClass.Players, this.selectedBonusPlayer)].Hand.push(this.playerBonusSet.Card);
+      }
+      this.currentClass.Players[this.getIndexOfPlayers(this.currentClass.Players, this.selectedBonusPlayer)].Point += this.playerBonusSet.Point;
+      this.currentClass.Players[this.getIndexOfPlayers(this.currentClass.Players, this.selectedBonusPlayer)].Gold += this.playerBonusSet.Gold;
 
-    this.dataService.updateClassInfo({_id: this.currentClass._id, Players: this.currentClass.Players}).subscribe((response) => {
-      this.currentClass = response.Class;
+      this.dataService.updateClassInfo({_id: this.currentClass._id, Players: this.currentClass.Players}).subscribe((response) => {
+        this.currentClass = response.Class;
+      });
+
+      this.selectedBonusPlayer = null;
+      this.resetBonusSet();
     });
-
-    this.selectedBonusPlayer = null;
-    this.resetBonusSet();
   }
 }

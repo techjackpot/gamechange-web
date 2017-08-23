@@ -1,4 +1,4 @@
-<div class="roll-calls-wrapper" *ngIf="loaded()">
+<div class="roll-calls-wrapper" *ngIf="loaded">
 	<div class="game-settings clearfix" *ngIf="currentClass.Weeks==1 && currentClass.Status=='Stopped'">
 		<h3 class="widget-label text-center text-accent" style="margin-bottom: 1em;">Game Settings</h3>
 	  <div class="form-group col-sm-3">
@@ -17,6 +17,66 @@
 	    <label>Hand Size</label>
 	    <input type="number" class="form-control" placeholder="Hand Size" name="HandSize" [(ngModel)]="currentClass.Player_HandSize" required>
 	  </div>
+	</div>
+	<div class="game-settings" *ngIf="cards.length>0">
+		<div class="cards-list-container">
+			<div class="cards-list-wrapper">
+				<div>Current Game Collection</div>
+				<div class="cards-list">
+					<div class="card" *ngFor="let card_id of currentClass.Collection">
+						<div class="card-preview-area">
+							<div class="card-tile-preview">
+								<div class="card-tile {{ cards[getIndexOfCards(cards,card_id)].Type | lowercase }}">
+									<div class="card-title">
+										<span>{{ cards[getIndexOfCards(cards,card_id)].Title }}</span>
+									</div>
+									<div class="card-picture">
+										<img class="card-picture-preview" src="{{ getServerAssetUrl(cards[getIndexOfCards(cards,card_id)].Picture) }}">
+									</div>
+									<div class="card-description">
+										<span>{{ cards[getIndexOfCards(cards,card_id)].Description }}</span>
+									</div>
+									<div class="card-goldcost">
+										<span>{{ cards[getIndexOfCards(cards,card_id)].GoldCost }}</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="cards-list-container" *ngIf="leftCollectionCardList.length>0">
+			<div class="cards-list-wrapper">
+				<div>Available Cards Left</div>
+				<div class="cards-list">
+					<div class="card" *ngFor="let card_id of leftCollectionCardList">
+						<div class="card-preview-area">
+							<div class="card-tile-preview">
+								<div class="card-tile {{ cards[getIndexOfCards(cards,card_id)].Type | lowercase }}" (click)="selectLeftCard(card_id)" [class.selected]="selectedLeftCards.indexOf(card_id)>=0">
+									<div class="card-title">
+										<span>{{ cards[getIndexOfCards(cards,card_id)].Title }}</span>
+									</div>
+									<div class="card-picture">
+										<img class="card-picture-preview" src="{{ getServerAssetUrl(cards[getIndexOfCards(cards,card_id)].Picture) }}">
+									</div>
+									<div class="card-description">
+										<span>{{ cards[getIndexOfCards(cards,card_id)].Description }}</span>
+									</div>
+									<div class="card-goldcost">
+										<span>{{ cards[getIndexOfCards(cards,card_id)].GoldCost }}</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="">
+			  	<div class="btn btn-update-collection" (click)="addCardsToCollection()">Add Cards to Current Collection</div>
+			  </div>
+			</div>
+
+		</div>
 	</div>
 	<div class="roll-call-status">
 		<h3 class="widget-label text-center text-accent" style="margin-bottom: 1em;">Game Status</h3>
@@ -114,14 +174,14 @@
 				</div>
 			</div>
 		</div>
-		<div class="player-bonus-set" *ngIf="selectedBonusPlayer">
-			<div class="bonus-set-card-list">
+		<div class="player-bonus-set cards-list-container" *ngIf="selectedBonusPlayer">
+			<div class="bonus-set-card-list cards-list-wrapper">
 				<div>Choose Card</div>
-				<div class="bonus-cards-list" *ngIf="cards.length>0">
-					<div class="bonus-card" *ngFor="let card of cards">
+				<div class="bonus-cards-list cards-list" *ngIf="cards.length>0">
+					<div class="bonus-card card" *ngFor="let card of cards">
 						<div class="card-preview-area">
 							<div class="card-tile-preview">
-								<div class="card-tile {{ cards[getIndexOfCards(cards,card._id)].Type | lowercase }}" (click)="selectedPlayerBonusCard(card._id)" [class.selected]="playerBonusSet.Card==card._id">
+								<div class="card-tile {{ cards[getIndexOfCards(cards,card._id)].Type | lowercase }}" (click)="selectPlayerBonusCard(card._id)" [class.selected]="playerBonusSet.Card==card._id">
 									<div class="card-title">
 										<span>{{ cards[getIndexOfCards(cards,card._id)].Title }}</span>
 									</div>

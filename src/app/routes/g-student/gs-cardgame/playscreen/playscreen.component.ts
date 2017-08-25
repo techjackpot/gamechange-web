@@ -283,7 +283,7 @@ export class PlayscreenComponent implements OnInit {
     this.loadCurrentGameStatus().then(() => {
       this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, this.me._id)].Hand.splice(this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, this.me._id)].Hand.indexOf(card_id), 1);
 
-      let total_targets = [];
+      let total_targets = [], total_targets_left = [];
       let unresolved = card.Actions.length, auto_progress = true;
       card.Actions.forEach((action, i) => {
         //"Add Points", "Subtract Points", "Add Gold", "Subtract Gold", "Add Cards", "Subtract Cards"
@@ -318,17 +318,23 @@ export class PlayscreenComponent implements OnInit {
             break;
         }
 
-        let targets = this.selectedCardTargets[i].slice().map((player_id) => { return { Player: player_id, Confirmed: auto_progress }; });
-        console.log(targets);
+        // console.log(this.selectedCardTargets[i].slice()); ['a','b'] => [{Player:'a', confirm:true}, {Player:'b' ]}]
+        let targets = this.selectedCardTargets[i].slice();//.map((player_id) => { return { Player: player_id, Confirmed: auto_progress }; });
+        let targets_left = this.selectedCardTargets[i].slice();
+        // console.log(targets);
 
         total_targets.push(targets);
+
+        if(targets.length==0) {
+          auto_progress = true;
+        }
 
         if(auto_progress) {
           unresolved--;
 
           targets.forEach((target) => {
 
-            let player_id = target.Player;
+            let player_id = target;//target.Player;
 
             if(bonus.AddFriend) {
               this.dataService.buildFriendConnection({ from: this.me._id, to: player_id }).subscribe((response) => {
@@ -363,27 +369,23 @@ export class PlayscreenComponent implements OnInit {
                 cnt--;
               }
             }
-
+            
+            targets_left.splice(targets_left.indexOf(target),1);
             this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, player_id)] = player;
           })
         }
+        total_targets_left.push(targets_left);
       });
 
-      // total_targets.forEach((target) => {
-      //   this.currentGame.CardHistory.push({
-      //     Source: this.me._id,
-      //     Target: target,
-      //     Card: card_id,
-      //     Resolved: false
-      //   })
-      // })
       this.currentGame.CardHistory.push({
         Source: this.me._id,
         Target: total_targets,
+        TargetLeft: total_targets_left,
         Card: card_id,
         UnResolved: unresolved,
         Week: this.currentGame.Weeks
       });
+      console.log(this.currentGame.CardHistory);
 
       this.dataService.updateClassInfo({_id: this.currentGame._id, Players: this.currentGame.Players, CardHistory: this.currentGame.CardHistory}).subscribe((response) => {
         // this.currentGame = response.Class;

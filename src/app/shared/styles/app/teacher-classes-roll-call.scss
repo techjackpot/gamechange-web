@@ -96,24 +96,86 @@
 				border: 0 none;
 				margin: 0 15px;
 			}
-			.card-tile-actions {
-				margin: 0 15px;
-				padding: 1em;
-				border-radius: 1em;
-				background: $gc-color-warn;
-				box-shadow: 0px 0px 32px $gc-bg-sub;
-				label {
-				}
-				span {
-					color: $gc-bg-main;
-					margin-left: 1em;
-				}
-				&.activated {
-					background: $gc-bg-main;
-					box-shadow: inset 0px 0px 64px $gc-bg-sub;
-					span {
-						text-decoration: underline;
-						color: $gc-color-primary;
+			.card-actions-section {
+				flex-grow: 1;
+				.card-tile-actions {
+					margin: 0 0 15px 30px;
+					display: flex;
+					border-left: solid 5px $gc-color-warn;
+					padding-left: 1em;
+					.card-creation-action-form {
+						flex-grow: 0;
+						margin-right: 20px;
+						.form-group {
+							margin-bottom: 0;
+							white-space: nowrap;
+							span {
+								color: $gc-color-warn;
+							}
+						}
+					}
+					.card-action-targets {
+						flex-grow: 1;
+						display: flex;
+						flex-direction: column;
+						align-items: center;
+						.card-action-target-wrapper {
+							margin: 8px 0;
+							display: flex;
+							align-items: center;
+							.card-action-target {
+								flex: 0 0 auto;
+								display: inline-flex;
+								margin:0 15px 0 0;
+								align-items: center;
+								border: dotted 2px $gc-color-primary;
+								border-radius: 1em;
+								overflow: hidden;
+								cursor: pointer;
+								transition: all 0.15s ease;
+
+								&:hover {
+									border-color: $gc-color-warn;
+								}
+								&.selected {
+									border-style: solid;
+									border-color: $gc-color-warn;
+									background: $gc-color-warn;
+								}
+								img {
+									width: auto;
+									height: 40px;
+									max-width: 60px;
+								}
+								span {
+									font-size: 12px;
+									margin: 0 0.7em;
+								}
+								* {
+									user-select: none;
+								}
+							}
+							.btn {
+								display: block;
+								margin-left: 8px;
+								transition: all 0.15s ease;
+								&:hover, &:focus, &:active {
+									color: #fff;
+								}
+							}
+							.btn-confirm {
+								background: $gc-color-accent;
+								&:hover {
+									background: darken($gc-color-accent, 10%);
+								}
+							}
+							.btn-deny {
+								background: $gc-color-warn;
+								&:hover {
+									background: darken($gc-color-warn, 10%);
+								}
+							}
+						}
 					}
 				}
 			}

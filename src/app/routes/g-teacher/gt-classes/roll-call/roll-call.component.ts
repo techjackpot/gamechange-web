@@ -192,6 +192,7 @@ export class RollCallComponent implements OnInit {
     let p3 = new Promise((resolve, reject) => {
       this.dataService.getStudentList().subscribe(response => {
         this.studentList = response;
+        console.log(this.studentList);
 
         resolve();
       });
@@ -410,6 +411,18 @@ export class RollCallComponent implements OnInit {
     });
     return index;
   }
+  getIndexOfPlayersID(players, player_id) {
+    let index = -1;
+    players.forEach((player, i) => {
+      if(player._id == player_id) {
+        index = i;
+      }
+    });
+    return index;
+  }
+  getPlayerByID(player_id) {
+    return this.studentList[this.getIndexOfPlayersID(this.studentList, player_id)];
+  }
 
   confirmCardAction(history) {
     if(confirm('Do you confirm this action?')) {
@@ -418,7 +431,7 @@ export class RollCallComponent implements OnInit {
 
         let auto_progress = true, unresolved = history.UnResolved;
         
-        card.Actions.forEach((action, i) => {
+        card.Actions.every((action, i) => {
           if(i<card.Actions.length-unresolved) {
             return true;
           }
@@ -459,6 +472,7 @@ export class RollCallComponent implements OnInit {
 
           if(auto_progress) {
             let targets = history.Target[history.Target.length-history.UnResolved];
+            let targets_left = history.TargetLeft[history.Target.length-history.UnResolved];
 
             history.UnResolved--;
 
@@ -467,7 +481,7 @@ export class RollCallComponent implements OnInit {
               if(bonus.AddFriend) {
                 this.dataService.buildFriendConnection({ from: this.me._id, to: player_id }).subscribe((response) => {});
               }
-              
+
               let player = this.currentClass.Players[this.getIndexOfPlayers(this.currentClass.Players, player_id)];
               if(player.Defence>0 && (bonus.Point<0 || bonus.Gold<0 || bonus.Cards<0)) {
                 player.Defence --;
@@ -516,6 +530,132 @@ export class RollCallComponent implements OnInit {
         });
       });
     }
+  }
+  confirmCardActionTarget(historyIndex, ActionTargetIndex, player_id) {
+    if(!confirm('Are you sure do this action?')) {
+      return ;
+    }
+    this.loadCurrentGameStatus().then(() => {
+      this.currentClass.CardHistory[historyIndex].TargetLeft[ActionTargetIndex].splice(this.currentClass.CardHistory[historyIndex].TargetLeft[ActionTargetIndex].indexOf(player_id), 1);
+
+      let history = this.currentClass.CardHistory[historyIndex];
+
+      if(history.TargetLeft[ActionTargetIndex].length==0) {
+
+      /* do the rest action */
+        let card = this.cards[this.getIndexOfCards(this.cards, history.Card)];
+
+        let auto_progress = true, unresolved = history.UnResolved;
+        
+        card.Actions.every((action, i) => {
+          if(i<card.Actions.length-unresolved) {
+            return true;
+          }
+          //"Add Points", "Subtract Points", "Add Gold", "Subtract Gold", "Add Cards", "Subtract Cards"
+          let bonus = { Point: 0, Gold: 0, Cards: 0, Defence: 0, AddFriend: false };
+          switch(action.Keyword) {
+            case "Add Points":
+              bonus.Point = action.KeywordValue;
+              break;
+            case "Subtract Points":
+              bonus.Point = -action.KeywordValue;
+              break;
+            case "Add Gold":
+              bonus.Gold = action.KeywordValue;
+              break;
+            case "Subtract Gold":
+              bonus.Gold = -action.KeywordValue;
+              break;
+            case "Add Cards":
+              bonus.Cards = action.KeywordValue;
+              break;
+            case "Subtract Cards":
+              bonus.Cards = -action.KeywordValue;
+              break;
+            case "Defend Negative":
+              bonus.Defence = action.KeywordValue;
+              break;
+            case "Add Friend":
+              bonus.AddFriend = true;
+              break;
+            default:
+              auto_progress = false;
+              break;
+          }
+          if(i==card.Actions.length-unresolved && history.TargetLeft[i].length==0) {
+            auto_progress = true;
+          }
+
+          if(auto_progress) {
+            let targets = history.Target[history.Target.length-history.UnResolved];
+            let targets_left = history.TargetLeft[history.Target.length-history.UnResolved];
+
+            history.UnResolved--;
+            unresolved = history.UnResolved;
+
+            targets.forEach((player_id) => {
+
+              if(bonus.AddFriend) {
+                this.dataService.buildFriendConnection({ from: this.me._id, to: player_id }).subscribe((response) => {});
+              }
+
+              let player = this.currentClass.Players[this.getIndexOfPlayers(this.currentClass.Players, player_id)];
+              if(player.Defence>0 && (bonus.Point<0 || bonus.Gold<0 || bonus.Cards<0)) {
+                player.Defence --;
+                bonus.Point = 0;
+                bonus.Gold = 0;
+                bonus.Cards = 0;
+              }
+              player.Point += bonus.Point;
+              player.Gold += bonus.Gold;
+              player.Defence += bonus.Defence;
+
+              if(bonus.Cards>0) {
+                player.Stack.splice(0,bonus.Cards).forEach((card_id) => {
+                  player.Hand.push(card_id);
+                })
+                if(player.Collection.length>0) {
+                  while(player.Stack.length<this.currentClass.Player_StackSize) {
+                    player.Stack.push(this.chooseCard(player.Collection, player.Stack));
+                  }
+                }
+              } else if(bonus.Cards<0) {
+                let cnt = bonus.Cards;
+                while(player.Hand.length>=0 && cnt>0) {
+                  player.Hand.splice(Math.floor(Math.random()*player.Hand.length),1);
+                  cnt--;
+                }
+              }
+
+              this.currentClass.Players[this.getIndexOfPlayers(this.currentClass.Players, player_id)] = player;
+            })
+          }
+          return auto_progress;
+        });
+
+        // total_targets.forEach((target) => {
+        //   this.currentGame.CardHistory.push({
+        //     Source: this.me._id,
+        //     Target: target,
+        //     Card: card_id,
+        //     Resolved: false
+        //   })
+        // })
+        this.currentClass.CardHistory[this.getIndexOfHistory(this.currentClass.CardHistory, history._id)] = history;
+      }
+
+      this.dataService.updateClassInfo({_id: this.currentClass._id, Players: this.currentClass.Players, CardHistory: this.currentClass.CardHistory}).subscribe((response) => {
+        this.currentClass = response.Class;
+        // console.log(response.Class);
+      });
+      // this.dataService.updateClassInfo({_id: this.currentClass._id, CardHistory: this.currentClass.CardHistory}).subscribe((response) => {
+      //   this.currentClass = response.Class;
+      //   // console.log(response.Class);
+      // });
+    });
+  }
+  denyCardActionTarget(historyIndex, ActionTargetIndex, player_id) {
+    this.confirmCardActionTarget(historyIndex, ActionTargetIndex, player_id);
   }
   denyCardAction(history) {
     if(confirm('Do you decline this action?')) {

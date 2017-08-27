@@ -27,7 +27,7 @@
 						</td>
 						<td>
 							<button class="btn btn-approve" (click)="onClickedApproveCard(card)" *ngIf="!card.Approved">Approve</button>
-							<button class="btn btn-deny" (click)="onClickedDenyCard(card)" *ngIf="!card.Approved">Deny</button>
+							<button class="btn btn-deny" (click)="onClickedDenyCard(card)" *ngIf="!card.Approved">Reject</button>
 							<button class="btn btn-deny" (click)="onClickedUnapproveCard(card)" *ngIf="card.Approved">Unapprove</button>
 						</td>
 					</tr>
@@ -58,8 +58,8 @@
 						<td>{{ card.createdAt | date: 'short' }}</td>
 						<td>{{ card.Title }}</td>
 						<td>
-							<div class="btn-approved" *ngIf="card.Approved">Approved</div>
-							<div class="btn-edit" *ngIf="!card.Approved">Pending</div>
+							<div class="" *ngIf="card.Approved">Approved</div>
+							<div class="" *ngIf="!card.Approved">Pending</div>
 						</td>
 						<td>
 							<button class="btn btn-preview" (click)="onClickedPreviewCard(card)">Preview</button>

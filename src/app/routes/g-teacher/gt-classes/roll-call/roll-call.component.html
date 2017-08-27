@@ -157,7 +157,7 @@
 					    			<span>{{action.Description}}</span>
 								  </div>
 								</div>
-								<div class="card-action-targets">
+								<div class="card-action-targets" *ngIf="action.Keyword!='Activation Time'">
 									<div *ngFor="let player of history.TargetLeft[ii];" class="card-action-target-wrapper">
 										<div class="card-action-target">
 											<img src="{{ getServerAssetUrl(getPlayerByID(player).DisplayPicture) }}"><span>{{ getPlayerByID(player).DisplayName }}</span>
@@ -165,6 +165,9 @@
 										<button class="btn btn-confirm" (click)="confirmCardActionTarget(i,ii,player)">√</button>
 										<button class="btn btn-deny" (click)="denyCardActionTarget(i,ii,player)">x</button>
 									</div>
+								</div>
+								<div class="card-actoi-targets" *ngIf="action.Keyword=='Activation Time'">
+									This card will be activated in {{history.Delay}} weeks.
 								</div>
 							</div>
 						</div>

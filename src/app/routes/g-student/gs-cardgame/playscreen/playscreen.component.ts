@@ -284,7 +284,7 @@ export class PlayscreenComponent implements OnInit {
       this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, this.me._id)].Hand.splice(this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, this.me._id)].Hand.indexOf(card_id), 1);
 
       let total_targets = [], total_targets_left = [];
-      let unresolved = card.Actions.length, auto_progress = true;
+      let unresolved = card.Actions.length, auto_progress = true, delay = 0, repeat = 0, start_at = 0;
       card.Actions.forEach((action, i) => {
         //"Add Points", "Subtract Points", "Add Gold", "Subtract Gold", "Add Cards", "Subtract Cards"
         let bonus = { Point: 0, Gold: 0, Cards: 0, Defence: 0, AddFriend: false };
@@ -312,6 +312,14 @@ export class PlayscreenComponent implements OnInit {
             break;
           case "Add Friend":
             bonus.AddFriend = true;
+            break;
+          case "Persist":
+            repeat = action.KeywordValue-1;
+            start_at = i+1;
+            break;
+          case "Activation Time":
+            delay = action.KeywordValue;
+            auto_progress = false;
             break;
           default:
             auto_progress = false;
@@ -383,6 +391,9 @@ export class PlayscreenComponent implements OnInit {
         TargetLeft: total_targets_left,
         Card: card_id,
         UnResolved: unresolved,
+        Delay: delay,
+        Repeat: repeat,
+        StartAt: start_at,
         Week: this.currentGame.Weeks
       });
       console.log(this.currentGame.CardHistory);

@@ -19,8 +19,8 @@
 						<td>{{ card.Type }}</td>
 						<td>{{ card.Rarity }}</td>
 						<td>
-							<div class="btn-approved" *ngIf="card.Approved">Approved</div>
-							<div class="btn-edit" *ngIf="!card.Approved">Pending</div>
+							<div class="" *ngIf="card.Approved">Approved</div>
+							<div class="" *ngIf="!card.Approved">Pending</div>
 						</td>
 						<td>
 							<button class="btn btn-edit" (click)="onClickedEditCard(card)" [disabled]="editMode" *ngIf="!card.Approved">Edit</button>

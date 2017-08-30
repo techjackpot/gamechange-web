@@ -113,7 +113,7 @@
 	<div class="card-history-list" *ngIf="currentClass.CardHistory.length>0 && studentList.length>0 && cards.length>0">
 		<h3 class="widget-label text-center text-accent" style="margin-bottom: 1em;">UnResolved Cards</h3>
 		<div *ngFor="let history of currentClass.CardHistory; let i=index;" class="card-history">
-			<div *ngIf="history.UnResolved>0">
+			<div *ngIf="history.UnResolved>0 || history.Repeat>0">
 				<div class="card-preview-area">
 					<div class="card-tile-preview">
 						<h4 class="text-center">
@@ -157,7 +157,7 @@
 					    			<span>{{action.Description}}</span>
 								  </div>
 								</div>
-								<div class="card-action-targets" *ngIf="action.Keyword!='Activation Time'">
+								<div class="card-action-targets" *ngIf="action.Keyword!='Activation Time' && action.Keyword!='Persist'">
 									<div *ngFor="let player of history.TargetLeft[ii];" class="card-action-target-wrapper">
 										<div class="card-action-target">
 											<img src="{{ getServerAssetUrl(getPlayerByID(player).DisplayPicture) }}"><span>{{ getPlayerByID(player).DisplayName }}</span>
@@ -166,15 +166,20 @@
 										<button class="btn btn-deny" (click)="denyCardActionTarget(i,ii,player)">x</button>
 									</div>
 								</div>
-								<div class="card-actoi-targets" *ngIf="action.Keyword=='Activation Time'">
+								<div class="card-action-targets" *ngIf="action.Keyword=='Activation Time'">
 									This card will be activated in {{history.Delay}} weeks.
 								</div>
 							</div>
+							<div class="card-tile-actions" *ngIf="history.Delay==0 && history.UnResolved==0 && history.Repeat>0">
+								<div class="card-action-targets" *ngIf="action.Keyword=='Persist'">
+									This card will be repeated for {{history.Repeat}} weeks.
+								</div>
+							</div>
 						</div>
-						<div class="confirm-actions" *ngIf="false">
+						<!--<div class="confirm-actions" *ngIf="false">
 							<button class="btn btn-confirm" (click)="confirmCardAction(history)">Confirm</button>
 							<button class="btn btn-deny" (click)="denyCardAction(history)">Deny</button>
-						</div>
+						</div>-->
 					</div>
 				</div>
 			</div>

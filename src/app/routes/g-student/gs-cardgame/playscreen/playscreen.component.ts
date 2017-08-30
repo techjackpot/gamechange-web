@@ -315,7 +315,7 @@ export class PlayscreenComponent implements OnInit {
             break;
           case "Persist":
             repeat = action.KeywordValue-1;
-            start_at = i+1;
+            start_at = i;
             break;
           case "Activation Time":
             delay = action.KeywordValue;

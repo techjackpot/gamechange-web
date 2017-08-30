@@ -303,7 +303,14 @@ export class RollCallComponent implements OnInit {
 
       } else {
         this.currentClass.CardHistory.forEach((history, i) => {
-          if(history.UnResolved==0) return;
+          if(history.UnResolved==0) {
+            if(history.Repeat>0) {
+              history.UnResolved = history.Target.length - history.StartAt;
+              history.Repeat --;
+            } else {
+              return;
+            }
+          }
           let card = this.cards[this.getIndexOfCards(this.cards,history.Card)];
 
           let action_index = history.Target.length-history.UnResolved;
@@ -312,7 +319,7 @@ export class RollCallComponent implements OnInit {
             history.Delay --;
           }
 
-          if(history.Delay == 0) {
+          if(history.Delay==0) {
             history.UnResolved --;
             this.currentClass.CardHistory[this.getIndexOfHistory(this.currentClass.CardHistory, history._id)] = history;
             this.currentClass.CardHistory[i].TargetLeft[action_index] = [];
@@ -433,7 +440,7 @@ export class RollCallComponent implements OnInit {
     return this.studentList[this.getIndexOfPlayersID(this.studentList, player_id)];
   }
 
-  confirmCardAction(history) {
+  /*confirmCardAction(history) {
     if(confirm('Do you confirm this action?')) {
       this.loadCurrentGameStatus().then(() => {
         let card = this.cards[this.getIndexOfCards(this.cards, history.Card)];
@@ -539,7 +546,7 @@ export class RollCallComponent implements OnInit {
         });
       });
     }
-  }
+  }*/
 
   _performCardActions(historyIndex, ActionTargetIndex) {
 
@@ -586,8 +593,9 @@ export class RollCallComponent implements OnInit {
             bonus.AddFriend = true;
             break;
           case "Persist":
-            repeat = action.KeywordValue-1;
-            start_at = i+1;
+            // repeat = action.KeywordValue-1;
+            // history.Repeat --;
+            // start_at = i+1;
             break;
           case "Activation Time":
             auto_progress = false;

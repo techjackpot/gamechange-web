@@ -14,6 +14,8 @@ export class LoginComponent implements OnInit {
   constructor(private authService: AuthService, private router: Router) { }
 
   loading = true;
+  valid = true;
+  invalid_message = "";
 
   ngOnInit() {
     if (this.authService.isLoggedIn()) {
@@ -47,10 +49,21 @@ export class LoginComponent implements OnInit {
 				]
 			}
 		};
+    this.valid = true;
+    this.invalid_message = "";
     this.authService.login(data).subscribe(
       response => {
         // this.authService.LoggedInEvent.emit(true);
         // login successful if there's a jwt token in the response
+        if(response.ERR_CODE != 'ERR_NONE') {
+          this.valid = false;
+          this.invalid_message = "Email or Password does not match."
+          setTimeout(() => {
+            this.valid = true;
+            this.invalid_message = "";
+          }, 3000);
+          return;
+        }
         let user = response;
         if (user && user.Token) {
           // store user details and jwt token in local storage to keep user logged in between page refreshes

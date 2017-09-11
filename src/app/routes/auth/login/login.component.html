@@ -11,6 +11,7 @@
 		<div class="row">
 	    <div class="col-md-4 col-sm-6 col-md-offset-4 col-sm-offset-3">
 	      <form (ngSubmit)="onSubmitLogin(f)" #f="ngForm" class="form login-form">
+          <div class="err-message" *ngIf="!valid">{{ invalid_message }}</div>
 					<input type="email" name="email" class="form-input" placeholder="Email@address.com" ngModel required>
 					<input type="password" name="password" class="form-input" placeholder="Password" ngModel required>
 

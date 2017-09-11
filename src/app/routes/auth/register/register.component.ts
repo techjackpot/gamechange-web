@@ -14,6 +14,8 @@ export class RegisterComponent implements OnInit {
 	roles = ['Student', 'Teacher', 'Convenor'];
 	model ;
 	loading = true;
+  valid = true;
+  invalid_message = "";
 
   constructor(private authService: AuthService, private router: Router) {
     if (this.authService.isLoggedIn()) {
@@ -54,9 +56,20 @@ export class RegisterComponent implements OnInit {
         Last: form.value.lastname
       }
 		};
+    this.valid = true;
+    this.invalid_message = "";
     this.authService.register(data).subscribe(
       response => {
-        this.router.navigate(['/login']);
+        if(response.ERR_CODE == 'ERR_NONE') {
+          this.router.navigate(['/login']);
+        } else {
+          this.valid = false;
+          this.invalid_message = response.Message;
+          setTimeout(() => {
+            this.valid = true;
+            this.invalid_message = "";
+          }, 3000)
+        }
       },
       (error) => {
         console.log(error);

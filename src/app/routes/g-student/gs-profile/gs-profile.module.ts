@@ -8,6 +8,8 @@ import { TitlesComponent } from './titles/titles.component';
 import { HomeComponent } from './home/home.component';
 import { AvatarComponent } from './avatar/avatar.component';
 
+import {ImageCropperComponent, CropperSettings, Bounds} from 'ng2-img-cropper';
+
 const routes: Routes = [
   {
     path: '', component: GsProfileComponent, 
@@ -28,7 +30,7 @@ const routes: Routes = [
     FormsModule,
     ReactiveFormsModule
   ],
-  declarations: [GsProfileComponent, BordersComponent, TitlesComponent, HomeComponent, AvatarComponent],
+  declarations: [GsProfileComponent, BordersComponent, TitlesComponent, HomeComponent, AvatarComponent, ImageCropperComponent],
   exports: [
   	RouterModule
   ]

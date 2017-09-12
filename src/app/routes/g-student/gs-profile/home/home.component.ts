@@ -1,9 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { DataService } from '../../../../core/services/data.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { Http, Headers, Response, RequestOptions } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
+
+import {ImageCropperComponent, CropperSettings, Bounds} from 'ng2-img-cropper';
 
 @Component({
   selector: 'app-home',
@@ -19,7 +21,76 @@ export class HomeComponent implements OnInit {
   marktypes = [];
   markHistory = [];
 
-  constructor(private router: Router, private dataService: DataService, private authService: AuthService, private http: Http) { }
+
+  data:any;
+  cropperSettings:CropperSettings;
+  @ViewChild('cropper', undefined) cropper:ImageCropperComponent;
+  cropping = false;
+
+  constructor(private router: Router, private dataService: DataService, private authService: AuthService, private http: Http) {
+
+    this.cropperSettings = new CropperSettings();
+    this.cropperSettings.width = 200;
+    this.cropperSettings.height = 200;
+    this.cropperSettings.croppedWidth = 200;
+    this.cropperSettings.croppedHeight = 200;
+    this.cropperSettings.canvasWidth = 700;
+    this.cropperSettings.canvasHeight = 500;
+    this.cropperSettings.minWidth = 40;
+    this.cropperSettings.minHeight = 40;
+    this.cropperSettings.rounded = false;
+    this.cropperSettings.keepAspect = true;
+    this.cropperSettings.noFileInput = true;
+
+    this.data = {};
+  }
+
+  fileChangeListener($event) {
+    let file:File = $event.target.files[0];
+    if(file) {
+      let image:any = new Image();
+      let myReader:FileReader = new FileReader();
+      let that = this;
+      myReader.onloadend = function (loadEvent:any) {
+          image.src = loadEvent.target.result;
+          that.cropper.setImage(image);
+
+      };
+
+      myReader.readAsDataURL(file);
+      this.cropping = true;
+    }
+  }
+
+  onAvatarAcceptClicked() {
+    let headers = new Headers();
+    headers.set('Accept', 'application/json');
+    headers.append('x-chaos-token', JSON.parse(localStorage.getItem('token')));
+    //headers.set('Accept', 'application/json');
+    let options = new RequestOptions({ headers: headers });
+    this.http.post(this.dataService.url + '/api/user/uploadprofilepicture', { 'Profile': this.data.image }, options)
+      .map(res => res.json())
+      .catch(error => Observable.throw(error))
+      .subscribe(
+      response => {
+        console.log(response);
+        if(response.ERR_CODE == 'ERR_NONE') {
+          let url = response.URL;
+          this.me.DisplayPicture = url;
+          this.authService.updateUserData();
+        } else {
+          alert("An error occured while uploading new avatar!");
+        }
+        this.cropping = false;
+      },
+      error => console.log(error),
+      () => {
+      });
+  }
+
+  onAvatarCancelClicked() {
+    this.cropping = false;
+  }
 
   ngOnInit() {
     this.me = this.authService.getUser();
@@ -36,41 +107,6 @@ export class HomeComponent implements OnInit {
   overlayClicked() {
   	this.router.navigate(['/profile/avatar']);
   }
-
-	fileChange(event) {
-	  let files = event.target.files;
-	  if (files.length > 0) {
-	    let formData: FormData = new FormData();
-	    //for (let file of files) {
-	    	let file = files[0];
-	      formData.append('Profile', file, file.name);
-	    //}
-	    //let headers = this.dataService.getHeaders();
-      let headers = new Headers();
-      headers.set('Accept', 'application/json');
-    	headers.append('x-chaos-token', JSON.parse(localStorage.getItem('token')));
-	    //headers.set('Accept', 'application/json');
-      let options = new RequestOptions({ headers: headers });
-      this.http.post(this.dataService.url + '/api/user/uploadprofilepicture', formData, options)
-        .map(res => res.json())
-        .catch(error => Observable.throw(error))
-        .subscribe(
-        data => {
-        	let url = data.URL;
-        	this.me.DisplayPicture = url;
-        	this.authService.updateUserData();
-        },
-        error => console.log(error),
-        () => {
-            //this.sleep(1000).then(() =>
-                // .. Post Upload Delayed Action
-            //)
-        });
-	    // this.dataService.uploadProfilePicture(formData).subscribe((response) => {
-	    // 	console.log(response);
-	    // });
-	  }
-	}
 
   getIndexOfWeeks(markhistory, week) {
     let index = -1;

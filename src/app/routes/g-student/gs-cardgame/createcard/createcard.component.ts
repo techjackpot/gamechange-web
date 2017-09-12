@@ -97,6 +97,10 @@ export class CreatecardComponent implements OnInit {
     });
 	}
 
+  getServerAssetUrl(url) {
+    return this.dataService.getServerAssetUrl(url);
+  }
+  
 	getCardActions() {
 
     let actionCount = 0, limitValue = 0;

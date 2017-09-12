@@ -9,7 +9,7 @@
 							<span>{{ selectedCard.Title }}</span>
 						</div>
 						<div class="card-picture">
-							<img class="card-picture-preview" src="{{ selectedCard.Picture }}">
+							<img class="card-picture-preview" src="{{ getServerAssetUrl(selectedCard.Picture) }}">
 						</div>
 						<div class="card-description">
 							<span>{{ selectedCard.Description }}</span>

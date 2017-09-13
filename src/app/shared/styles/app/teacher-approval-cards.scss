@@ -55,8 +55,29 @@
 				}
 			}
 		}
+		.card-selected-preview {
+	    position: fixed;
+	    width: 100%;
+	    height: 100%;
+	    left: 0;
+	    top: 0;
+	    background: rgba(0,16,20,0.93);
+	    overflow: auto;
+	    padding: 3em;
+	    .close {
+	    	position: absolute;
+	    	right: 0;
+	    	bottom: 100%;
+	    	margin-bottom: 15px;
+	    	margin-right: 15px;
+	    	font-size: 40px;
+	    	color: $gc-color-warn;
+	    	transition: all 0.15s ease;
+	    }
+		}
 		.card-selected {
-			margin-top: 2em;
+			position: relative;
+			margin-top: 4em;
 			border-top: solid 1px $gc-color-accent;
 			padding-top: 2em;
 			color: $gc-color-primary;
@@ -90,6 +111,12 @@
 					color: #fff;
 					border-color: #00e2b6;
 					text-align: left;
+				}
+			}
+			.card-creation-form {
+				img {
+			    max-width: calc(100% - 80px);
+			    max-height: 180px;
 				}
 			}
 			textarea.form-control {

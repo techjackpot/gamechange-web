@@ -248,6 +248,10 @@ export class DataService {
     return this.http.post(this.url + '/api/marks/addtype', data, { headers: this.getHeaders() })
       .map((response: Response) => response.json());
   }
+  updateMarkTypeToClass(data) {
+    return this.http.post(this.url + '/api/marks/updatetype', data, {headers: this.getHeaders() })
+      .map((response: Response) => response.json());
+  }
   removeMarkTypeFromClass(data) {
     return this.http.post(this.url + '/api/marks/removetype', data, { headers: this.getHeaders() })
       .map((response: Response) => response.json());

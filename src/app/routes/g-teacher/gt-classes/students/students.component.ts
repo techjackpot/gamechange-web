@@ -18,8 +18,13 @@ export class StudentsComponent implements OnInit {
   marktypes = [];
   selectedMarkType = {
     Name: '',
-    Description: ''
+    Description: '',
+    Multiplier: 1.5,
+    Weeks: 3,
+    MinValue: 5
   };
+
+  editingMark = false;
 
   isEditMode = false;
 
@@ -103,8 +108,35 @@ export class StudentsComponent implements OnInit {
       this.dataService.addMarkTypeToClass({ ...this.selectedMarkType, Class: this.currentClass._id }).subscribe((response) => {
         this.marktypes.push(response.MarkType);
       })
-      this.selectedMarkType.Name = '';
-      this.selectedMarkType.Description = '';
+      this.resetSelectedMarkType();
+    }
+  }
+
+  resetSelectedMarkType() {
+    this.selectedMarkType = {
+      Name: '',
+      Description: '',
+      Multiplier: 1.5,
+      Weeks: 3,
+      MinValue: 5
+    };
+    this.editingMark = false;
+  }
+
+  updateMarkTypeToClass() {
+    if(!this.selectedMarkType.Name) {
+      return false;
+    }
+    if(confirm('Do you want to update this Mark Type?')) {
+      this.dataService.updateMarkTypeToClass({ ...this.selectedMarkType }).subscribe((response) => {
+        this.marktypes[this.getIndexOfMarkTypes(this.marktypes, this.selectedMarkType['_id'])] = response.MarkType;
+        this.resetSelectedMarkType();
+      })
+    }
+  }
+  cancelUpdateMarkTypeToClass() {
+    if(confirm('Do you want to cancel the Update?')) {
+      this.resetSelectedMarkType();
     }
   }
 
@@ -126,4 +158,10 @@ export class StudentsComponent implements OnInit {
     }
   }
 
+  editMarkType(marktype) {
+    if(confirm('Do you really want to edit this Mark Type?')) {
+      this.selectedMarkType = { ...marktype };
+      this.editingMark = true;
+    }
+  }
 }

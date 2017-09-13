@@ -79,4 +79,8 @@ export class CardsComponent implements OnInit {
   	})
   }
 
+  closeCardPreview() {
+    this.previewMode = false;
+    this.selectedCard = null;
+  }
 }

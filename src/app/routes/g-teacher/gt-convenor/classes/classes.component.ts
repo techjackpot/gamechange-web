@@ -138,6 +138,44 @@ export class ClassesComponent implements OnInit {
 	      response => {
 	      	this.classesList.push(response.Class);
 	      	this.opened = false;
+
+          let class_id = response.Class._id;
+          this.dataService.addMarkTypeToClass({
+            Name: 'Quiz',
+            Description: '',
+            Multiplier: 1.5,
+            Weeks: 3,
+            MinValue: 5,
+            Class: class_id
+          }).subscribe((response) => {
+          });
+          this.dataService.addMarkTypeToClass({
+            Name: 'Multiple Choice',
+            Description: '',
+            Multiplier: 1.5,
+            Weeks: 3,
+            MinValue: 5,
+            Class: class_id
+          }).subscribe((response) => {
+          });
+          this.dataService.addMarkTypeToClass({
+            Name: 'Written Homework',
+            Description: '',
+            Multiplier: 1.5,
+            Weeks: 3,
+            MinValue: 5,
+            Class: class_id
+          }).subscribe((response) => {
+          });
+          this.dataService.addMarkTypeToClass({
+            Name: 'Group',
+            Description: '',
+            Multiplier: 1.5,
+            Weeks: 3,
+            MinValue: 5,
+            Class: class_id
+          }).subscribe((response) => {
+          });
 	      },
 	      (error) => {
 	        // console.log(error);

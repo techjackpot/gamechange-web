@@ -115,4 +115,16 @@
 			text-align: center;
 		}
 	}
+	.value-multiplier {
+		&:before {
+			content: '+ ';
+		}
+		&:after {
+			content: 'x';
+			font-size: 0.5em;
+		}
+		font-size: 0.7em;
+		margin-left: 8px;
+		color: $gc-color-accent;
+	}
 }

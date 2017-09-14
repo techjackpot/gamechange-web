@@ -23,7 +23,7 @@
 	</div>
 
 	<div class="score-board">
-		<div class="score-board-item score-point"><span>Point</span><span class="value">{{ currentPlayer && currentPlayer.Point }}</span></div>
+		<div class="score-board-item score-point"><span>Point<span class="value-multiplier" *ngIf="getMultiplierValue(currentPlayer.Multiplier)>0">{{ getMultiplierValue(currentPlayer.Multiplier) }}</span></span><span class="value">{{ currentPlayer && currentPlayer.Point }}</span></div>
 		<div class="score-board-item score-gold"><span>Gold</span><span class="value">{{ currentPlayer && currentPlayer.Gold }}</span></div>
 		<div class="score-board-item score-defence"><span>Defence</span><span class="value">{{ currentPlayer && currentPlayer.Defence }}</span></div>
 	</div>

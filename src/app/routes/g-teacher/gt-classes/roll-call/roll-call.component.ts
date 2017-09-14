@@ -125,6 +125,15 @@ export class RollCallComponent implements OnInit {
     });
     return index;
   }
+  getIndexOfMarkType(marktypes, marktype) {
+    let index = -1;
+    marktypes.forEach((_marktype, i) => {
+      if(_marktype._id == marktype) {
+        index = i;
+      }
+    });
+    return index;
+  }
 
   updateCurrentStudentBook() {
     this.dataService.getStudentBook({ Class: this.currentClass._id, Week: this.week_studentbook}).subscribe((response) => {
@@ -295,7 +304,14 @@ export class RollCallComponent implements OnInit {
             Hand: hand,
             Gold: 0,
             Point: 0,
-            Player: player
+            Player: player,
+            Multiplier: this.marktypes.map((marktype) => {
+              return {
+                MarkType: marktype._id,
+                Continuous: 0,
+                Value: 0
+              }
+            })
           };
         });
 
@@ -359,8 +375,6 @@ export class RollCallComponent implements OnInit {
   	if(confirm('Did you check everything before going to next week?')) {
       this.dataService.getStudentBook({ Class: this.currentClass._id, Week: this.currentClass.Weeks }).subscribe((m_response) => {
         let markHistory = m_response.MarkHistory;
-        // this.dataService.getGameInfo({_id: this.currentClass._id}).subscribe(response => {
-          // this.currentClass = response.Class;
         this.loadCurrentGameStatus().then(() => {
           this.currentClass.Weeks ++;
           this.week_numbers.push(this.currentClass.Weeks);
@@ -383,6 +397,14 @@ export class RollCallComponent implements OnInit {
             if(this.getIndexOfMarkHistory(markHistory, Player.Player)>=0) {
               markHistory[this.getIndexOfMarkHistory(markHistory, Player.Player)].Marks.forEach((mark, ii) => {
                 Player.Gold += mark.Value;
+                if(mark.Value < this.marktypes[this.getIndexOfMarkType(this.marktypes, mark.MarkType)].MinValue) {
+                  Player.Multiplier[this.getIndexOfMark(Player.Multiplier, mark.MarkType)].Continuous = 0;
+                  Player.Multiplier[this.getIndexOfMark(Player.Multiplier, mark.MarkType)].Value = 0;
+                } else {
+                  if(++Player.Multiplier[this.getIndexOfMark(Player.Multiplier, mark.MarkType)].Continuous >= this.marktypes[this.getIndexOfMarkType(this.marktypes, mark.MarkType)].Weeks) {
+                    Player.Multiplier[this.getIndexOfMark(Player.Multiplier, mark.MarkType)].Value = this.marktypes[this.getIndexOfMarkType(this.marktypes, mark.MarkType)].Multiplier;
+                  }
+                }
               });
             }
             this.currentClass.Players[i]=Player;
@@ -629,7 +651,7 @@ export class RollCallComponent implements OnInit {
               bonus.Gold = 0;
               bonus.Cards = 0;
             }
-            player.Point += bonus.Point;
+            player.Point += bonus.Point>0?(bonus.Point + bonus.Point * player.Multiplier.reduce((sum, multiplier) => sum+multiplier.Value, 0)):bonus.Point;;
             player.Gold += bonus.Gold;
             player.Defence += bonus.Defence;
 

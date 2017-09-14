@@ -253,6 +253,10 @@ export class PlayscreenComponent implements OnInit {
     return copy;
   }
 
+  getMultiplierValue(multipliers) {
+    return multipliers.reduce((sum, multiplier) => sum+multiplier.Value, 0);
+  }
+
   resetSelectedCardTargets() {
     this.selectedCardTargets = [[],[],[],[],[]];
     if(this.selectedCard) {
@@ -357,7 +361,7 @@ export class PlayscreenComponent implements OnInit {
               bonus.Gold = 0;
               bonus.Cards = 0;
             }
-            player.Point += bonus.Point;
+            player.Point += bonus.Point>0?(bonus.Point + bonus.Point * player.Multiplier.reduce((sum, multiplier) => sum+multiplier.Value, 0)):bonus.Point;
             player.Gold += bonus.Gold;
             player.Defence += bonus.Defence;
 
@@ -396,7 +400,6 @@ export class PlayscreenComponent implements OnInit {
         StartAt: start_at,
         Week: this.currentGame.Weeks
       });
-      console.log(this.currentGame.CardHistory);
 
       this.dataService.updateClassInfo({_id: this.currentGame._id, Players: this.currentGame.Players, CardHistory: this.currentGame.CardHistory}).subscribe((response) => {
         // this.currentGame = response.Class;

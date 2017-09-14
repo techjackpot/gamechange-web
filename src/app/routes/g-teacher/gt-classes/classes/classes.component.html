@@ -1,8 +1,8 @@
-<div class="class-list">
-	<div *ngIf="assignedClasses.length>0">
+<div *ngIf="assignedClasses.length>0">
+	<div class="class-list">
 		<div *ngFor="let classInfo of assignedClasses;" (click)="chooseClass(classInfo);" class="class-item" [class.active]="classInfo._id==currentClass._id" >
 			<span>{{ classInfo.Name }}</span>
-			{{ classInfo.DateTime | date : 'short' }}
+			({{ classInfo.DateTime | date : 'EEE h:mma' }} at {{ classInfo.Room }})
 		</div>
 	</div>
 </div>

@@ -28,7 +28,7 @@ export class GroupsComponent implements OnInit {
     this.dragulaService.setOptions('students-bag', {
       moves: function (el, source, handle, sibling) {
         if(source.children.length <= 1) return false;
-        return true;
+        return handle.className.indexOf('handle')>=0;
       },
       accepts: function (el, target, source, sibling) {
         return true; // elements can be dropped in any of the `containers` by default

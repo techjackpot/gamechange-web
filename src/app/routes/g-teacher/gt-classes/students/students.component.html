@@ -61,6 +61,7 @@
 						<th width="50px">Multiplier</th>
 						<th width="50px">Weeks</th>
 						<th width="50px">Minimum Value</th>
+						<th width="50px">For Group?</th>
 						<th>-</th>
 					</tr>
 				</thead>
@@ -71,6 +72,7 @@
 						<td>{{ marktype.Multiplier }}</td>
 						<td>{{ marktype.Weeks }}</td>
 						<td>{{ marktype.MinValue }}</td>
+						<td>{{ marktype.ForGroup?'√':'' }}</td>
 						<td><a href="javascript:void(0);" class="btn btn-edit" (click)="editMarkType(marktype)">Edit</a><a href="javascript:void(0);" class="btn btn-remove" (click)="removeMarkTypeFromClass(marktype)">Remove</a></td>
 					</tr>
 					<tr *ngIf="marktypes.length==0">
@@ -78,12 +80,13 @@
 							There are no Mark Types for this Class.
 						</td>
 					</tr>
-					<tr>
+					<tr class="edit-row">
 						<td><input type="text" placeholder="Mark Type Name" [(ngModel)]="selectedMarkType.Name" [class.invalid]="!selectedMarkType.Name"></td>
 						<td><input type="text" placeholder="Description ..." [(ngModel)]="selectedMarkType.Description"></td>
 						<td><!--<select [(ngModel)]="selectedMarkType.Multiplier"></select>--><input type="number" [(ngModel)]="selectedMarkType.Multiplier" min="0.25" max="10" step="0.25" (keydown)="false"></td>
 						<td><input type="number" pattern="[0-9]" min="1" step="1" [(ngModel)]="selectedMarkType.Weeks"></td>
 						<td><input type="number" min="3" [(ngModel)]="selectedMarkType.MinValue"></td>
+						<td class="text-center"><input type="checkbox" [(ngModel)]="selectedMarkType.ForGroup"></td>
 						<td><button class="btn btn-add" (click)="addMarkTypeToClass()" *ngIf="!editingMark">Add</button><button class="btn btn-edit" (click)="updateMarkTypeToClass()" *ngIf="editingMark">Update</button><button class="btn btn-edit" (click)="cancelUpdateMarkTypeToClass()" *ngIf="editingMark">Cancel</button></td>
 					</tr>
 				</tbody>

@@ -21,7 +21,8 @@ export class StudentsComponent implements OnInit {
     Description: '',
     Multiplier: 1.5,
     Weeks: 3,
-    MinValue: 5
+    MinValue: 5,
+    ForGroup: false
   };
 
   editingMark = false;
@@ -118,7 +119,8 @@ export class StudentsComponent implements OnInit {
       Description: '',
       Multiplier: 1.5,
       Weeks: 3,
-      MinValue: 5
+      MinValue: 5,
+      ForGroup: false
     };
     this.editingMark = false;
   }

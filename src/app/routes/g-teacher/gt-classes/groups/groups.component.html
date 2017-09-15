@@ -1,7 +1,7 @@
 <div class="class-groups">
 	<div class="groups-control" *ngIf="Groups.length==0">
 		<div class="row">
-	    <form (ngSubmit)="onSubmitGroups(f)" #f="ngForm" class="form group-form col-md-4 col-md-offset-4">
+	    <form (ngSubmit)="onSubmitGroups(f)" #f="ngForm" class="form group-form col-md-4 col-md-offset-4" name="creategroup">
 			  <div class="form-group">
 			    <label>Groups Count</label>
 			    <input type="number" class="form-control" placeholder="Group Count" name="Groups" [(ngModel)]="model.Groups" required>
@@ -41,6 +41,41 @@
 					<span class="group-member-name">{{ studentList[getIndexOfUsers(studentList, st)].DisplayName }}</span>
 				</div>
 			</div>
+		</div>
+	</div>
+	<div class="groups-marking-area" *ngIf="Groups.length>0 && this.GroupsLoaded">
+		<h3 class="text-center">Give the Group Mark</h3>
+		<div class="row">
+	    <form (ngSubmit)="onSubmitMarkGroup(mg)" #mg="ngForm" class="form group-form col-md-4 col-md-offset-4" name="givemark">
+			  <div class="form-group">
+			    <label>Group</label>
+			    <select [(ngModel)]="markModel.group" name="markModel-group" required class="form-control">
+			    	<option value="">Select a Group...</option>
+			    	<option *ngFor="let group of Groups;" [value]="group._id">{{ group.Title }}</option>
+			    </select>
+			  </div>
+			  <div class="form-group">
+			    <label>Week</label>
+			    <select [(ngModel)]="markModel.week" name="markModel-week" required class="form-control">
+			    	<option value="0">Select Week</option>
+			    	<option *ngFor="let w of week_numbers;" [value]="w">{{ w }}</option>
+			    </select>
+			  </div>
+			  <div class="form-group">
+			    <label>Mark Type</label>
+			    <select [(ngModel)]="markModel.marktype" name="markModel-marktype" required class="form-control">
+			    	<option value="">Select Mark Type</option>
+			    	<option *ngFor="let marktype of groupmarktypes;" [value]="marktype._id">{{ marktype.Name }}</option>
+			    </select>
+			  </div>
+			  <div class="form-group">
+			    <label>Mark Value</label>
+			    <input type="number" class="form-control" placeholder="Mark Value" [(ngModel)]="markModel.value" name="markModel-value" required>
+			  </div>
+			  <div class="form-group">
+	      	<button type="submit" [disabled]="!mg.form.valid || !markModel.group || !markModel.week" class="btn-save">Set Mark</button>
+	      </div>
+		  </form>
 		</div>
 	</div>
 </div>

@@ -88,7 +88,7 @@
 			text-align: center;
 			border-collapse: collapse;
 			tbody {
-				font-size: 14px;
+				font-size: 12px;
 			}
 			td,th {
 				background: $gc-bg-sub;
@@ -114,6 +114,22 @@
 					left: 0;
 					background: rgba(0,0,0,0.5);
 				}*/
+			}
+			tr.edit-row {
+				font-size: 14px;
+				td {
+					background: lighten($gc-bg-sub, 5%);
+					position: relative;
+					&:before {
+						content: '';
+						display: block;
+						position: absolute;
+						top: 0;
+						left: -2px;
+						width: calc(100% + 4px);
+						border-top: solid 1px $gc-color-warn;
+					}
+				}
 			}
 			th {
 				text-transform: uppercase;
@@ -147,6 +163,10 @@
 					border-color: $gc-color-warn;
 				}
 			}
+			input[type=checkbox] {
+				display: inline;
+				width: auto;
+			}
 			.btn-add {
 				width: 100%;
 				font-size: 1em;
@@ -155,7 +175,7 @@
 				outline: 0 none;
 			}
 			.btn-edit, .btn-remove {
-				width: 45%;
+				// width: 45%;
 				font-size: 1em;
 				background: $gc-color-warn;
 				color: $gc-color-primary;

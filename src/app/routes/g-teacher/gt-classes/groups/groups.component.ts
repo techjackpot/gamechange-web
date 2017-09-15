@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { DataService } from '../../../../core/services/data.service';
+import { AuthService } from '../../../../core/services/auth.service';
 import { DragulaService } from "ng2-dragula";
 import { NgForm } from '@angular/forms';
 
@@ -11,14 +12,19 @@ import { NgForm } from '@angular/forms';
 })
 export class GroupsComponent implements OnInit {
 
+  me = null;
 	Groups = [];
   currentClass = null;
 	studentList = [];
   model;
   GroupsLoaded = false;
   markHistory = [];
+  markModel;
+  week_numbers = [];
+  groupmarktypes = [];
+  marktypes = [];
 
-  constructor(private dataService: DataService, private router: Router, private dragulaService: DragulaService) {
+  constructor(private dataService: DataService, private router: Router, private dragulaService: DragulaService, private authService: AuthService) {
     this.model = {
       Groups: 2, Members: 2
       //Groups: 6, Members: 10
@@ -72,6 +78,7 @@ export class GroupsComponent implements OnInit {
   ngOnInit() {
     if(!this.dataService.getCurrentClass()) this.router.navigate(['/classes']);
     this.currentClass = Object.assign( { _id: '' }, this.dataService.getCurrentClass() );
+    this.me = this.authService.getUser();
     let p1 = new Promise((resolve, reject) => {
       this.dataService.getGameInfo({_id: this.currentClass._id}).subscribe(response => {
         this.currentClass = response.Class;
@@ -93,14 +100,33 @@ export class GroupsComponent implements OnInit {
     let p4 = new Promise((resolve, reject) => {
       this.dataService.getStudentBook({ Class: this.currentClass._id }).subscribe( response => {
         this.markHistory = response.MarkHistory;
-        console.log(this.markHistory);
         resolve();
       })
-    })
-
-    Promise.all([p1, p2, p3]).then(() => {
-      this.GroupsLoaded = true;
     });
+    let p5 = new Promise((resolve, reject) => {
+      this.dataService.getClassMarkTypes({ Class: this.currentClass._id }).subscribe(response => {
+        this.groupmarktypes = response.MarkTypes.filter((marktype) => marktype.ForGroup );
+        this.marktypes = response.MarkTypes;
+        resolve();
+      });
+    });
+
+    Promise.all([p1, p2, p3, p4, p5]).then(() => {
+      this.GroupsLoaded = true;
+      this.resetMarkModel();
+      for(let i=1;i<=this.currentClass.Weeks;i++) {
+        this.week_numbers.push(i);
+      }
+    });
+  }
+
+  resetMarkModel() {
+    this.markModel = {
+      group: '',
+      week: 0,
+      marktype: '',
+      value: 0
+    }
   }
 
   getIndexOfMarkHistory(markhistory, student_id) {
@@ -125,6 +151,15 @@ export class GroupsComponent implements OnInit {
     let index = -1;
     users.forEach((user, i) => {
       if(user.Player == user_id) {
+        index = i;
+      }
+    });
+    return index;
+  }
+  getIndexOfGroups(groups,group_id) {
+    let index = -1;
+    groups.forEach((group, i) => {
+      if(group._id == group_id) {
         index = i;
       }
     });
@@ -172,6 +207,50 @@ export class GroupsComponent implements OnInit {
         this.dataService.setCurrentClass(response.Class);
         this.currentClass = response.Class;
         this.router.navigate(['/classes/chooseclass']);
+      });
+    }
+  }
+
+  onSubmitMarkGroup(form: NgForm) {
+    if(confirm('Do you really want to set this mark to group?')) {
+
+      let studentBook;
+
+      this.dataService.getStudentBook({ Class: this.currentClass._id, Week: this.markModel.week}).subscribe((response) => {
+        studentBook = this.Groups[this.getIndexOfGroups(this.Groups, this.markModel.group)].Students.map((student) => {
+          let index = this.getIndexOfMarkHistory(response.MarkHistory, student);
+          if(index<0) {
+            return {
+              Class: this.currentClass._id,
+              Staff: this.me._id,
+              Week: this.markModel.week,
+              Student: student,
+              Marks: this.marktypes.map((marktype) => { return { MarkType: marktype._id, Value: 0 }; } ),
+              Attendance: false,
+              Date: new Date().toJSON(),
+              Note: ''
+            };
+          } else {
+            let markhistory = response.MarkHistory[index];
+            markhistory.Marks = markhistory.Marks.map((mark) => {
+              if(mark.MarkType == this.markModel.marktype) {
+                return {
+                  MarkType: mark.MarkType,
+                  Value: this.markModel.value
+                }
+              } else {
+                return mark;
+              }
+            });
+            return markhistory;
+          }
+        });
+        this.dataService.updateStudentBook({ data: studentBook }).subscribe((response) => {
+          this.dataService.getStudentBook({ Class: this.currentClass._id }).subscribe( response => {
+            this.markHistory = response.MarkHistory;
+            this.resetMarkModel();
+          })
+        });
       });
     }
   }

@@ -1,6 +1,82 @@
-<div class="student-info">
+<!-- <div class="student-info">
 	<p>This Student details page comes from <a [routerLink]="['/classes/students']">Class Management Page.</a></p>
 	<div class="info" *ngIf="Student">
 		<p>Name: {{Student.DisplayName}}</p>
 	</div>
+</div> -->
+
+<div class="btn btn-go-back" (click)="goBack()">Go Back...</div>
+
+<div class="student-status-info" *ngIf="loaded">
+	<div class="brief-area">
+		<div class="avatar-area" [class.no-avatar]="!Student.DisplayPicture">
+			<img src="{{ getServerAssetUrl(Student.DisplayPicture) }}" class="avatar" />
+		</div>
+		<div class="student-info">
+			<div class="student-info-item">
+				<span class="info-item-name">Name</span>
+				<span class="info-item-content">{{ Student.DisplayName }}</span>
+			</div>
+			<!-- <div class="student-info-item">
+				<span class="info-item-name">Title</span>
+				<span class="info-item-content"></span>
+			</div>
+			<div class="student-info-item">
+				<span class="info-item-name">Class</span>
+				<span class="info-item-content">Wednesday 3pm</span>
+			</div>
+			<div class="student-info-item">
+				<span class="info-item-name">Total Points</span>
+				<span class="info-item-content">53</span>
+			</div>
+			<div class="student-info-item">
+				<span class="info-item-name">Points Spent</span>
+				<span class="info-item-content">47</span>
+			</div>
+			<div class="student-info-item">
+				<span class="info-item-name">Class Rank</span>
+				<span class="info-item-content">4</span>
+			</div>
+			<div class="student-info-item">
+				<span class="info-item-name">Points Behind</span>
+				<span class="info-item-content">7</span>
+			</div>
+			<div class="student-info-item">
+				<span class="info-item-name">Weekly Average</span>
+				<span class="info-item-content">4.5/6.0</span>
+			</div>
+			<div class="student-info-item">
+				<span class="info-item-name">Strongest Category</span>
+				<span class="info-item-content">YMCA</span>
+			</div>
+			<div class="student-info-item">
+				<span class="info-item-name">Weakest Category</span>
+				<span class="info-item-content">Individual</span>
+			</div> -->
+		</div>
+		<div class="clearfix"></div>
+	</div>
+
+	<h3 class="widget-label text-center text-accent" style="margin-bottom: 1em;">Enrolled Class</h3>
+	<div class="class-info clearfix">
+		<table>
+			<thead>
+				<tr>
+					<td>Week #</td>
+					<td>Attendance</td>
+					<td *ngFor="let marktype of marktypes;">{{ marktype.Name }}</td>
+					<td>Note</td>
+				</tr>
+			</thead>
+			<tbody>
+				<tr *ngFor="let history of markHistory;">
+					<td>{{ history.Week }}</td>
+					<td>{{ history.Attendance?'/':'' }}</td>
+					<td *ngFor="let marktype of marktypes;">{{ history.Marks[getIndexOfMark(history.Marks, marktype._id)].Value || '' }}</td>
+					<td>{{ history.Note }}</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+
 </div>

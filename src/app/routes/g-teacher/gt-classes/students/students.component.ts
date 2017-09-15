@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { DataService } from '../../../../core/services/data.service';
 import { Router } from '@angular/router';
 import { NgForm } from '@angular/forms';
-
 @Component({
   selector: 'app-students',
   templateUrl: './students.component.html',

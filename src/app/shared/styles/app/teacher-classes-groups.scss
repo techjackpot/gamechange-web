@@ -200,9 +200,9 @@
 		.handle-wrapper {
 			display: block;
 		}
-		.group-member-name {
-			opacity: 0;
-		}
+		// .group-member-name {
+		// 	opacity: 0;
+		// }
 	}
 	// margin-bottom: 20px;
 	img {
@@ -224,6 +224,8 @@
 		text-align: center;
     background: rgba(0,0,0,0.7);
 		transition: all 0.3s ease;
+		cursor: pointer;
+		z-index: 5;
 	}
 }
 

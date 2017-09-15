@@ -6,10 +6,10 @@
 			    <label>Groups Count</label>
 			    <input type="number" class="form-control" placeholder="Group Count" name="Groups" [(ngModel)]="model.Groups" required>
 			  </div>
-			  <div class="form-group">
+			  <!-- <div class="form-group">
 			    <label>Members Count</label>
 			    <input type="number" class="form-control" placeholder="Member Count" name="Members" [(ngModel)]="model.Members" required>
-			  </div>
+			  </div> -->
 			  <div class="form-group">
 	      	<button type="submit" [disabled]="!f.form.valid || model.Groups==0 || model.Members==0" class="btn-save">Create Groups</button>
 	      </div>
@@ -38,7 +38,7 @@
 				<div class="group-member-photo" *ngFor="let st of group.Students;" id="{{ st }}">
 					<span class="handle-wrapper"><i class="fa fa-arrows handle" aria-hidden="true"></i></span>
 					<img src="{{ getServerAssetUrl(studentList[getIndexOfUsers(studentList, st)].DisplayPicture) }}" alt="{{ studentList[getIndexOfUsers(studentList, st)].DisplayName }}" draggable="false" />
-					<span class="group-member-name">{{ studentList[getIndexOfUsers(studentList, st)].DisplayName }}</span>
+					<span class="group-member-name" (click)="viewPlayerProfile(st)">{{ studentList[getIndexOfUsers(studentList, st)].DisplayName }}</span>
 				</div>
 			</div>
 		</div>

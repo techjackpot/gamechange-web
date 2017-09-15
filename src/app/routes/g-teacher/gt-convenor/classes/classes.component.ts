@@ -141,15 +141,6 @@ export class ClassesComponent implements OnInit {
 
           let class_id = response.Class._id;
           this.dataService.addMarkTypeToClass({
-            Name: 'Quiz',
-            Description: '',
-            Multiplier: 1.5,
-            Weeks: 3,
-            MinValue: 5,
-            Class: class_id
-          }).subscribe((response) => {
-          });
-          this.dataService.addMarkTypeToClass({
             Name: 'Multiple Choice',
             Description: '',
             Multiplier: 1.5,
@@ -159,7 +150,7 @@ export class ClassesComponent implements OnInit {
           }).subscribe((response) => {
           });
           this.dataService.addMarkTypeToClass({
-            Name: 'Written Homework',
+            Name: 'Group',
             Description: '',
             Multiplier: 1.5,
             Weeks: 3,
@@ -168,7 +159,16 @@ export class ClassesComponent implements OnInit {
           }).subscribe((response) => {
           });
           this.dataService.addMarkTypeToClass({
-            Name: 'Group',
+            Name: 'Individual',
+            Description: '',
+            Multiplier: 1.5,
+            Weeks: 3,
+            MinValue: 5,
+            Class: class_id
+          }).subscribe((response) => {
+          });
+          this.dataService.addMarkTypeToClass({
+            Name: 'Homework',
             Description: '',
             Multiplier: 1.5,
             Weeks: 3,

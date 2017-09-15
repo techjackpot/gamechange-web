@@ -16,6 +16,7 @@ export class GroupsComponent implements OnInit {
 	studentList = [];
   model;
   GroupsLoaded = false;
+  markHistory = [];
 
   constructor(private dataService: DataService, private router: Router, private dragulaService: DragulaService) {
     this.model = {
@@ -59,30 +60,71 @@ export class GroupsComponent implements OnInit {
     });
   }
 
-  
+  getGroupTotalPoints(group) {
+    if(this.currentClass.Players.length == 0) return 0;
+    return group.Students.reduce((sum, student) => sum+this.currentClass.Players[this.getIndexOfPlayers(this.currentClass.Players, student)].Point, 0);
+  }
+  getGroupTotalMarks(group) {
+    if(this.currentClass.Players.length == 0) return 0;
+    return group.Students.reduce((total, student) => total+this.markHistory.filter((markhistory) => markhistory.Student==student).reduce((t_sum, markhistory) => t_sum+markhistory.Marks.reduce((sum, mark) => sum+mark.Value, 0), 0), 0);
+  }
+
   ngOnInit() {
     if(!this.dataService.getCurrentClass()) this.router.navigate(['/classes']);
     this.currentClass = Object.assign( { _id: '' }, this.dataService.getCurrentClass() );
-    let that = this;
-    this.dataService.getGroupsForClass(this.currentClass).subscribe(
-      response => {
-      	that.Groups = response.Groups;
-        this.dataService.getClassStudents(that.currentClass).subscribe(
-          response => {
-            this.dataService.getStudentList(response).subscribe( response => {
-              that.studentList = response;
-              this.GroupsLoaded = true;
-            })
-          }
-        );
-      }
-    );
+    let p1 = new Promise((resolve, reject) => {
+      this.dataService.getGameInfo({_id: this.currentClass._id}).subscribe(response => {
+        this.currentClass = response.Class;
+        resolve();
+      });
+    });
+    let p2 = new Promise((resolve, reject) => {
+      this.dataService.getGroupsForClass({ _id: this.currentClass._id }).subscribe( response => {
+        this.Groups = response.Groups;
+        resolve();
+      });
+    });
+    let p3 = new Promise((resolve, reject) => {
+      this.dataService.getStudentList(this.currentClass.Students).subscribe( response => {
+        this.studentList = response;
+        resolve();
+      });
+    });
+    let p4 = new Promise((resolve, reject) => {
+      this.dataService.getStudentBook({ Class: this.currentClass._id }).subscribe( response => {
+        this.markHistory = response.MarkHistory;
+        console.log(this.markHistory);
+        resolve();
+      })
+    })
+
+    Promise.all([p1, p2, p3]).then(() => {
+      this.GroupsLoaded = true;
+    });
   }
 
+  getIndexOfMarkHistory(markhistory, student_id) {
+    let index = -1;
+    markhistory.forEach((history, i) => {
+      if(history.Student == student_id) {
+        index = i;
+      }
+    });
+    return index;
+  }
   getIndexOfUsers(users,user_id) {
     let index = -1;
     users.forEach((user, i) => {
       if(user._id == user_id) {
+        index = i;
+      }
+    });
+    return index;
+  }
+  getIndexOfPlayers(users,user_id) {
+    let index = -1;
+    users.forEach((user, i) => {
+      if(user.Player == user_id) {
         index = i;
       }
     });

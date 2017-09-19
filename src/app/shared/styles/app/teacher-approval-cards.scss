@@ -146,9 +146,17 @@
 				}
 			}
 		}
-		.card-creation-action-form {
-			border: solid 2px $gc-color-accent;
-			padding: 1em;
+		.card-creation-actions {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: flex-start;
+			justify-content: space-evenly;
+			.card-creation-action-form {
+				flex: 0 0 280px;
+				border: solid 2px $gc-color-accent;
+				padding: 1em;
+				margin: 0.5em;
+			}
 		}
 	}
 }

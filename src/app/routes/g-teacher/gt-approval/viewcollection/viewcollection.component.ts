@@ -1,21 +1,23 @@
 import { Component, OnInit, ElementRef } from '@angular/core';
-import { AuthService } from '../../../../core/services/auth.service';
-import { DataService } from '../../../../core/services/data.service';
 import { Router } from '@angular/router';
+import { DataService } from '../../../../core/services/data.service';
+import { AuthService } from '../../../../core/services/auth.service';
 import { NgForm } from '@angular/forms';
 import { Http, Headers, Response, RequestOptions } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 
 @Component({
-  selector: 'app-createcard',
-  templateUrl: './createcard.component.html',
-  styleUrls: ['./createcard.component.scss']
+  selector: 'app-viewcollection',
+  templateUrl: './viewcollection.component.html',
+  styleUrls: ['./viewcollection.component.scss']
 })
-export class CreatecardComponent implements OnInit {
+export class ViewcollectionComponent implements OnInit {
 
-	selectedCard;
-	selectedFile = null;
+	cardList = [];
   me;
+  selectedCard = null;
+  selectedFile = null;
+  editMode = false;
 
 	valueList = {
 		types: ["Special", "Common", "Defence", "Offence"],
@@ -26,33 +28,21 @@ export class CreatecardComponent implements OnInit {
 		goldcosts: [1,2,3,4,5,6,7,8,9,10], 
 	}
 
-	numberList : any = [1,2,3,4,5,6,7,8,9,10];
+	numberList = [1,2,3,4,5,6,7,8,9,10];
 
-  constructor(private dataService: DataService, private authService: AuthService, private element: ElementRef, private http: Http, private router: Router) {
-    this.me = this.authService.getUser();
-  	this.selectedCard = {
-  		Title: '',
-  		Description: '',
-  		Type: '',
-  		Rarity: '',
-  		GoldCost: '0',
-  		Picture: '',
-  		Actions: [],
-      Creator: this.me._id
-  	}
-  	// this.selectedCard = {
-  	// 	Title: 'test',
-  	// 	Description: 'test',
-  	// 	Type: 'Common',
-  	// 	Rarity: '',
-  	// 	GoldCost: '5',
-   //    Picture: '',
-  	// 	Actions: [],
-   //    Creator: this.me._id
-  	// }
+
+  constructor(private router: Router, private dataService: DataService, private authService: AuthService, private element: ElementRef, private http: Http) {
   }
 
   ngOnInit() {
+    this.me = this.authService.getUser();
+    this.dataService.getCards({ Creator: this.me._id }).subscribe( (response) => {
+    	this.cardList = response.Cards;
+    })
+  }
+
+  getServerAssetUrl(url) {
+  	return this.dataService.getServerAssetUrl(url);
   }
 
 	fileChange(event) {
@@ -70,34 +60,70 @@ export class CreatecardComponent implements OnInit {
 	  this.selectedFile = event.target.files[0];
 	}
 
-	onSubmitCreateCard(form: NgForm) {
-
-    this.selectedCard.Actions = this.selectedCard.Actions.filter((action) => action.Keyword!='');
-
-    let formData: FormData = new FormData();
-    formData.append('Picture', this.selectedFile, this.selectedFile.name);
-    formData.append('cardData', JSON.stringify(this.selectedCard));
-
-    let headers = new Headers();
-    headers.set('Accept', 'application/json');
-  	headers.append('x-chaos-token', JSON.parse(localStorage.getItem('token')));
-
-    // let options = new RequestOptions({ headers: headers });
-    let options = { headers: headers };
-    this.http.post(this.dataService.url + '/api/cards/create', /*{
-        imageData: imageData,
-        formData: this.selectedCard
-      }*/ formData, options)
-    .map(res => res.json())
-    .subscribe((data) => {
-      this.router.navigate(['/approvals/cards']);
-    });
-	}
-
-  getServerAssetUrl(url) {
-    return this.dataService.getServerAssetUrl(url);
+  onClickedEditCard(card) {
+  	if(this.editMode) {
+  		if(confirm("Do you want to abort current edit?")) {
+		  	this.selectedCard = Object.assign({}, card);
+		  	this.editMode = true;
+	  	}
+  	} else {
+		  this.selectedCard = Object.assign({}, card);
+	  	this.editMode = true;
+  	}
+  	this.getCardActions();
   }
-  
+
+  getIndexOfCards(cards,card_id) {
+    let index = -1;
+    cards.forEach((card, i) => {
+      if(card._id == card_id) {
+        index = i;
+      }
+    });
+    return index;
+  }
+
+  onCancelUpdateCard() {
+  	if(confirm("Do you want to cancel the update?")) {
+	  	this.selectedCard = null;
+	  	this.selectedFile = null;
+	  	this.editMode = false;
+	  }
+  }
+
+  onSubmitUpdateCard(form: NgForm) {
+  	if(confirm("Do you want to update the card?")) {
+
+    	this.selectedCard.Actions = this.selectedCard.Actions.filter((action) => action.Keyword!='');
+
+	    let formData: FormData = new FormData();
+	    if(this.selectedFile) {
+	    	formData.append('Picture', this.selectedFile, this.selectedFile.name);
+	    }
+	    formData.append('cardData', JSON.stringify(this.selectedCard));
+
+	    let headers = new Headers();
+	    headers.set('Accept', 'application/json');
+	  	headers.append('x-chaos-token', JSON.parse(localStorage.getItem('token')));
+
+	    // let options = new RequestOptions({ headers: headers });
+	    let options = { headers: headers };
+	    this.http.post(this.dataService.url + '/api/cards/update', /*{
+	        imageData: imageData,
+	        formData: this.selectedCard
+	      }*/ formData, options)
+	    .map(res => res.json())
+	    .subscribe((response) => {
+	    	let updatedCard = response.Card;
+	    	//this.selectedCarddata.Card;
+	    	this.cardList[this.getIndexOfCards(this.cardList, updatedCard._id)] = updatedCard;
+	    	this.editMode = false;
+	    	this.selectedCard = null;
+	    	this.selectedFile = null;
+	    });
+  	}
+  }
+
 	getCardActions() {
 
     let actionCount = 0, limitValue = 0;
@@ -122,9 +148,8 @@ export class CreatecardComponent implements OnInit {
     for(let i=0;i<limitValue;i++) {
       this.numberList.push(i+1);
     }
+
 		// let actionCount = this.valueList.rarity.indexOf(this.selectedCard.Rarity)+1;
-
-
 		let currentSize = this.selectedCard.Actions.length;
 		if(currentSize > actionCount) {
 			for(let i=0; i<currentSize-actionCount; i++) {
@@ -153,6 +178,13 @@ export class CreatecardComponent implements OnInit {
     });
     return validActions>0;
   }
+
+	onClickedDeleteCard(card) {
+		this.dataService.deleteCard({ card_id: card._id }).subscribe((response) => {
+			this.cardList.splice(this.getIndexOfCards(this.cardList, card._id), 1);
+		})
+	}
+
 
   getParams_Target(idx, action) {
     let targets = this.valueList.targets.concat();

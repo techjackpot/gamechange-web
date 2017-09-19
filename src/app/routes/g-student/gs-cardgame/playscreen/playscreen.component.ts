@@ -30,6 +30,9 @@ export class PlayscreenComponent implements OnInit {
   historyCardsAgainstMe = [];
   historyCardsByMe = [];
 
+  markHistory = [];
+  Groups = [];
+
   loaded = false;
 
   constructor(private route: ActivatedRoute, private router: Router, private dataService: DataService, private authService: AuthService) { }
@@ -63,7 +66,14 @@ export class PlayscreenComponent implements OnInit {
       });
     });
 
-    Promise.all([p1, p2, p3]).then(() => {
+    let p4 = new Promise((resolve, reject) => {
+      this.dataService.getGroupsForClass({_id: this.GameID}).subscribe( response => {
+        this.Groups = response.Groups;
+        resolve();
+      })
+    })
+
+    Promise.all([p1, p2, p3, p4]).then(() => {
       this.updateCardHistory();
 
       this.dataService.getStudentFriends({ student_id: this.me._id }).subscribe( (response) => {
@@ -102,12 +112,28 @@ export class PlayscreenComponent implements OnInit {
   }
 
   loadCurrentGameStatus() {
-    return new Promise((resolve, reject) => {
+    let p1 = new Promise((resolve, reject) => {
       this.dataService.getGameInfo({_id: this.currentGame._id}).subscribe(response => {
         this.currentGame = response.Class;
         resolve();
       });
+    });
+
+    let p2 = new Promise((resolve, reject) => {
+      this.dataService.getStudentBook({ Class: this.currentGame._id }).subscribe( response => {
+        this.markHistory = response.MarkHistory;
+        resolve();
+      });
     })
+
+    let p3 = new Promise((resolve, reject) => {
+      this.dataService.getGroupsForClass({_id: this.currentGame._id}).subscribe( response => {
+        this.Groups = response.Groups;
+        resolve();
+      })
+    })
+
+    return Promise.all([p1, p2, p3]);
   }
 
   array_diff(a, b) {
@@ -257,12 +283,160 @@ export class PlayscreenComponent implements OnInit {
     return multipliers.reduce((sum, multiplier) => sum+multiplier.Value, 0);
   }
 
+  getGroupTotalPoints(group) {
+    if(this.currentGame.Players.length == 0) return 0;
+    return group.Students.reduce((sum, student) => sum+this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, student)].Point, 0);
+  }
+  getGroupTotalGold(group) {
+    if(this.currentGame.Players.length == 0) return 0;
+    return group.Students.reduce((sum, student) => sum+this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, student)].Gold, 0);
+  }
+  getGroupTotalMarks(group) {
+    if(this.currentGame.Players.length == 0) return 0;
+    return group.Students.reduce((total, student) => total+this.markHistory.filter((markhistory) => markhistory.Student==student).reduce((t_sum, markhistory) => t_sum+markhistory.Marks.reduce((sum, mark) => sum+mark.Value, 0), 0), 0);
+  }
+
+  getHighestMarkPlayer() {
+    return this.currentGame.Students.reduce((r, student) => this.markHistory.filter((markhistory) => markhistory.Student==r).reduce((t_sum, markhistory) => t_sum+markhistory.Marks.reduce((sum, mark) => sum+mark.Value, 0), 0) > this.markHistory.filter((markhistory) => markhistory.Student==student).reduce((t_sum, markhistory) => t_sum+markhistory.Marks.reduce((sum, mark) => sum+mark.Value, 0), 0) ? r : student, this.me._id)
+  }
+  getLowestMarkPlayer() {
+    return this.currentGame.Students.reduce((r, student) => this.markHistory.filter((markhistory) => markhistory.Student==r).reduce((t_sum, markhistory) => t_sum+markhistory.Marks.reduce((sum, mark) => sum+mark.Value, 0), 0) < this.markHistory.filter((markhistory) => markhistory.Student==student).reduce((t_sum, markhistory) => t_sum+markhistory.Marks.reduce((sum, mark) => sum+mark.Value, 0), 0) ? r : student, this.me._id)
+  }
+  getHighestGoldPlayer() {
+    return this.currentGame.Students.reduce((r, student) => this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, r)].Gold > this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, student)].Gold ? r : student, this.me._id)
+  }
+  getLowestGoldPlayer() {
+    return this.currentGame.Students.reduce((r, student) => this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, r)].Gold < this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, student)].Gold ? r : student, this.me._id)
+  }
+  getHighestPointsPlayer() {
+    return this.currentGame.Students.reduce((r, student) => this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, r)].Point > this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, student)].Point ? r : student, this.me._id)
+  }
+  getLowestPointsPlayer() {
+    return this.currentGame.Students.reduce((r, student) => this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, r)].Point < this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, student)].Point ? r : student, this.me._id)
+  }
+  getHighestMarkGroup() {
+    return this.Groups.reduce((r, group) => this.getGroupTotalMarks(r) > this.getGroupTotalMarks(group) ? r : group, this.Groups[0])
+  }
+  getLowestMarkGroup() {
+    return this.Groups.reduce((r, group) => this.getGroupTotalMarks(r) < this.getGroupTotalMarks(group) ? r : group, this.Groups[0])
+  }
+  getHighestGoldGroup() {
+    return this.Groups.reduce((r, group) => this.getGroupTotalGold(r) > this.getGroupTotalGold(group) ? r : group, this.Groups[0])
+  }
+  getLowestGoldGroup() {
+    return this.Groups.reduce((r, group) => this.getGroupTotalGold(r) < this.getGroupTotalGold(group) ? r : group, this.Groups[0])
+  }
+  getHighestPointsGroup() {
+    return this.Groups.reduce((r, group) => this.getGroupTotalPoints(r) > this.getGroupTotalPoints(group) ? r : group, this.Groups[0])
+  }
+  getLowestPointsGroup() {
+    return this.Groups.reduce((r, group) => this.getGroupTotalPoints(r) < this.getGroupTotalPoints(group) ? r : group, this.Groups[0])
+  }
+  getHighestMarkFriend() {
+    if(this.list_friends.length == 0) return null;
+    return this.list_friends.reduce((r, student) => this.markHistory.filter((markhistory) => markhistory.Student==r).reduce((t_sum, markhistory) => t_sum+markhistory.Marks.reduce((sum, mark) => sum+mark.Value, 0), 0) > this.markHistory.filter((markhistory) => markhistory.Student==student).reduce((t_sum, markhistory) => t_sum+markhistory.Marks.reduce((sum, mark) => sum+mark.Value, 0), 0) ? r : student, this.list_friends[0])
+  }
+  getLowestMarkFriend() {
+    if(this.list_friends.length == 0) return null;
+    return this.list_friends.reduce((r, student) => this.markHistory.filter((markhistory) => markhistory.Student==r).reduce((t_sum, markhistory) => t_sum+markhistory.Marks.reduce((sum, mark) => sum+mark.Value, 0), 0) < this.markHistory.filter((markhistory) => markhistory.Student==student).reduce((t_sum, markhistory) => t_sum+markhistory.Marks.reduce((sum, mark) => sum+mark.Value, 0), 0) ? r : student, this.me._id)
+  }
+  getHighestGoldFriend() {
+    if(this.list_friends.length == 0) return null;
+    return this.list_friends.reduce((r, student) => this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, r)].Gold > this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, student)].Gold ? r : student, this.me._id)
+  }
+  getLowestGoldFriend() {
+    if(this.list_friends.length == 0) return null;
+    return this.list_friends.reduce((r, student) => this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, r)].Gold < this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, student)].Gold ? r : student, this.me._id)
+  }
+  getHighestPointsFriend() {
+    if(this.list_friends.length == 0) return null;
+    return this.list_friends.reduce((r, student) => this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, r)].Point > this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, student)].Point ? r : student, this.me._id)
+  }
+  getLowestPointsFriend() {
+    if(this.list_friends.length == 0) return null;
+    return this.list_friends.reduce((r, student) => this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, r)].Point < this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, student)].Point ? r : student, this.me._id)
+  }
+
   resetSelectedCardTargets() {
     this.selectedCardTargets = [[],[],[],[],[]];
     if(this.selectedCard) {
       this.selectedCard.Actions.forEach((action, i) => {
-        if(action.Target=='Self') {
-          this.selectedCardTargets[i].push(this.me._id);
+        let friend = null;
+        switch(action.Target) {
+          case 'Self':
+            this.selectedCardTargets[i].push(this.me._id);
+            break;
+          case 'Highest Mark Player':
+            this.selectedCardTargets[i].push(this.getHighestMarkPlayer());
+            break;
+          case 'Lowest Mark Player':
+            this.selectedCardTargets[i].push(this.getLowestMarkPlayer());
+            break;
+          case 'Highest Gold Player':
+            this.selectedCardTargets[i].push(this.getHighestGoldPlayer());
+            break;
+          case 'Lowest Gold Player':
+            this.selectedCardTargets[i].push(this.getLowestGoldPlayer());
+            break;
+          case 'Highest Points Player':
+            this.selectedCardTargets[i].push(this.getHighestPointsPlayer());
+            break;
+          case 'Lowest Points Player':
+            this.selectedCardTargets[i].push(this.getLowestPointsPlayer());
+            break;
+          case 'Highest Mark Group':
+            this.selectedCardTargets[i].push(...this.getHighestMarkGroup().Students);
+            break;
+          case 'Lowest Mark Group':
+            this.selectedCardTargets[i].push(...this.getLowestMarkGroup().Students);
+            break;
+          case 'Highest Gold Group':
+            this.selectedCardTargets[i].push(...this.getHighestGoldGroup().Students);
+            break;
+          case 'Lowest Gold Group':
+            this.selectedCardTargets[i].push(...this.getLowestGoldGroup().Students);
+            break;
+          case 'Highest Points Group':
+            this.selectedCardTargets[i].push(...this.getHighestPointsGroup().Students);
+            break;
+          case 'Lowest Points Group':
+            this.selectedCardTargets[i].push(...this.getLowestPointsGroup().Students);
+            break;
+          case 'Highest Mark Friend':
+            if(friend = this.getHighestMarkFriend()) {
+              this.selectedCardTargets[i].push(friend);
+            }
+            break;
+          case 'Lowest Mark Friend':
+            if(friend = this.getLowestMarkFriend()) {
+              this.selectedCardTargets[i].push(friend);
+            }
+            break;
+          case 'Highest Gold Friend':
+            if(friend = this.getHighestGoldFriend()) {
+              this.selectedCardTargets[i].push(friend);
+            }
+            break;
+          case 'Lowest Gold Friend':
+            if(friend = this.getLowestGoldFriend()) {
+              this.selectedCardTargets[i].push(friend);
+            }
+            break;
+          case 'Highest Points Friend':
+            if(friend = this.getHighestPointsFriend()) {
+              this.selectedCardTargets[i].push(friend);
+            }
+            break;
+          case 'Lowest Points Friend':
+            if(friend = this.getLowestPointsFriend()) {
+              this.selectedCardTargets[i].push(friend);
+            }
+            break;
+          case 'Previous':
+            this.selectedCardTargets[i].push(...this.selectedCardTargets[i-1]);
+            break;
+          default:
+            break;
         }
       })
     }
@@ -285,37 +459,27 @@ export class PlayscreenComponent implements OnInit {
 
 
     this.loadCurrentGameStatus().then(() => {
+      console.log(this.currentGame);
       this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, this.me._id)].Hand.splice(this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, this.me._id)].Hand.indexOf(card_id), 1);
 
       let total_targets = [], total_targets_left = [];
       let unresolved = card.Actions.length, auto_progress = true, delay = 0, repeat = 0, start_at = 0;
+
+      let applied = [];
+
       card.Actions.forEach((action, i) => {
+        console.log(i, action);
         //"Add Points", "Subtract Points", "Add Gold", "Subtract Gold", "Add Cards", "Subtract Cards"
-        let bonus = { Point: 0, Gold: 0, Cards: 0, Defence: 0, AddFriend: false };
+
         switch(action.Keyword) {
           case "Add Points":
-            bonus.Point = action.KeywordValue;
-            break;
           case "Subtract Points":
-            bonus.Point = -action.KeywordValue;
-            break;
           case "Add Gold":
-            bonus.Gold = action.KeywordValue;
-            break;
           case "Subtract Gold":
-            bonus.Gold = -action.KeywordValue;
-            break;
           case "Add Cards":
-            bonus.Cards = action.KeywordValue;
-            break;
           case "Subtract Cards":
-            bonus.Cards = -action.KeywordValue;
-            break;
           case "Defend Negative":
-            bonus.Defence = action.KeywordValue;
-            break;
           case "Add Friend":
-            bonus.AddFriend = true;
             break;
           case "Persist":
             repeat = action.KeywordValue-1;
@@ -335,11 +499,12 @@ export class PlayscreenComponent implements OnInit {
         let targets_left = this.selectedCardTargets[i].slice();
         // console.log(targets);
 
-        total_targets.push(targets);
 
         if(targets.length==0) {
           auto_progress = true;
         }
+
+        let applied_value = 0;
 
         if(auto_progress) {
           unresolved--;
@@ -347,6 +512,74 @@ export class PlayscreenComponent implements OnInit {
           targets.forEach((target) => {
 
             let player_id = target;//target.Player;
+            let player = this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, player_id)];
+
+            let bonus = { Point: 0, Gold: 0, Cards: 0, Defence: 0, AddFriend: false };
+
+            let rValue = 0;
+            switch(action.Keyword) {
+              case "Add Points":
+              case "Subtract Points":
+                rValue = player.Point;
+                break;
+              case "Add Gold":
+              case "Subtract Gold":
+                rValue = player.Gold;
+                break;
+              default:
+                rValue = action.KeywordValue;
+                break;
+            }
+            console.log(player, rValue);
+            switch(action.ValueType) {
+              case 'All':
+                // rValue *= action.ValueMultiple / action.ValueDivide;
+                break;
+              case 'Percentage':
+                rValue *= rValue / 100;
+                break;
+              case 'Any':
+                rValue = action.KeywordValue;
+                break;
+              case 'Previous':
+                rValue = applied[i-1].Value;
+                break;
+            }
+            rValue *= action.ValueMultiple / action.ValueDivide;
+            console.log(player, rValue);
+
+            switch(action.Keyword) {
+              case "Add Points":
+                bonus.Point = rValue;
+                break;
+              case "Subtract Points":
+                bonus.Point = -rValue;
+                break;
+              case "Add Gold":
+                bonus.Gold = rValue;
+                break;
+              case "Subtract Gold":
+                bonus.Gold = -rValue;
+                break;
+              case "Add Cards":
+                bonus.Cards = rValue = action.KeywordValue;
+                break;
+              case "Subtract Cards":
+                bonus.Cards = rValue = -action.KeywordValue;
+                break;
+              case "Defend Negative":
+                bonus.Defence = rValue = action.KeywordValue;
+                break;
+              case "Add Friend":
+                bonus.AddFriend = true;
+                break;
+              default:
+                break;
+            }
+
+            console.log(bonus);
+
+            applied_value = rValue;
 
             if(bonus.AddFriend) {
               this.dataService.buildFriendConnection({ from: this.me._id, to: player_id }).subscribe((response) => {
@@ -354,7 +587,6 @@ export class PlayscreenComponent implements OnInit {
               });
             }
 
-            let player = this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, player_id)];
             if(player.Defence>0 && (bonus.Point<0 || bonus.Gold<0 || bonus.Cards<0)) {
               player.Defence --;
               bonus.Point = 0;
@@ -386,13 +618,17 @@ export class PlayscreenComponent implements OnInit {
             this.currentGame.Players[this.getIndexOfPlayers(this.currentGame.Players, player_id)] = player;
           })
         }
+
+        total_targets.push(targets);
         total_targets_left.push(targets_left);
+        applied.push({Targets: targets, Value: applied_value});
       });
 
       this.currentGame.CardHistory.push({
         Source: this.me._id,
         Target: total_targets,
         TargetLeft: total_targets_left,
+        Applied: applied,
         Card: card_id,
         UnResolved: unresolved,
         Delay: delay,
@@ -454,5 +690,31 @@ export class PlayscreenComponent implements OnInit {
   }
   isTargetPerAction(action_index, player_id) {
     return this.selectedCardTargets[action_index].indexOf(player_id)>=0?true:false;
+  }
+
+  
+  getCondition_Target(action) {
+    return action.Keyword!='' && action.Keyword!='Persist' && action.Keyword!='Activation Time'  && action.Keyword!='Defend Negative' && action.Keyword!='Add Friend';
+  }
+  getCondition_TargetValue(action) {
+    if(action.Keyword=='Add Friend') return true;
+    return action.Keyword!='' && action.Target!='' && (action.Target=='Friends' || action.Target=='Others');
+  }
+  getCondition_ValueType(action) {
+    if(action.Keyword=='Any Title' || action.Keyword=='Any Background' || action.Keyword=='Any Points Value Over' || action.Keyword=='Any Points Value Under' || action.Keyword=='Any Gold Value Over' || action.Keyword=='Any Gold Value Under') return false;
+    return action.Keyword!='' && action.Keyword!='Persist' && action.Keyword!='Activation Time' && action.Keyword!='Defend Negative' && action.Keyword!='Perform Action' && action.Keyword!='Add Cards' && action.Keyword!='Subtract Cards' && action.Target!='';
+  }
+  getCondition_KeywordValue(action) {
+    if(action.Keyword=='Any Title' || action.Keyword=='Any Background') return false;
+    return action.Keyword!='' && ((action.Target!='' && (action.ValueType=='Any' || action.ValueType=='Percentage')) || (action.Keyword=='Defend Negative' || action.Keyword=='Persist' || action.Keyword=='Activation Time'));
+  }
+  getCondition_Description(action) {
+    return action.Keyword=='Perform Action';
+  }
+  getCondition_ValueMultiple(action) {
+    return action.ValueType=='All' || action.ValueType=='Previous';
+  }
+  getCondition_ValueDivide(action) {
+    return action.ValueType=='All' || action.ValueType=='Previous';
   }
 }

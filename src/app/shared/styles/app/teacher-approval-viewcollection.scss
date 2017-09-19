@@ -1,0 +1,90 @@
+.page-gt-approval {
+	.view-collection {
+		.cards-table {
+			width: 100%;
+			font-size: 14px;
+			text-align: center;
+			border-collapse: collapse;
+			td,th {
+				background: $gc-bg-sub;
+				text-align: center;
+				border: solid 4px $gc-bg-main;
+				padding: 6px 4px;
+			}
+			th {
+				text-transform: uppercase;
+				font-weight: 400;
+				color: $gc-color-warn;
+				font-size: 16px;
+			}
+			a {
+				color: $gc-color-warn;
+				&:hover, &:focus {
+					text-decoration: none;
+				}
+			}
+			.btn-edit, .btn-approved {
+				background: darken($gc-color-warn, 20%);
+				color: $gc-color-primary;
+				outline: 0;
+				transition: all 0.15s ease;
+				cursor: pointer;
+				padding: 6px 12px;
+				border-radius: 6px;
+				display: inline-block;
+				margin: 0 8px;
+				&:hover, &:focus, &:active {
+					background: darken($gc-color-warn, 30%);
+				}
+			}
+			.btn-approved {
+				background: darken($gc-color-accent, 20%);
+				&:hover, &:focus, &:active {
+					background: darken($gc-color-accent, 30%);
+				}
+			}
+			tr.active {
+				td {
+					background: darken($gc-color-accent, 30%);
+				}
+			}
+		}
+		.card-form {
+			margin-top: 2em;
+			border-top: 1px solid $gc-color-accent;
+			padding-top: 2em;
+			.form-submit, .form-cancel {
+				display: block;
+				width: 30%;
+				background: $gc-color-accent;
+				color: $gc-color-primary;
+				text-transform: uppercase;
+				text-align: center;
+				line-height: 40px;
+				font-size: 16px;
+				border: 0 none;
+				outline: 0 none;
+				border-radius: 4px;
+				transition: all 0.15s ease;
+				letter-spacing: 2px;
+				margin: 15px auto 20px;
+			}
+			.form-cancel {
+				background: $gc-color-warn;
+			}
+		}
+		
+		.card-creation-actions {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: flex-start;
+			justify-content: space-evenly;
+			.card-creation-action-form {
+				flex: 0 0 280px;
+				border: solid 2px $gc-color-accent;
+				padding: 1em;
+				margin: 0.5em;
+			}
+		}
+	}
+}

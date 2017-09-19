@@ -102,23 +102,35 @@
 						<div class="card-creation-action-form">
 						  <div class="form-group">
 						    <label>Keyword</label>
-			    			<span>{{action.Keyword}}</span>
+						    <span>{{ action.Keyword }}</span>
 						  </div>
-						  <div class="form-group">
+						  <div class="form-group" *ngIf="getCondition_Target(action)">
 						    <label>Target</label>
-			    			<span>{{action.Target}}</span>
+						    <span>{{ action.Target }}</span>
 						  </div>
-						  <div class="form-group">
+						  <div class="form-group" *ngIf="getCondition_TargetValue(action)">
 						    <label>Target Value</label>
-			    			<span>{{action.TargetValue}}</span>
+						    <span>{{ action.TargetValue }}</span>
 						  </div>
-						  <div class="form-group">
+						  <div class="form-group" *ngIf="getCondition_ValueType(action)">
+						    <label>Value Type</label>
+						    <span>{{ action.ValueType }}</span>
+						  </div>
+						  <div class="form-group" *ngIf="getCondition_KeywordValue(action)">
 						    <label>Keyword Value</label>
-			    			<span>{{action.KeywordValue}}</span>
+						    <span>{{ action.KeywordValue }}</span>
 						  </div>
-						  <div class="form-group" *ngIf="action.Keyword=='Perform Action'">
+						  <div class="form-group" *ngIf="getCondition_ValueMultiple(action)">
+						  	<label>Multiple Value</label>
+						    <span>{{ action.ValueMultiple }}</span>
+						  </div>
+						  <div class="form-group" *ngIf="getCondition_ValueDivide(action)">
+						  	<label>Divide Value</label>
+						    <span>{{ action.ValueDivide }}</span>
+						  </div>
+						  <div class="form-group" *ngIf="getCondition_Description(action)">
 						    <label>Action Description</label>
-			    			<span>{{action.Description}}</span>
+						    <span>{{ action.Description }}</span>
 						  </div>
 						</div>
 						<div class="card-action-targets">
@@ -142,6 +154,11 @@
 									<div class="card-action-target" *ngFor="let player of list_others;" (click)="chooseTargetsPerAction(ii, player)" [class.selected]="isTargetPerAction(ii, player)">
 										<img src="{{ getServerAssetUrl(getPlayerByID(player).DisplayPicture) }}"><span>{{ getPlayerByID(player).DisplayName }}</span>
 									</div>
+								</div>
+							</div>
+							<div *ngIf="action.Target!='Self' && action.Target!='Friends' && action.Target!='Others'">
+								<div class="card-action-target selected" *ngFor="let player of selectedCardTargets[ii];">
+									<img src="{{ getServerAssetUrl(getPlayerByID(player).DisplayPicture) }}"><span>{{ getPlayerByID(player).DisplayName }}</span>
 								</div>
 							</div>
 						</div>

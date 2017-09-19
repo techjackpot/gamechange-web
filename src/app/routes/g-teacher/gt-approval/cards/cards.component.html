@@ -132,27 +132,39 @@
 			</div>
 			<div class="card-creation-form col-lg-12" *ngIf="selectedCard.Actions.length>0">
 				<h4 class="text-center"><label>Actions</label></h4>
-				<div class="col-md-4" *ngFor="let action of selectedCard.Actions; let ii=index;">
-					<div class="card-creation-action-form">
+				<div class="card-creation-actions">
+					<div class="card-creation-action-form" *ngFor="let action of selectedCard.Actions; let ii=index;">
 					  <div class="form-group">
 					    <label>Keyword</label>
-		    			<span>{{action.Keyword}}</span>
+					    <span>{{ action.Keyword }}</span>
 					  </div>
-					  <div class="form-group">
+					  <div class="form-group" *ngIf="getCondition_Target(action)">
 					    <label>Target</label>
-		    			<span>{{action.Target}}</span>
+					    <span>{{ action.Target }}</span>
 					  </div>
-					  <div class="form-group">
+					  <div class="form-group" *ngIf="getCondition_TargetValue(action)">
 					    <label>Target Value</label>
-		    			<span>{{action.TargetValue}}</span>
+					    <span>{{ action.TargetValue }}</span>
 					  </div>
-					  <div class="form-group">
+					  <div class="form-group" *ngIf="getCondition_ValueType(action)">
+					    <label>Value Type</label>
+					    <span>{{ action.ValueType }}</span>
+					  </div>
+					  <div class="form-group" *ngIf="getCondition_KeywordValue(action)">
 					    <label>Keyword Value</label>
-		    			<span>{{action.KeywordValue}}</span>
+					    <span>{{ action.KeywordValue }}</span>
 					  </div>
-					  <div class="form-group" *ngIf="action.Keyword=='Perform Action'">
+					  <div class="form-group" *ngIf="getCondition_ValueMultiple(action)">
+					  	<label>Multiple Value</label>
+					    <span>{{ action.ValueMultiple }}</span>
+					  </div>
+					  <div class="form-group" *ngIf="getCondition_ValueDivide(action)">
+					  	<label>Divide Value</label>
+					    <span>{{ action.ValueDivide }}</span>
+					  </div>
+					  <div class="form-group" *ngIf="getCondition_Description(action)">
 					    <label>Action Description</label>
-		    			<span>{{action.Description}}</span>
+					    <span>{{ action.Description }}</span>
 					  </div>
 					</div>
 				</div>

@@ -1,0 +1,167 @@
+<div class="view-collection">
+	<div class="card-list">
+		<div *ngIf="cardList.length>0">
+			<table class="cards-table">
+				<thead>
+					<tr>
+						<th>Title</th>
+						<th>Description</th>
+						<th>Fantasy Type</th>
+						<th>Rarity</th>
+						<th>Status</th>
+						<th>-</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr *ngFor="let card of cardList;" [class.active]="selectedCard && (card._id == selectedCard._id)">
+						<td>{{ card.Title }}</td>
+						<td>{{ card.Description }}</td>
+						<td>{{ card.Type }}</td>
+						<td>{{ card.Rarity }}</td>
+						<td>
+							<div class="" *ngIf="card.Approved">Approved</div>
+							<div class="" *ngIf="!card.Approved">Pending</div>
+						</td>
+						<td>
+							<button class="btn btn-edit" (click)="onClickedEditCard(card)" [disabled]="editMode" *ngIf="!card.Approved">Edit</button>
+							<button class="btn btn-edit" (click)="onClickedDeleteCard(card)" [disabled]="editMode" *ngIf="!card.Approved">Delete</button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div *ngIf="cardList.length==0">
+			<h4 class="text-center">There are no cards created.</h4>
+		</div>
+	</div>
+
+	<div class="card-creation clearfix" *ngIf="selectedCard && editMode">
+	  <form #f="ngForm" class="form card-form">
+			<div class="card-preview-area col-md-6">
+				<div class="card-preview-wrapper">
+					<div class="card-tile-preview">
+						<h4 class="text-center">Preview</h4>
+						<div class="card-tile {{ selectedCard.Type | lowercase }}">
+							<div class="card-title">
+								<span>{{ selectedCard.Title }}</span>
+							</div>
+							<div class="card-picture">
+								<img class="card-picture-preview" src="{{ getServerAssetUrl(selectedCard.Picture) }}">
+							</div>
+							<div class="card-description">
+								<span>{{ selectedCard.Description }}</span>
+							</div>
+							<div class="card-type">
+								<span>{{ selectedCard.Type }}</span>
+							</div>
+							<div class="card-goldcost">
+								<span>{{ selectedCard.GoldCost }}</span>
+							</div>
+						</div>
+					</div>
+
+		      <button type="submit" [disabled]="!f.form.valid && !checkCardActions()" class="btn form-submit" (click)="onSubmitUpdateCard(f)">Save</button>
+		      <button type="submit" class="btn form-cancel" (click)="onCancelUpdateCard()">Cancel</button>
+		    </div>
+			</div>
+			<div class="card-creation-form col-md-6">
+			  <div class="form-group">
+			    <label>Title</label>
+			    <input type="text" class="form-control" placeholder="Card Title" name="Title" [(ngModel)]="selectedCard.Title" required>
+			  </div>
+			  <div class="form-group">
+			    <label>Description</label>
+			    <textarea class="form-control" placeholder="Card Description" name="Description" [(ngModel)]="selectedCard.Description" required></textarea>
+			  </div>
+			  <div class="form-group">
+			    <label>Type</label>
+			    <select class="form-control" name="Type" [(ngModel)]="selectedCard.Type" required>
+	          <option value="" selected>Choose Type ...</option>
+	          <option *ngFor="let t of valueList.types" [value]="t">{{t}}</option>
+			    </select>
+			  </div>
+			  <div class="form-group">
+			    <label>Picture</label>
+			    <div><img src="{{ getServerAssetUrl(selectedCard.Picture) }}"></div>
+			    <input type="file" class="form-input-file" name="Picture" accept="image/*" (change)="fileChange($event)" required>
+			  </div>
+			  <div class="form-group">
+			    <label>Gold Cost</label>
+			    <!--<input type="number" class="form-control" name="GoldCost" step=1 min=0 [(ngModel)]="selectedCard.GoldCost" required>-->
+			    <select class="form-control" name="GoldCost" [(ngModel)]="selectedCard.GoldCost" required>
+	          <option value="0" selected>Free</option>
+	          <option *ngFor="let t of valueList.goldcosts" [value]="t">{{t}}</option>
+			    </select>
+			  </div>
+			  <div class="form-group">
+			    <label>Rarity</label>
+			    <select class="form-control" name="Rarity" [(ngModel)]="selectedCard.Rarity" required (change)="getCardActions()">
+	          <option value="" selected>Choose Rarity ...</option>
+	          <option *ngFor="let r of valueList.rarity" [value]="r">{{r}}</option>
+			    </select>
+			  </div>
+			</div>
+			<div class="clearfix"></div>
+			<div class="card-creation-form col-lg-12" *ngIf="selectedCard.Actions.length>0">
+				<h4 class="text-center">Actions</h4>
+				<div class="card-creation-actions">
+					<div class="card-creation-action-form" *ngFor="let action of selectedCard.Actions; let ii=index;">
+					  <div class="form-group">
+					    <label>Keyword</label>
+					    <select class="form-control" name="Keyword-{{ii}}" [(ngModel)]="action.Keyword" required>
+			          <option value="" selected>Choose Keyword ...</option>
+			          <optgroup label="Conditional">
+			          	<option *ngFor="let t of valueList.keywords.Conditional" [value]="t">{{t}}</option>
+			          </optgroup>
+			          <optgroup label="Auto">
+			          	<option *ngFor="let t of valueList.keywords.Auto" [value]="t">{{t}}</option>
+			          </optgroup>
+			          <optgroup label="Manual">
+			          	<option *ngFor="let t of valueList.keywords.Manual" [value]="t">{{t}}</option>
+			          </optgroup>
+					    </select>
+					  </div>
+					  <div class="form-group" *ngIf="getCondition_Target(action)">
+					    <label>Target</label>
+					    <select class="form-control" name="Target-{{ii}}" [(ngModel)]="action.Target" required>
+			          <option value="" selected>Choose Target ...</option>
+			          <option *ngFor="let t of getParams_Target(ii,action)" [value]="t">{{t}}</option>
+					    </select>
+					  </div>
+					  <div class="form-group" *ngIf="getCondition_TargetValue(action)">
+					    <label>Target Value</label>
+					    <select class="form-control" name="TargetValue-{{ii}}" [(ngModel)]="action.TargetValue" required>
+			          <option *ngFor="let t of getParams_TargetValue(ii,action)" [value]="t">{{t}}</option>
+					    </select>
+					  </div>
+					  <div class="form-group" *ngIf="getCondition_ValueType(action)">
+					    <label>Value Type</label>
+					    <select class="form-control" name="ValueType-{{ii}}" [(ngModel)]="action.ValueType" required>
+			          <option *ngFor="let t of getParams_ValueType(ii,action)" [value]="t">{{t}}</option>
+					    </select>
+					  </div>
+					  <div class="form-group" *ngIf="getCondition_KeywordValue(action)">
+					    <label>Keyword Value</label>
+					    <select class="form-control" name="KeywordValue-{{ii}}" [(ngModel)]="action.KeywordValue" required *ngIf="action.ValueType=='Any'">
+			          <option *ngFor="let t of getParams_KeywordValue()" [value]="t">{{t}}</option>
+					    </select>
+					    <input class="form-control" type="number" name="KeywordValue-{{ii}}" min="0" max="100" [(ngModel)]="action.KeywordValue" required *ngIf="action.ValueType=='Percentage'">
+					  </div>
+					  <div class="form-group" *ngIf="getCondition_ValueMultiple(action)">
+					  	<label>Multiple Value</label>
+					  	<input class="form-control" type="number" name="ValueMultiple-{{ii}}" [(ngModel)]="action.ValueMultiple" required>
+					  </div>
+					  <div class="form-group" *ngIf="getCondition_ValueDivide(action)">
+					  	<label>Divide Value</label>
+					  	<input class="form-control" type="number" name="ValueDivide-{{ii}}" [(ngModel)]="action.ValueDivide" required>
+					  </div>
+					  <div class="form-group" *ngIf="getCondition_Description(action)">
+					    <label>Action Description</label>
+					    <textarea class="form-control" placeholder="Action Description" name="ActionDescription-{{ii}}" [(ngModel)]="action.Description" required></textarea>
+					  </div>
+					</div>
+				</div>
+			</div>
+	  </form>
+	</div>
+</div>

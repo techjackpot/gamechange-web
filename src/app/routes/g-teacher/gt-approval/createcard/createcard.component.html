@@ -65,12 +65,15 @@
 		<div class="clearfix"></div>
 		<div class="card-creation-form col-lg-12" *ngIf="selectedCard.Actions.length>0">
 			<h4 class="text-center">Actions</h4>
-			<div class="col-sm-4" *ngFor="let action of selectedCard.Actions; let ii=index;">
-				<div class="card-creation-action-form">
+			<div class="card-creation-actions">
+				<div class="card-creation-action-form" *ngFor="let action of selectedCard.Actions; let ii=index;">
 				  <div class="form-group">
 				    <label>Keyword</label>
 				    <select class="form-control" name="Keyword-{{ii}}" [(ngModel)]="action.Keyword" required>
 		          <option value="" selected>Choose Keyword ...</option>
+		          <optgroup label="Conditional">
+		          	<option *ngFor="let t of valueList.keywords.Conditional" [value]="t">{{t}}</option>
+		          </optgroup>
 		          <optgroup label="Auto">
 		          	<option *ngFor="let t of valueList.keywords.Auto" [value]="t">{{t}}</option>
 		          </optgroup>
@@ -79,28 +82,41 @@
 		          </optgroup>
 				    </select>
 				  </div>
-				  <div class="form-group">
+				  <div class="form-group" *ngIf="getCondition_Target(action)">
 				    <label>Target</label>
 				    <select class="form-control" name="Target-{{ii}}" [(ngModel)]="action.Target" required>
 		          <option value="" selected>Choose Target ...</option>
-		          <option *ngFor="let t of valueList.targets" [value]="t">{{t}}</option>
+		          <option *ngFor="let t of getParams_Target(ii,action)" [value]="t">{{t}}</option>
 				    </select>
 				  </div>
-				  <div class="form-group">
+				  <div class="form-group" *ngIf="getCondition_TargetValue(action)">
 				    <label>Target Value</label>
 				    <select class="form-control" name="TargetValue-{{ii}}" [(ngModel)]="action.TargetValue" required>
-		          <option value="0" selected>None</option>
-		          <option *ngFor="let t of numberList" [value]="t">{{t}}</option>
+		          <option *ngFor="let t of getParams_TargetValue(ii,action)" [value]="t">{{t}}</option>
 				    </select>
 				  </div>
-				  <div class="form-group">
+				  <div class="form-group" *ngIf="getCondition_ValueType(action)">
+				    <label>Value Type</label>
+				    <select class="form-control" name="ValueType-{{ii}}" [(ngModel)]="action.ValueType" required>
+		          <option *ngFor="let t of getParams_ValueType(ii,action)" [value]="t">{{t}}</option>
+				    </select>
+				  </div>
+				  <div class="form-group" *ngIf="getCondition_KeywordValue(action)">
 				    <label>Keyword Value</label>
-				    <select class="form-control" name="KeywordValue-{{ii}}" [(ngModel)]="action.KeywordValue" required>
-		          <option value="0" selected>None</option>
-		          <option *ngFor="let t of numberList" [value]="t">{{t}}</option>
+				    <select class="form-control" name="KeywordValue-{{ii}}" [(ngModel)]="action.KeywordValue" required *ngIf="action.ValueType=='Any'">
+		          <option *ngFor="let t of getParams_KeywordValue()" [value]="t">{{t}}</option>
 				    </select>
+				    <input class="form-control" type="number" name="KeywordValue-{{ii}}" min="0" max="100" [(ngModel)]="action.KeywordValue" required *ngIf="action.ValueType=='Percentage'">
 				  </div>
-				  <div class="form-group" *ngIf="action.Keyword=='Perform Action'">
+				  <div class="form-group" *ngIf="getCondition_ValueMultiple(action)">
+				  	<label>Multiple Value</label>
+				  	<input class="form-control" type="number" name="ValueMultiple-{{ii}}" [(ngModel)]="action.ValueMultiple" required>
+				  </div>
+				  <div class="form-group" *ngIf="getCondition_ValueDivide(action)">
+				  	<label>Divide Value</label>
+				  	<input class="form-control" type="number" name="ValueDivide-{{ii}}" [(ngModel)]="action.ValueDivide" required>
+				  </div>
+				  <div class="form-group" *ngIf="getCondition_Description(action)">
 				    <label>Action Description</label>
 				    <textarea class="form-control" placeholder="Action Description" name="ActionDescription-{{ii}}" [(ngModel)]="action.Description" required></textarea>
 				  </div>

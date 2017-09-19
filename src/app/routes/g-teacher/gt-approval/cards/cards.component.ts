@@ -83,4 +83,30 @@ export class CardsComponent implements OnInit {
     this.previewMode = false;
     this.selectedCard = null;
   }
+
+  
+  getCondition_Target(action) {
+    return action.Keyword!='' && action.Keyword!='Persist' && action.Keyword!='Activation Time'  && action.Keyword!='Defend Negative' && action.Keyword!='Add Friend';
+  }
+  getCondition_TargetValue(action) {
+    if(action.Keyword=='Add Friend') return true;
+    return action.Keyword!='' && action.Target!='' && (action.Target=='Friends' || action.Target=='Others');
+  }
+  getCondition_ValueType(action) {
+    if(action.Keyword=='Any Title' || action.Keyword=='Any Background' || action.Keyword=='Any Points Value Over' || action.Keyword=='Any Points Value Under' || action.Keyword=='Any Gold Value Over' || action.Keyword=='Any Gold Value Under') return false;
+    return action.Keyword!='' && action.Keyword!='Persist' && action.Keyword!='Activation Time' && action.Keyword!='Defend Negative' && action.Keyword!='Perform Action' && action.Keyword!='Add Cards' && action.Keyword!='Subtract Cards' && action.Target!='';
+  }
+  getCondition_KeywordValue(action) {
+    if(action.Keyword=='Any Title' || action.Keyword=='Any Background') return false;
+    return action.Keyword!='' && ((action.Target!='' && (action.ValueType=='Any' || action.ValueType=='Percentage')) || (action.Keyword=='Defend Negative' || action.Keyword=='Persist' || action.Keyword=='Activation Time'));
+  }
+  getCondition_Description(action) {
+    return action.Keyword=='Perform Action';
+  }
+  getCondition_ValueMultiple(action) {
+    return action.ValueType=='All' || action.ValueType=='Previous';
+  }
+  getCondition_ValueDivide(action) {
+    return action.ValueType=='All' || action.ValueType=='Previous';
+  }
 }

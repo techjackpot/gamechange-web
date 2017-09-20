@@ -23,6 +23,8 @@ export class RollCallComponent implements OnInit {
   playerBonusSet = { Card: null, Point: 0, Gold: 0 };
   week_numbers = [];
   week_studentbook = 1;
+  markHistory = [];
+  Groups = [];
 
   leftCollectionCardList = [];
   selectedLeftCards = [];
@@ -207,8 +209,14 @@ export class RollCallComponent implements OnInit {
       });
     });
 
+    let p4 = new Promise((resolve, reject) => {
+      this.dataService.getGroupsForClass({_id: this.currentClass._id}).subscribe( response => {
+        this.Groups = response.Groups;
+        resolve();
+      })
+    })
 
-    Promise.all([p1, p2, p3]).then(() => {
+    Promise.all([p1, p2, p3, p4]).then(() => {
       this.leftCollectionCardList = this.leftCollectionCards();
       this.loaded = true;
     });
@@ -342,9 +350,6 @@ export class RollCallComponent implements OnInit {
             this.currentClass.CardHistory[i].TargetLeft[action_index].length = 0;
             this._performCardActions(i, action_index);
           }
-
-
-
         });
       }
 	  	this.dataService.updateClassInfo({_id: this.currentClass._id, Status: 'Started', CardHistory: this.currentClass.CardHistory, Players: this.currentClass.Players, PickUp: this.currentClass.PickUp, Collection: this.currentClass.Collection, Player_PickupPileSize: this.currentClass.Player_PickupPileSize, Player_CollectionSize: this.currentClass.Player_CollectionSize, Player_StackSize: this.currentClass.Player_StackSize, Player_HandSize: this.currentClass.Player_HandSize}).subscribe((response) => {
@@ -409,8 +414,73 @@ export class RollCallComponent implements OnInit {
             }
             this.currentClass.Players[i]=Player;
           });
+
+
+          this.currentClass.CardHistory.forEach((history, i) => {
+
+            if(history.UnResolved==0) {
+              if(history.Repeat>0) {
+              } else {
+                return;
+              }
+            }
+
+            while(this.currentClass.CardHistory[i].UnResolved > 0) {
+              console.log(this.currentClass.CardHistory[i].UnResolved);
+              let history = this.currentClass.CardHistory[i];
+              let card = this.cards[this.getIndexOfCards(this.cards,history.Card)];
+              let action_index = history.Target.length-history.UnResolved;
+              let action = card.Actions[action_index];
+              let auto_progress = true;
+
+              if(this.checkCondition_ConditionKeywords(action.Keyword)) {
+
+                let confirmed = false;
+                switch(action.Keyword) {
+                  case "Any Mark":
+                    confirmed = history.Target[action_index].every((player_id) => markHistory[this.getIndexOfMarkHistory(markHistory, player_id)].Marks.some((mark) => mark.Value==action.KeywordValue))
+                    break;
+                  case "Specific Mark":
+                  case "Any Title":
+                  case "Any Background":
+                    break;
+                  case "Any Points Value Over":
+                    confirmed = history.Target[action_index].every((player_id) => this.currentClass.Players[this.getIndexOfPlayers(this.currentClass.Players, player_id)].Point >= action.KeywordValue)
+                    break;
+                  case "Any Points Value Under":
+                    confirmed = history.Target[action_index].every((player_id) => this.currentClass.Players[this.getIndexOfPlayers(this.currentClass.Players, player_id)].Point <= action.KeywordValue)
+                    break;
+                  case "Any Gold Value Over":
+                    confirmed = history.Target[action_index].every((player_id) => this.currentClass.Players[this.getIndexOfPlayers(this.currentClass.Players, player_id)].Gold >= action.KeywordValue)
+                    break;
+                  case "Any Gold Value Under":
+                    confirmed = history.Target[action_index].every((player_id) => this.currentClass.Players[this.getIndexOfPlayers(this.currentClass.Players, player_id)].Gold <= action.KeywordValue)
+                    break;
+                  default:
+                    break;
+                }
+                if(confirmed) {
+                  this.currentClass.CardHistory[i].TargetLeft[action_index] = [];
+                  this.currentClass.CardHistory[i].TargetLeft[action_index].length = 0;
+                  console.log('this is conditional keyword', action_index, this.currentClass.CardHistory[i].UnResolved );
+                  this._performCardActions(i, action_index);
+                  this.currentClass.CardHistory[i].TargetLeft[action_index] = this.currentClass.CardHistory[i].Target[action_index].concat();
+                  console.log('done: this is conditional keyword', action_index, this.currentClass.CardHistory[i].UnResolved );
+                } else {
+                  console.log('finding next action_index', action_index, this.currentClass.CardHistory[i].UnResolved );
+                  while(++action_index<card.Actions.length && !this.checkCondition_ConditionKeywords(card.Actions[action_index].Keyword));
+                  this.currentClass.CardHistory[i].UnResolved = history.Target.length - action_index;
+                  console.log('found next action_index', action_index, this.currentClass.CardHistory[i].UnResolved );
+                }
+              } else {
+                console.log('found next action_index', action_index, this.currentClass.CardHistory[i].UnResolved );
+                break;
+              }
+            }
+
+          });
           
-          this.dataService.updateClassInfo({_id: this.currentClass._id, Players: this.currentClass.Players, Status: this.currentClass.Status, Weeks: this.currentClass.Weeks}).subscribe((response) => {
+          this.dataService.updateClassInfo({_id: this.currentClass._id, Players: this.currentClass.Players, Status: this.currentClass.Status, CardHistory: this.currentClass.CardHistory, Weeks: this.currentClass.Weeks}).subscribe((response) => {
             this.currentClass = response.Class;
             this.dataService.setCurrentClass(this.currentClass);
 
@@ -421,13 +491,46 @@ export class RollCallComponent implements OnInit {
   	}
   }
 
+  checkCondition_AnyMark(historyIndex, markHistory) {
+    let history = this.currentClass.CardHistory[historyIndex];
+    let card = this.cards[this.getIndexOfCards(this.cards,history.Card)];
+    let action_index = history.Target.length-history.UnResolved;
+    let action = card.Actions[action_index];
+
+
+
+    return false;
+  }
+
   loadCurrentGameStatus() {
-    return new Promise((resolve, reject) => {
+    let p1 = new Promise((resolve, reject) => {
       this.dataService.getGameInfo({_id: this.currentClass._id}).subscribe(response => {
         this.currentClass = response.Class;
         resolve();
       });
+    });
+
+    let p2 = new Promise((resolve, reject) => {
+      this.dataService.getStudentBook({ Class: this.currentClass._id }).subscribe( response => {
+        this.markHistory = response.MarkHistory;
+        resolve();
+      });
     })
+
+    let p3 = new Promise((resolve, reject) => {
+      this.dataService.getGroupsForClass({_id: this.currentClass._id}).subscribe( response => {
+        this.Groups = response.Groups;
+        resolve();
+      })
+    })
+
+    return Promise.all([p1, p2, p3]);
+    // return new Promise((resolve, reject) => {
+    //   this.dataService.getGameInfo({_id: this.currentClass._id}).subscribe(response => {
+    //     this.currentClass = response.Class;
+    //     resolve();
+    //   });
+    // })
   }
 
 
@@ -581,38 +684,24 @@ export class RollCallComponent implements OnInit {
 
       let auto_progress = true, unresolved = history.UnResolved, delay = history.Delay, repeat = history.Repeat, start_at = history.StartAt;
 
-      
+      console.log(history,ActionTargetIndex);
+
       card.Actions.every((action, i) => {
         if(i<card.Actions.length-unresolved) {
           return true;
         }
 
         //"Add Points", "Subtract Points", "Add Gold", "Subtract Gold", "Add Cards", "Subtract Cards"
-        let bonus = { Point: 0, Gold: 0, Cards: 0, Defence: 0, AddFriend: false };
+
         switch(action.Keyword) {
           case "Add Points":
-            bonus.Point = action.KeywordValue;
-            break;
           case "Subtract Points":
-            bonus.Point = -action.KeywordValue;
-            break;
           case "Add Gold":
-            bonus.Gold = action.KeywordValue;
-            break;
           case "Subtract Gold":
-            bonus.Gold = -action.KeywordValue;
-            break;
           case "Add Cards":
-            bonus.Cards = action.KeywordValue;
-            break;
           case "Subtract Cards":
-            bonus.Cards = -action.KeywordValue;
-            break;
           case "Defend Negative":
-            bonus.Defence = action.KeywordValue;
-            break;
           case "Add Friend":
-            bonus.AddFriend = true;
             break;
           case "Persist":
             // repeat = action.KeywordValue-1;
@@ -626,6 +715,7 @@ export class RollCallComponent implements OnInit {
             auto_progress = false;
             break;
         }
+        console.log(i, auto_progress, action);
 
         if(i==card.Actions.length-unresolved && history.TargetLeft[i].length==0) {
           auto_progress = true;
@@ -634,17 +724,85 @@ export class RollCallComponent implements OnInit {
         if(auto_progress) {
           let targets = history.Target[history.Target.length-history.UnResolved];
           let targets_left = history.TargetLeft[history.Target.length-history.UnResolved];
+          let applied = history.Applied;
 
           history.UnResolved--;
           unresolved = history.UnResolved;
 
+          console.log(targets, targets_left);
+          console.log(unresolved);
+
           targets.forEach((player_id) => {
+
+            let player = this.currentClass.Players[this.getIndexOfPlayers(this.currentClass.Players, player_id)];
+
+            let bonus = { Point: 0, Gold: 0, Cards: 0, Defence: 0, AddFriend: false };
+
+            let rValue = 0;
+            switch(action.Keyword) {
+              case "Add Points":
+              case "Subtract Points":
+                rValue = player.Point;
+                break;
+              case "Add Gold":
+              case "Subtract Gold":
+                rValue = player.Gold;
+                break;
+              default:
+                rValue = action.KeywordValue;
+                break;
+            }
+            console.log(player, rValue);
+            switch(action.ValueType) {
+              case 'All':
+                // rValue *= action.ValueMultiple / action.ValueDivide;
+                break;
+              case 'Percentage':
+                rValue *= action.KeywordValue / 100;
+                break;
+              case 'Any':
+                rValue = action.KeywordValue;
+                break;
+              case 'Previous':
+                rValue = applied[i-1].Value;
+                break;
+            }
+            rValue *= action.ValueMultiple / action.ValueDivide;
+            console.log(player, rValue);
+
+            switch(action.Keyword) {
+              case "Add Points":
+                bonus.Point = rValue;
+                break;
+              case "Subtract Points":
+                bonus.Point = -rValue;
+                break;
+              case "Add Gold":
+                bonus.Gold = rValue;
+                break;
+              case "Subtract Gold":
+                bonus.Gold = -rValue;
+                break;
+              case "Add Cards":
+                bonus.Cards = rValue = action.KeywordValue;
+                break;
+              case "Subtract Cards":
+                bonus.Cards = rValue = -action.KeywordValue;
+                break;
+              case "Defend Negative":
+                bonus.Defence = rValue = action.KeywordValue;
+                break;
+              case "Add Friend":
+                bonus.AddFriend = true;
+                break;
+              default:
+                break;
+            }
 
             if(bonus.AddFriend) {
               this.dataService.buildFriendConnection({ from: this.me._id, to: player_id }).subscribe((response) => {});
             }
 
-            let player = this.currentClass.Players[this.getIndexOfPlayers(this.currentClass.Players, player_id)];
             if(player.Defence>0 && (bonus.Point<0 || bonus.Gold<0 || bonus.Cards<0)) {
               player.Defence --;
               bonus.Point = 0;
@@ -745,5 +903,34 @@ export class RollCallComponent implements OnInit {
       this.selectedBonusPlayer = null;
       this.resetBonusSet();
     });
+  }
+
+  getCondition_Target(action) {
+    return action.Keyword!='' && action.Keyword!='Persist' && action.Keyword!='Activation Time'  && action.Keyword!='Defend Negative' && action.Keyword!='Add Friend';
+  }
+  getCondition_TargetValue(action) {
+    if(action.Keyword=='Add Friend') return true;
+    return action.Keyword!='' && action.Target!='' && (action.Target=='Friends' || action.Target=='Others');
+  }
+  getCondition_ValueType(action) {
+    if(action.Keyword=='Any Mark' || action.Keyword=='Specific Mark' || action.Keyword=='Any Title' || action.Keyword=='Any Background' || action.Keyword=='Any Points Value Over' || action.Keyword=='Any Points Value Under' || action.Keyword=='Any Gold Value Over' || action.Keyword=='Any Gold Value Under') return false;
+    return action.Keyword!='' && action.Keyword!='Persist' && action.Keyword!='Activation Time' && action.Keyword!='Defend Negative' && action.Keyword!='Perform Action' && action.Keyword!='Add Cards' && action.Keyword!='Subtract Cards' && action.Target!='';
+  }
+  getCondition_KeywordValue(action) {
+    if(action.Keyword=='Any Title' || action.Keyword=='Any Background') return false;
+    return action.Keyword!='' && ((action.Target!='' && (action.ValueType=='Any' || action.ValueType=='Percentage')) || (action.Keyword=='Defend Negative' || action.Keyword=='Persist' || action.Keyword=='Activation Time'));
+  }
+  getCondition_Description(action) {
+    return action.Keyword=='Perform Action';
+  }
+  getCondition_ValueMultiple(action) {
+    return action.ValueType=='All' || action.ValueType=='Previous';
+  }
+  getCondition_ValueDivide(action) {
+    return action.ValueType=='All' || action.ValueType=='Previous';
+  }
+
+  checkCondition_ConditionKeywords(keyword) {
+    return ["Any Mark", "Specific Mark", "Any Title", "Any Background", "Any Points Value Over", "Any Points Value Under", "Any Gold Value Over", "Any Gold Value Under"].indexOf(keyword)>=0;
   }
 }

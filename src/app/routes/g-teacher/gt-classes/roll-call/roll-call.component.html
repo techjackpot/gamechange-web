@@ -138,26 +138,41 @@
 								<div class="card-creation-action-form">
 								  <div class="form-group">
 								    <label>Keyword</label>
-					    			<span>{{action.Keyword}}</span>
+								    <span>{{ action.Keyword }}</span>
 								  </div>
-								  <div class="form-group">
+								  <div class="form-group" *ngIf="getCondition_Target(action)">
 								    <label>Target</label>
-					    			<span>{{action.Target}}</span>
+								    <span>{{ action.Target }}</span>
 								  </div>
-								  <div class="form-group">
+								  <div class="form-group" *ngIf="getCondition_TargetValue(action)">
 								    <label>Target Value</label>
-					    			<span>{{action.TargetValue}}</span>
+								    <span>{{ action.TargetValue }}</span>
 								  </div>
-								  <div class="form-group">
+								  <div class="form-group" *ngIf="getCondition_ValueType(action)">
+								    <label>Value Type</label>
+								    <span>{{ action.ValueType }}</span>
+								  </div>
+								  <div class="form-group" *ngIf="getCondition_KeywordValue(action)">
 								    <label>Keyword Value</label>
-					    			<span>{{action.KeywordValue}}</span>
+								    <span>{{ action.KeywordValue }}</span>
 								  </div>
-								  <div class="form-group" *ngIf="action.Keyword=='Perform Action'">
+								  <div class="form-group" *ngIf="getCondition_ValueMultiple(action)">
+								  	<label>Multiple Value</label>
+								    <span>{{ action.ValueMultiple }}</span>
+								  </div>
+								  <div class="form-group" *ngIf="getCondition_ValueDivide(action)">
+								  	<label>Divide Value</label>
+								    <span>{{ action.ValueDivide }}</span>
+								  </div>
+								  <div class="form-group" *ngIf="getCondition_Description(action)">
 								    <label>Action Description</label>
-					    			<span>{{action.Description}}</span>
+								    <span>{{ action.Description }}</span>
 								  </div>
 								</div>
-								<div class="card-action-targets" *ngIf="action.Keyword!='Activation Time' && action.Keyword!='Persist'">
+								<div class="card-action-targets" *ngIf="checkCondition_ConditionKeywords(action.Keyword)">
+									This card will be evaluated with this condition at the end of turn.
+								</div>
+								<div class="card-action-targets" *ngIf="action.Keyword=='Perform Action'">
 									<div *ngFor="let player of history.TargetLeft[ii];" class="card-action-target-wrapper">
 										<div class="card-action-target">
 											<img src="{{ getServerAssetUrl(getPlayerByID(player).DisplayPicture) }}"><span>{{ getPlayerByID(player).DisplayName }}</span>

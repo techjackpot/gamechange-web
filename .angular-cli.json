@@ -23,9 +23,11 @@
       ],
       "scripts": [
         "../node_modules/jquery/dist/jquery.js",
+        "../node_modules/hammerjs/hammer.min.js", 
+        "../node_modules/popper.js/dist/umd/popper.min.js",
         "../node_modules/bootstrap/dist/js/bootstrap.js",
-        "../src/assets/js/core/material.min.js",
         "../node_modules/arrive/src/arrive.js",
+        "../src/assets/js/core/material.min.js",
         "../node_modules/moment/moment.js",
         "../node_modules/chartist/dist/chartist.js",
         "../node_modules/chartist-plugin-zoom/dist/chartist-plugin-zoom.js",
@@ -49,7 +51,6 @@
 
         "../src/assets/js/core/jquery.validate.min.js"
        
-        "../node_modules/hammerjs/hammer.min.js"
       ],
       "environmentSource": "environments/environment.ts",
       "environments": {

@@ -1,27 +1,77 @@
-<div *ngIf="!loading">
-	<div class="topnav-wrapper">
-		<div class="topnav-bar">
-			<div class="topnav-logo">
-				<img src="../../../assets/images/logo.png" alt="logo" class="logo" />
-			</div>
-		</div>
-	</div>
-
-	<div class="container">
-		<div class="row">
-	    <div class="col-md-4 col-sm-6 col-md-offset-4 col-sm-offset-3">
-	      <form (ngSubmit)="onSubmitLogin(f)" #f="ngForm" class="form login-form">
-          <div class="err-message" *ngIf="!valid">{{ invalid_message }}</div>
-					<input type="email" name="email" class="form-input" placeholder="Email@address.com" ngModel required>
-					<input type="password" name="password" class="form-input" placeholder="Password" ngModel required>
-
-					<button type="submit" [disabled]="!f.form.valid" class="btn form-submit">Login</button>
-					<span class="bottom-links">
-						<a [routerLink] = "['/forgot']" class="link-forgot">?</a>
-						<a [routerLink] = "['/register']" class="link-register">Register...</a>
-					</span>
-				</form>
-	    </div>
-		</div>
-	</div>
+<div class="wrapper wrapper-full-page">
+    <nav class="navbar navbar-primary navbar-transparent navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#menu-example">
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#"><img src="../../../assets/images/logo.png" alt="logo" class="logo" /></a>
+            </div>
+            <div class="collapse navbar-collapse" id="menu-example">
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="">
+                        <a [routerLink] = "['/register']">
+                            <i class="material-icons">person_add</i> Register
+                        </a>
+                    </li>
+                    <li class=" active ">
+                        <a [routerLink] = "['/login']">
+                            <i class="material-icons">fingerprint</i> Login
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="full-page login-page" filter-color="black" data-image="../../../assets/img/login.jpeg">
+        <!--   you can change the color of the filter page using: data-color="blue | purple | green | orange | red | rose " -->
+        <div class="content">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-4 col-sm-6 col-md-offset-4 col-sm-offset-3">
+                        <form #f="ngForm" (ngSubmit)="onSubmitLogin(f)">
+                            <div class="err-message" *ngIf="!valid">{{ invalid_message }}</div>
+                            <div class="card card-login card-hidden">
+                                <div class="card-header text-center" data-background-color="rose">
+                                    <h4 class="card-title">Login</h4>
+                                </div>
+                                <div class="card-content">
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <i class="material-icons">email</i>
+                                        </span>
+                                        <div class="form-group label-floating">
+                                            <label class="control-label">Email address</label>
+                                            <input type="email" class="form-control" name="email" ngModel required>
+                                        </div>
+                                    </div>
+                                    <div class="input-group">
+                                        <span class="input-group-addon">
+                                            <i class="material-icons">lock_outline</i>
+                                        </span>
+                                        <div class="form-group label-floating">
+                                            <label class="control-label">Password</label>
+                                            <input type="password" class="form-control" name="password" ngModel required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="footer text-center">
+                                    <button type="submit" [disabled]="!f.form.valid"  class="btn btn-rose btn-simple btn-wd btn-lg">Let's go</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer class="footer">
+            <div class="container">
+                <p class="copyright pull-right">
+                    &copy;
+                    {{test | date: 'yyyy'}}
+                    <a href="#">Epiphany Games</a>
+                </p>
+            </div>
+        </footer>
+    </div>
 </div>

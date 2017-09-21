@@ -1,31 +1,142 @@
-<div *ngIf="!loading">
-  <div class="topnav-wrapper">
-    <div class="topnav-bar">
-      <div class="topnav-logo">
-        <img src="../../../assets/images/logo.png" alt="logo" class="logo" />
-      </div>
+<div class="wrapper wrapper-full-page">
+    <nav class="navbar navbar-primary navbar-transparent navbar-absolute">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#"><img src="../../../assets/images/logo.png" alt="logo" class="logo" /></a>
+            </div>
+            <div class="collapse navbar-collapse" id="menu-example">
+                <ul class="nav navbar-nav navbar-right">
+                    <li class=" active ">
+                        <a [routerLink]="['/register']">
+                            <i class="material-icons">person_add</i> Register
+                        </a>
+                    </li>
+                    <li class="">
+                        <a [routerLink]="['/login']">
+                            <i class="material-icons">fingerprint</i> Login
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="full-page register-page" filter-color="black" data-image="../assets/img/register.jpeg">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-10 col-md-offset-1">
+                    <div class="card card-signup">
+                        <h2 class="card-title text-center">Register</h2>
+                        <div class="row">
+                            <div class="col-md-5 col-md-offset-1">
+                                <div class="card-content">
+                                    <div class="info info-horizontal">
+                                        <div class="icon icon-rose">
+                                            <i class="material-icons">timeline</i>
+                                        </div>
+                                        <div class="description">
+                                            <h4 class="info-title">Marketing</h4>
+                                            <p class="description">
+                                                We've created the marketing campaign of the website. It was a very interesting collaboration.
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="info info-horizontal">
+                                        <div class="icon icon-primary">
+                                            <i class="material-icons">code</i>
+                                        </div>
+                                        <div class="description">
+                                            <h4 class="info-title">Fully Coded in HTML5</h4>
+                                            <p class="description">
+                                                We've developed the website with HTML5 and CSS3. The client has access to the code using GitHub.
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="info info-horizontal">
+                                        <div class="icon icon-info">
+                                            <i class="material-icons">group</i>
+                                        </div>
+                                        <div class="description">
+                                            <h4 class="info-title">Built Audience</h4>
+                                            <p class="description">
+                                                There is also a Fully Customizable CMS Admin Dashboard for this product.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <form class="form" (ngSubmit)="onSubmitRegister(f)" #f="ngForm" >
+                                    <div class="err-message" *ngIf="!valid">{{ invalid_message }}</div>
+                                    <div class="card-content">
+                                        <div class="input-group">
+                                            <span class="input-group-addon">
+                                                <i class="material-icons">face</i>
+                                            </span>
+                                            <input type="text" class="form-control" placeholder="First Name..." name="firstname" [(ngModel)]="model.firstname" required>
+                                        </div>
+                                        <div class="input-group">
+                                            <span class="input-group-addon">
+                                                <i class="material-icons">face</i>
+                                            </span>
+                                            <input type="text" class="form-control" placeholder="Last Name..." name="lastname" [(ngModel)]="model.lastname" required>
+                                        </div>
+                                        <div class="input-group">
+                                            <span class="input-group-addon">
+                                                <i class="material-icons">email</i>
+                                            </span>
+                                            <input type="text" class="form-control" placeholder="Email..." name="email" [(ngModel)]="model.email" required>
+                                        </div>
+                                        <div class="input-group">
+                                            <span class="input-group-addon">
+                                                <i class="material-icons">lock_outline</i>
+                                            </span>
+                                            <input type="password" placeholder="Password..." class="form-control" name="password" [(ngModel)]="model.password" required />
+                                        </div>
+                                        <div class="input-group">
+                                            <span class="input-group-addon">
+                                                <i class="material-icons">lock_outline</i>
+                                            </span>
+                                            <input type="password" placeholder="Confirm Password..." class="form-control" name="confirmpassword" [(ngModel)]="model.confirm_password" required />
+                                        </div>
+                                        <div class="input-group">
+                                            <span class="input-group-addon">
+                                                <i class="material-icons">account_circle</i>
+                                            </span>
+                                            <div class="form-group label-floating">
+                                                <label class="control-label">Role</label>
+                                                <select name="role" class="form-control" required [(ngModel)]="model.role">
+                                                    <option value="" selected></option>
+                                                    <option *ngFor="let r of roles" [value]="r">{{r}}</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <!-- If you want to add a checkbox to this form, uncomment this code -->
+                                        <!-- <div class="checkbox">
+                                            <label>
+                                                <input type="checkbox" name="optionsCheckboxes" checked> I agree to the
+                                                <a href="#something">terms and conditions</a>.
+                                            </label>
+                                        </div> -->
+                                    </div>
+                                    <div class="footer text-center">
+                                        <!-- <a href="#pablo" class="btn btn-primary btn-round">Get Started</a> -->
+                                        <button type="submit" [disabled]="!f.form.valid || model.password!=model.confirm_password || model.password=='' || model.role==''" class="btn btn-primary btn-round">Get Started</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer class="footer">
+            <div class="container">
+                <p class="copyright pull-right">
+                    &copy;
+                    {{test | date: 'yyyy'}}
+                    <a href="#">Epiphany Games</a>
+                </p>
+            </div>
+        </footer>
     </div>
-  </div>
-  <div class="container">
-    <div class="row">
-      <div class="col-md-4 col-sm-6 col-md-offset-4 col-sm-offset-3">
-        <form (ngSubmit)="onSubmitRegister(f)" #f="ngForm" class="form register-form">
-          <div class="err-message" *ngIf="!valid">{{ invalid_message }}</div>
-          <input type="text" name="firstname" class="form-input" placeholder="First Name" [(ngModel)]="model.firstname" required>
-          <input type="text" name="lastname" class="form-input" placeholder="Last Name" [(ngModel)]="model.lastname" required>
-          <input type="email" name="email" class="form-input" placeholder="Email@address.com" [(ngModel)]="model.email" required>
-          <input type="password" name="password" class="form-input input-password" placeholder="Password" [(ngModel)]="model.password" required>
-          <input type="password" name="confirm-password" class="form-input input-password" placeholder="Confirm Password" [(ngModel)]="model.confirm_password" required>
-          <select name="role" class="form-input" required [(ngModel)]="model.role">
-            <option value="" selected>Choose a Role ...</option>
-            <option *ngFor="let r of roles" [value]="r">{{r}}</option>
-          </select>
-          <button type="submit" [disabled]="!f.form.valid || model.password!=model.confirm_password || model.password=='' || model.role==''" class="btn form-submit">Register</button>
-          <span class="bottom-links">
-            <a [routerLink] = "['/login']" class="link-login">Already have account? Login ...</a>
-          </span>
-        </form>
-      </div>
-    </div>
-  </div>
 </div>

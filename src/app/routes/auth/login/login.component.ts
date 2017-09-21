@@ -4,12 +4,15 @@ import { AuthService } from '../../../core/services/auth.service';
 import { Router } from '@angular/router';
 import { NgForm } from '@angular/forms';
 
+declare var $:any;
+
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit {
+  test : Date = new Date();
 
   constructor(private authService: AuthService, private router: Router) { }
 
@@ -24,6 +27,21 @@ export class LoginComponent implements OnInit {
     //   this.loading = false;
     }
     this.loading = false;
+    this.checkFullPageBackgroundImage();
+    setTimeout(function(){
+        // after 1000 ms we add the class animated to the login/register card
+        $('.card').removeClass('card-hidden');
+    }, 700)
+  }
+
+  checkFullPageBackgroundImage() {
+      var $page = $('.full-page');
+      var image_src = $page.data('image');
+
+      if(image_src !== undefined){
+          var image_container = '<div class="full-page-background" style="background-image: url(' + image_src + ') "/>'
+          $page.append(image_container);
+      }
   }
 
   navigateUser() {

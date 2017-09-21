@@ -4,6 +4,10 @@ import { DataService } from '../../../../core/services/data.service';
 import { Router } from '@angular/router';
 import { NgForm } from '@angular/forms';
 
+declare var require: any
+
+declare var $:any;
+
 @Component({
   selector: 'app-classes',
   templateUrl: './classes.component.html',
@@ -38,6 +42,22 @@ export class ClassesComponent implements OnInit {
         // console.log(error);
       }
     );
+
+
+
+    // $('.datetimepicker').datetimepicker({
+    //     icons: {
+    //         time: "fa fa-clock-o",
+    //         date: "fa fa-calendar",
+    //         up: "fa fa-chevron-up",
+    //         down: "fa fa-chevron-down",
+    //         previous: 'fa fa-chevron-left',
+    //         next: 'fa fa-chevron-right',
+    //         today: 'fa fa-screenshot',
+    //         clear: 'fa fa-trash',
+    //         close: 'fa fa-remove'
+    //     }
+    //  });
   }
 
   selectClass(classInfo) {

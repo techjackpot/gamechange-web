@@ -4,6 +4,8 @@ import { AuthService } from '../../../core/services/auth.service';
 import { Router } from '@angular/router';
 import { NgForm } from '@angular/forms';
 
+declare var $:any;
+
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
@@ -16,7 +18,17 @@ export class RegisterComponent implements OnInit {
 	loading = true;
   valid = true;
   invalid_message = "";
+  test : Date = new Date();
 
+  checkFullPageBackgroundImage(){
+      var $page = $('.full-page');
+      var image_src = $page.data('image');
+
+      if(image_src !== undefined){
+          var image_container = '<div class="full-page-background" style="background-image: url(' + image_src + ') "/>'
+          $page.append(image_container);
+      }
+  };
   constructor(private authService: AuthService, private router: Router) {
     if (this.authService.isLoggedIn()) {
       this.router.navigate(['/']);
@@ -28,6 +40,7 @@ export class RegisterComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.checkFullPageBackgroundImage();
   }
 
   navigateUser() {

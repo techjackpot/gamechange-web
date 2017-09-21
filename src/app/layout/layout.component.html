@@ -1,9 +1,11 @@
-<div class="main-wrapper">
-	<app-header class="header-wrapper"></app-header>
-	<section>
-		<div class="content-wrapper">
-			<router-outlet></router-outlet>
-		</div>
-	</section>
-	<app-footer class="footer-wrapper"></app-footer>
+<div class="wrapper">
+    <div class="sidebar" data-active-color="white" data-background-color="black" data-image="../assets/img/sidebar-1.jpg">
+        <!-- <div class="sidebar" data-color="red" data-image=""> -->
+        <sidebar-cmp></sidebar-cmp>
+        <div class="sidebar-background" style="background-image: url(assets/img/sidebar-1.jpg)"></div>
+    </div>
+    <div class="main-panel">
+        <navbar-cmp></navbar-cmp>
+        <router-outlet></router-outlet>
+    </div>
 </div>

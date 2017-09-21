@@ -441,6 +441,12 @@ export class RollCallComponent implements OnInit {
                     confirmed = history.Target[action_index].every((player_id) => markHistory[this.getIndexOfMarkHistory(markHistory, player_id)].Marks.some((mark) => mark.Value==action.KeywordValue))
                     break;
                   case "Specific Mark":
+                    if(history.SpecificMarkTypes[action_index]=='') {
+                      confirmed = false;
+                    } else {
+                      confirmed = history.Target[action_index].every((player_id) => markHistory[this.getIndexOfMarkHistory(markHistory, player_id)].Marks.filter((mark) => mark.MarkType==history.SpecificMarkTypes[action_index]).every((mark) => mark.Value==action.KeywordValue))
+                    }
+                    break;
                   case "Any Title":
                   case "Any Background":
                     break;

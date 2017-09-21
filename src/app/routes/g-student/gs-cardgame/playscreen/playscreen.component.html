@@ -162,6 +162,11 @@
 								</div>
 							</div>
 						</div>
+						<div class="card-action-targets-marktype" *ngIf="action.Keyword=='Specific Mark'">
+							<select [(ngModel)]="selectedCardMarkTypeTargets[ii]">
+								<option *ngFor="let t of marktypes" [value]="t._id">{{ t.Name }}</option>
+							</select>
+						</div>
 					</div>
 				</div>
 			</div>

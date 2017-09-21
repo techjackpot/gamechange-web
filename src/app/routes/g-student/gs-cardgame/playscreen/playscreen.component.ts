@@ -22,6 +22,7 @@ export class PlayscreenComponent implements OnInit {
 
   selectedCard = null;
   selectedCardTargets = [[],[],[],[],[]];
+  selectedCardMarkTypeTargets = ['','','','',''];
 
   timer = null;
 
@@ -31,6 +32,7 @@ export class PlayscreenComponent implements OnInit {
   historyCardsByMe = [];
 
   markHistory = [];
+  marktypes = [];
   Groups = [];
 
   loaded = false;
@@ -72,8 +74,14 @@ export class PlayscreenComponent implements OnInit {
         resolve();
       })
     })
+    let p5 = new Promise((resolve, reject) => {
+      this.dataService.getClassMarkTypes({ Class: this.GameID }).subscribe(response => {
+        this.marktypes = response.MarkTypes;
+        resolve();
+      });
+    })
 
-    Promise.all([p1, p2, p3, p4]).then(() => {
+    Promise.all([p1, p2, p3, p4, p5]).then(() => {
       this.updateCardHistory();
 
       this.dataService.getStudentFriends({ student_id: this.me._id }).subscribe( (response) => {
@@ -359,6 +367,7 @@ export class PlayscreenComponent implements OnInit {
 
   resetSelectedCardTargets() {
     this.selectedCardTargets = [[],[],[],[],[]];
+    this.selectedCardMarkTypeTargets = ['','','','',''];
     if(this.selectedCard) {
       this.selectedCard.Actions.forEach((action, i) => {
         let friend = null;
@@ -456,6 +465,7 @@ export class PlayscreenComponent implements OnInit {
     let card = this.selectedCard;
     this.selectedCard = null;
     let card_id = card._id;
+
 
 
     this.loadCurrentGameStatus().then(() => {
@@ -629,6 +639,7 @@ export class PlayscreenComponent implements OnInit {
         Target: total_targets,
         TargetLeft: total_targets_left,
         Applied: applied,
+        SpecificMarkTypes: this.selectedCardMarkTypeTargets,
         Card: card_id,
         UnResolved: unresolved,
         Delay: delay,

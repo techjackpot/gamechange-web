@@ -6,15 +6,14 @@
 		border: solid 1px #2d4554;
 		color: #2d4554;
 		margin: 5px 0 15px;
-		line-height: 70px;
 		text-align: center;
 		outline: 0 none;
 		font-size: 16px;
 		padding: 0 1em;
 		border-radius: 4px;
 		&:focus, &:active {
-			color: #fff;
-			border-color: #00e2b6;
+			color: $gc-color-primary;
+			border-color: $gc-color-accent;
 			text-align: left;
 		}
 	}
@@ -160,7 +159,7 @@
 								margin-left: 8px;
 								transition: all 0.15s ease;
 								&:hover, &:focus, &:active {
-									color: #fff;
+									color: $gc-color-primary;
 								}
 							}
 							.btn-confirm {
@@ -250,8 +249,8 @@
 			padding: 0 1em;
 			border-radius: 4px;
 			&:focus, &:active {
-				color: #fff;
-				border-color: #00e2b6;
+				color: $gc-color-primary;
+				border-color: $gc-color-accent;
 			}
 			&.invalid {
 				border-color: $gc-color-warn;

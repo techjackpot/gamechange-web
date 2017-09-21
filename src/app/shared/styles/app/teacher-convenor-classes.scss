@@ -65,12 +65,12 @@
 				padding: 0 1em;
 				border-radius: 4px;
 				&.ng-touched {
-					color: #fff;
+					color: $gc-color-primary;
 					text-align: center;
 				}
 				&:focus, &:active {
-					color: #fff;
-					border-color: #00e2b6;
+					color: $gc-color-primary;
+					border-color: $gc-color-accent;
 					text-align: left;
 				}
 			}
@@ -80,8 +80,8 @@
 			.form-submit {
 				display: block;
 				width: 60%;
-				background: #00e2b6;
-				color: #fff;
+				background: $gc-color-accent;
+				color: $gc-color-primary;
 				text-transform: uppercase;
 				text-align: center;
 				line-height: 40px;

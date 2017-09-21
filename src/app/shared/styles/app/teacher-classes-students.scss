@@ -16,7 +16,7 @@
 		.btn-save {
 			display: block;
 			width: 60%;
-			background: #00e2b6;
+			background: $gc-color-accent;
 			color: $gc-color-primary;
 			text-transform: uppercase;
 			text-align: center;
@@ -153,11 +153,11 @@
 				border-radius: 4px;
 				text-align: left;
 				&.ng-touched {
-					color: #fff;
+					color: $gc-color-primary;
 				}
 				&:focus, &:active {
-					color: #fff;
-					border-color: #00e2b6;
+					color: $gc-color-primary;
+					border-color: $gc-color-accent;
 				}
 				&.invalid {
 					border-color: $gc-color-warn;

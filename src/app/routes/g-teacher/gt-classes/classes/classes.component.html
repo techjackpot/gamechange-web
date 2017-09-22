@@ -1,8 +1,8 @@
 <div *ngIf="assignedClasses.length>0">
-	<div class="class-list">
-		<div *ngFor="let classInfo of assignedClasses;" (click)="chooseClass(classInfo);" class="class-item" [class.active]="classInfo._id==currentClass._id" >
-			<span>{{ classInfo.Name }}</span>
-			({{ classInfo.DateTime | date : 'EEE h:mma' }} at {{ classInfo.Room }})
-		</div>
+	<div class="btn-group">
+		<button *ngFor="let classInfo of assignedClasses;" (click)="chooseClass(classInfo);" class="btn btn-round" [class.btn-success]="classInfo._id==currentClass._id" >
+			<i class="material-icons" *ngIf="classInfo._id==currentClass._id">check</i>
+			<span>{{ classInfo.Name }}</span>({{ classInfo.DateTime | date : 'EEE h:mma' }} at {{ classInfo.Room }})
+		</button>
 	</div>
 </div>

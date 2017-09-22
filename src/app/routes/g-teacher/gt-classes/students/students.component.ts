@@ -28,6 +28,8 @@ export class StudentsComponent implements OnInit {
 
   isEditMode = false;
 
+  loaded = false;
+
   constructor(private dataService: DataService, private router: Router) { }
 
   getIndexOfUsers(users,user_id) {
@@ -43,22 +45,34 @@ export class StudentsComponent implements OnInit {
   ngOnInit() {
     if(!this.dataService.getCurrentClass()) this.router.navigate(['/classes']);
     this.currentClass = Object.assign( { _id: '' }, this.dataService.getCurrentClass() );
-    this.dataService.getClassMarkTypes({ Class: this.currentClass._id }).subscribe(response => {
-      this.marktypes = response.MarkTypes;
-    });
-    this.dataService.getClassStudents(this.currentClass).subscribe(
-      response => {
+
+    let p1 = new Promise((resolve, reject) => {
+      this.dataService.getClassMarkTypes({ Class: this.currentClass._id }).subscribe(response => {
+        this.marktypes = response.MarkTypes;
+        resolve();
+      });
+    })
+
+    let p2 = new Promise((resolve, reject) => {
+      this.dataService.getClassStudents(this.currentClass).subscribe(response => {
         this.assignedStudents = response;
-        this.dataService.getStudentList().subscribe(
-          response => {
-            let that = this;
-            this.studentList = response.map(function (student) {
-              return Object.assign({ use: (that.assignedStudents.indexOf(student._id)!=-1)?true:false }, student);
-            });
-          }
-        );
-      }
-    );
+        resolve();
+      });
+    })
+
+    let p3 = new Promise((resolve, reject) => {
+      this.dataService.getStudentList().subscribe(response => {
+        this.studentList = response.map((student) => {
+          return {...student, use: this.assignedStudents.indexOf(student._id)>-1 };
+        })
+        resolve();
+      })
+    })
+
+    Promise.all([p1, p2, p3]).then(() => {
+      this.loaded = true;
+    })
+
   }
 
   toggleEditMode() {
@@ -155,6 +169,7 @@ export class StudentsComponent implements OnInit {
     if(confirm('Do you really want to remove this Mark Type?')) {
       this.dataService.removeMarkTypeFromClass({ _id: marktype._id }).subscribe((response) => {
         this.marktypes.splice(this.getIndexOfMarkTypes(this.marktypes, marktype._id), 1);
+        this.resetSelectedMarkType();
       });
     }
   }

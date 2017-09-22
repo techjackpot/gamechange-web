@@ -32,6 +32,10 @@ export class ClassesComponent implements OnInit {
   chooseClass(classInfo) {
   	this.dataService.setCurrentClass(classInfo);
   	this.currentClass = classInfo;
-    this.router.navigate(['/classes/students']);
+    this.dataService.getGameInfo({_id: this.currentClass._id}).subscribe(response => {
+      this.currentClass = response.Class;
+      this.dataService.setCurrentClass(this.currentClass);
+      this.router.navigate(['/classes/students']);
+    });
   }
 }

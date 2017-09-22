@@ -1,22 +1,22 @@
 .page-gt-classes {
-	.form-control {
-		display: block;
-		width: 100%;
-		background: transparent;
-		border: solid 1px #2d4554;
-		color: #2d4554;
-		margin: 5px 0 15px;
-		text-align: center;
-		outline: 0 none;
-		font-size: 16px;
-		padding: 0 1em;
-		border-radius: 4px;
-		&:focus, &:active {
-			color: $gc-color-primary;
-			border-color: $gc-color-accent;
-			text-align: left;
-		}
-	}
+	// .form-control {
+	// 	display: block;
+	// 	width: 100%;
+	// 	background: transparent;
+	// 	border: solid 1px #2d4554;
+	// 	color: #2d4554;
+	// 	margin: 5px 0 15px;
+	// 	text-align: center;
+	// 	outline: 0 none;
+	// 	font-size: 16px;
+	// 	padding: 0 1em;
+	// 	border-radius: 4px;
+	// 	&:focus, &:active {
+	// 		color: $gc-color-primary;
+	// 		border-color: $gc-color-accent;
+	// 		text-align: left;
+	// 	}
+	// }
 	.roll-calls-wrapper {
 		.roll-call-list {
 			.roll-call-item-wrapper {

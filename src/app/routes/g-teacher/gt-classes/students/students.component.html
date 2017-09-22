@@ -1,95 +1,127 @@
-<div class="students-wrapper">
-	<div *ngIf="isEditMode">
-		<div class="widget-label">Invite/Assign Students</div>
-    <form (ngSubmit)="onSubmitStudents(f)" #f="ngForm" class="form student-form">
-		  <div *ngIf="studentList.length>0">
-		  	<div class="students-select-list list-checkbox">
-		  		<label *ngFor="let student of studentList;" class="item-checkbox">
-		  			<input type="checkbox" name="Student-{{student._id}}" value=true [checked]="student.use" [(ngModel)]="student.use" />{{ student.DisplayName }}
-		  		</label>
-		  	</div>
-		  </div>
-		  <div *ngIf="studentList.length==0">
-		  	No students to add to class.
-		  </div>
-		  <div class="form-group">
-      	<button type="submit" class="btn-save">Update & Close</button>
-      </div>
-	  </form>
-	</div>
-	<div *ngIf="!isEditMode">
-		<div class="widget-label">Manage Class <a class="btn-edit" (click)="toggleEditMode()">Edit</a></div>
-		<div *ngIf="assignedStudents.length>0 && studentList.length>0">
-			<table class="students-table">
-				<thead>
-					<tr>
-						<th>First Name</th>
-						<th>Last Name</th>
-						<th>Preferred Name</th>
-						<th>-</th>
-						<th>Info</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr *ngFor="let student_id of assignedStudents;">
-						<td>{{ studentList[getIndexOfUsers(studentList,student_id)].Name.First }}</td>
-						<td>{{ studentList[getIndexOfUsers(studentList,student_id)].Name.Last }}</td>
-						<td>{{ studentList[getIndexOfUsers(studentList,student_id)].DisplayName }}</td>
-						<td><a href="javascript:void(0);" class="link-remove" (click)="removeStudentFromClass(student_id)">Remove</a></td>
-						<td><a [routerLink]="['/classes/student', student_id]">View</a></td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-	</div>
-	<!--<div class="tip-text">
-		<p>New students will automatically be added to this class (Test Unit)</p>
-		<p>If a new student already exists in the syste, only the Student ID is required. Name and password will be unchanged.</p>
-		<p>If unsure, you may enter only the Student ID and then edit the student if such details are missing.</p>
-		<p>Students are removed only from the class. (Test Unit)</p>
-	</div>-->
-</div>
+<ng-container *ngIf="loaded">
+	<div class="card">
+	  <div class="card-header card-header-text" data-background-color="orange">
+	    <h4 class="card-title">Class Students <ng-container *ngIf="assignedStudents.length>0">( {{ assignedStudents.length }} )</ng-container></h4>
+	  </div>
+	  <div class="card-content">
 
-<div class="marktypes-wrapper">
-		<div class="widget-label">Mark Types ( {{ marktypes && marktypes.length }} )</div>
-		<!-- <div *ngIf="marktypes.length>0"> -->
-			<table class="marktypes-table">
-				<thead>
-					<tr>
+	  	<ng-container *ngIf="isEditMode">
+		    <form (ngSubmit)="onSubmitStudents(f)" #f="ngForm" class="form-horizontal">
+			    <button type="submit" class="btn btn-danger pull-right">Done</button>
+				  <div *ngIf="studentList.length>0">
+				  	<div class="checkbox checkbox-inline" *ngFor="let student of studentList;">
+                <label><input name="Student-{{student._id}}" value=true [checked]="student.use" type="checkbox" [(ngModel)]="student.use">{{ student.DisplayName }}</label>&nbsp;&nbsp;
+            </div>
+				  </div>
+				  <div class="text-danger text-center" *ngIf="studentList.length==0">
+				  	No students to add to class.
+				  </div>
+			  </form>
+	  	</ng-container>
+
+	  	<ng-container *ngIf="!isEditMode">
+		  	<button class="btn btn-success pull-right" (click)="toggleEditMode()"><i class="material-icons">edit</i> Edit</button>
+
+		  	<div class="clearfix"></div>
+		  	<div class="table-responsive">
+		      <table class="table">
+		        <thead class="text-warning">
+		          <tr>
+		          	<th>First Name</th>
+		          	<th>Last Name</th>
+		          	<th>Preferred Name</th>
+		          	<th>Action</th>
+		          </tr>
+						</thead>
+		        <tbody>
+							<tr *ngFor="let student_id of assignedStudents;">
+								<td>{{ studentList[getIndexOfUsers(studentList,student_id)].Name.First }}</td>
+								<td>{{ studentList[getIndexOfUsers(studentList,student_id)].Name.Last }}</td>
+								<td>{{ studentList[getIndexOfUsers(studentList,student_id)].DisplayName }}</td>
+								<td class="td-actions">
+									<a class="btn btn-info" [routerLink]="['/classes/student', student_id]"><i class="material-icons">person</i></a>
+									<button class="btn btn-danger" (click)="removeStudentFromClass(student_id)"><i class="material-icons">close</i></button>
+								</td>
+		          </tr>
+		        </tbody>
+		      </table>
+	    	</div>
+	    </ng-container>
+	  </div>
+	</div>
+
+	<div class="card">
+	  <div class="card-header card-header-text" data-background-color="purple">
+	    <h4 class="card-title">Mark Types <ng-container *ngIf="marktypes.length>0">( {{ marktypes.length}} )</ng-container></h4>
+	  </div>
+	  <div class="card-content">
+	  	<div class="table-responsive">
+	  		<table class="table">
+	  			<thead class="text-primary">
 						<th>Name</th>
 						<th>Description</th>
-						<th width="50px">Multiplier</th>
-						<th width="50px">Weeks</th>
-						<th width="50px">Minimum Value</th>
-						<th width="50px">For Group?</th>
-						<th>-</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr *ngFor="let marktype of marktypes;" [class.editing]="marktype._id==selectedMarkType._id">
-						<td>{{ marktype.Name }}</td>
-						<td>{{ marktype.Description }}</td>
-						<td>{{ marktype.Multiplier }}</td>
-						<td>{{ marktype.Weeks }}</td>
-						<td>{{ marktype.MinValue }}</td>
-						<td>{{ marktype.ForGroup?'√':'' }}</td>
-						<td><a href="javascript:void(0);" class="btn btn-edit" (click)="editMarkType(marktype)">Edit</a><a href="javascript:void(0);" class="btn btn-remove" (click)="removeMarkTypeFromClass(marktype)">Remove</a></td>
-					</tr>
-					<tr *ngIf="marktypes.length==0">
-						<td colspan="6">
-							There are no Mark Types for this Class.
-						</td>
-					</tr>
-					<tr class="edit-row">
-						<td><input type="text" placeholder="Mark Type Name" [(ngModel)]="selectedMarkType.Name" [class.invalid]="!selectedMarkType.Name"></td>
-						<td><input type="text" placeholder="Description ..." [(ngModel)]="selectedMarkType.Description"></td>
-						<td><!--<select [(ngModel)]="selectedMarkType.Multiplier"></select>--><input type="number" [(ngModel)]="selectedMarkType.Multiplier" min="0.25" max="10" step="0.25" (keydown)="false"></td>
-						<td><input type="number" pattern="[0-9]" min="1" step="1" [(ngModel)]="selectedMarkType.Weeks"></td>
-						<td><input type="number" min="3" [(ngModel)]="selectedMarkType.MinValue"></td>
-						<td class="text-center"><input type="checkbox" [(ngModel)]="selectedMarkType.ForGroup"></td>
-						<td><button class="btn btn-add" (click)="addMarkTypeToClass()" *ngIf="!editingMark">Add</button><button class="btn btn-edit" (click)="updateMarkTypeToClass()" *ngIf="editingMark">Update</button><button class="btn btn-edit" (click)="cancelUpdateMarkTypeToClass()" *ngIf="editingMark">Cancel</button></td>
-					</tr>
-				</tbody>
-			</table>
-		<!-- </div> -->
-</div>
+						<th width="10%">Multiplier</th>
+						<th width="10%">Weeks</th>
+						<th width="10%">Minimum Value</th>
+						<th>For Group?</th>
+						<th class="text-center">Actions</th>
+	  			</thead>
+	  			<tbody>
+						<tr *ngFor="let marktype of marktypes;" [class.warning]="marktype._id==selectedMarkType._id">
+							<td>{{ marktype.Name }}</td>
+							<td>{{ marktype.Description }}</td>
+							<td>{{ marktype.Multiplier }}</td>
+							<td>{{ marktype.Weeks }}</td>
+							<td>{{ marktype.MinValue }}</td>
+							<td>{{ marktype.ForGroup?'Yes':'No' }}</td>
+							<td class="td-actions text-center">
+								<button class="btn btn-success" (click)="editMarkType(marktype)"><i class="material-icons">edit</i></button>
+								<button class="btn btn-danger" (click)="removeMarkTypeFromClass(marktype)"><i class="material-icons">close</i></button>
+							</td>
+						</tr>
+						<tr class="edit-row">
+							<td>
+                <div class="form-group label-floating">
+                  <label class="control-label">Mark Type Name</label>
+                  <input type="text" class="form-control" [(ngModel)]="selectedMarkType.Name" required>
+                </div>
+              </td>
+              <td>
+                <div class="form-group label-floating">
+                  <label class="control-label">Description</label>
+                  <input type="text" class="form-control" [(ngModel)]="selectedMarkType.Description" />
+                </div>
+              </td>
+              <td>
+                <div class="form-group label-floating">
+                  <label class="control-label">Multiplier</label>
+    							<input type="number" class="form-control" min="0.25" max="10" step="0.25" [(ngModel)]="selectedMarkType.Multiplier" (keydown)="false" number="true">
+                </div>
+              </td>
+              <td>
+                <div class="form-group label-floating">
+                  <label class="control-label">Weeks</label>
+    							<input type="number" class="form-control" pattern="[0-9]" min="1" step="1" [(ngModel)]="selectedMarkType.Weeks" number="true">
+                </div>
+              </td>
+              <td>
+                <div class="form-group label-floating">
+                  <label class="control-label">MinValue</label>
+    							<input type="number" class="form-control" min="3" [(ngModel)]="selectedMarkType.MinValue" number="true">
+                </div>
+							</td>
+							<td>
+                <div class="checkbox"><label><input type="checkbox" [(ngModel)]="selectedMarkType.ForGroup"></label></div>
+							</td>
+							<td class="text-center">
+								<button class="btn btn-success" (click)="addMarkTypeToClass()" *ngIf="!editingMark"><i class="material-icons">add</i>Add</button>
+								<button class="btn btn-danger btn-sm pull-right" (click)="cancelUpdateMarkTypeToClass()" *ngIf="editingMark"><i class="material-icons">close</i>Cancel</button>
+								<button class="btn btn-warning btn-sm pull-right" (click)="updateMarkTypeToClass()" *ngIf="editingMark"><i class="material-icons">edit</i>Update</button>
+							</td>
+						</tr>
+	  			</tbody>
+	  		</table>
+	  	</div>
+	  </div>
+	</div>
+</ng-container>

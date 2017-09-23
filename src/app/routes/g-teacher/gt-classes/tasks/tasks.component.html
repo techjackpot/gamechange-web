@@ -1,33 +1,80 @@
-<div class="tasks-wrapper">
-	<div class="widget-label">Today's task</div>
-	<div class="task-item task-create-form">
-		<h1>Create new Task</h1>
-	  <form (ngSubmit)="onSubmitTask(f)" #f="ngForm" class="form task-form">
-			<div class="task-label">
-				<span>Name</span>
-				<input type="text" class="task-name-field" placeholder="Task Name..." name="task-name" [(ngModel)]="model.title" required />
-        <select name="task-group" class="task-group-field" required [(ngModel)]="model.group">
-          <option value="-1" selected>Select Groups</option>
-          <option value="0">All Groups</option>
-          <option *ngFor="let g of Groups" [value]="g._id">Group {{g.Title}} Only</option>
-        </select>
-	      <button type="submit" [disabled]="!f.form.valid || model.group==-1 || model.title=='' || model.content==''" class="btn-save pull-right">Create Task</button>
-			</div>
-			<div class="task-content">
-				<textarea class="task-content-field" name="task-content" placeholder="Enter task information here" [(ngModel)]="model.content"></textarea>
-			</div>
-		</form>
+<ng-container *ngIf="loaded">
+	<div class="card">
+	  <div class="card-header card-header-text" data-background-color="orange">
+	    <h4 class="card-title">Create New Task</h4>
+	  </div>
+	  <div class="card-content">
+      <form #f="ngForm" (ngSubmit)="onSubmitTask(f)">
+        <div class="row">
+        	<div class="col-md-4">
+        		<div class="form-group label-floating">
+        			<label class="control-label">Group</label>
+        			<select name="Group" class="form-control" required [(ngModel)]="model.group">
+        				<option value=""></option>
+			          <option value="-1" selected>Select Groups</option>
+			          <option value="0">All Groups</option>
+			          <option *ngFor="let g of Groups" [value]="g._id">Group {{g.Title}} Only</option>
+        			</select>
+        		</div>
+        	</div>
+          <div class="col-md-8">
+            <div class="form-group label-floating">
+              <label class="control-label">Name</label>
+              <input type="text" class="form-control" name="Name" [(ngModel)]="model.title" required />
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <div class="form-group label-floating">
+              <label>Enter task information here</label>
+							<textarea class="form-control" name="Description" [(ngModel)]="model.content" rows="4"></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+        	<div class="col-md-12 text-right">
+      			<button type="submit" [disabled]="!f.form.valid || model.group==-1 || model.title=='' || model.content==''" class="btn btn-success"><i class="material-icons">add</i>Create Task</button>
+        	</div>
+        </div>
+      </form>
+	  </div>
 	</div>
 
-	<h1>Task List</h1>
-	<div class="task-item" *ngFor="let tk of Tasks;">
-		<div class="task-label">
-			<span>{{ tk.Title }}</span>
-			<span *ngIf="tk.Group!=null"> -- For Group {{ Groups[getIndexOfGroups(Groups,tk.Group)].Title }}</span>
-			<span *ngIf="tk.Group==null"> -- For All Group</span>
-		</div>
-		<div class="task-content">
-			<div class="task-content-div">{{ tk.Content }}</div>
-		</div>
+
+	<div class="main-content">
+    <div class="container-fluid">
+      <div class="header text-center">
+        <h3 class="title">Tasks</h3>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card card-plain">
+            <div class="card-content">
+              <ul class="timeline">
+              	<ng-container *ngFor="let task of Tasks; let ii=index">
+	                <li [class.timeline-inverted]="ii%2==0">
+	                  <div class="timeline-badge" [class.danger]="task.Group!=null" [class.success]="task.Group==null">
+	                  	<ng-container *ngIf="task.Group!=null">{{ Groups[getIndexOfGroups(Groups,task.Group)].Title }}</ng-container>
+	                  	<ng-container *ngIf="task.Group==null"><i class="material-icons">group_work</i></ng-container>
+	                  </div>
+	                  <div class="timeline-panel">
+	                    <div class="timeline-heading">
+	                      <span class="label label-danger">{{ task.Title }}</span>
+	                    </div>
+	                    <div class="timeline-body">
+	                      <p>{{ task.Content }}</p>
+	                    </div>
+	                    <h6><i class="material-icons">access_time</i> {{ task.updatedAt | date: 'longDate' }}</h6>
+	                  </div>
+	                </li>
+	              </ng-container>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 	</div>
-</div>
+
+</ng-container>

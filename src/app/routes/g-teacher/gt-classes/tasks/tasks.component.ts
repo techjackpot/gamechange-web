@@ -14,29 +14,41 @@ export class TasksComponent implements OnInit {
 	model;
   currentClass = null;
   Tasks = [];
+  loaded = false;
+
+  resetModel() {
+    this.model = {
+      title: '',
+      group: '',
+      content: ''
+    }
+  }
 
   constructor(private dataService: DataService, private router: Router) {
-  	this.model = {
-  		title: '',
-  		group: -1,
-  		content: ''
-  	}
+    this.resetModel();
   }
 
   ngOnInit() {
     if(!this.dataService.getCurrentClass()) this.router.navigate(['/classes']);
     this.currentClass = Object.assign( { _id: '' }, this.dataService.getCurrentClass() );
-    let that = this;
-    this.dataService.getGroupsForClass(this.currentClass).subscribe(
-      response => {
-      	that.Groups = response.Groups;
-        this.dataService.getClassTasks({ class_id: this.currentClass._id }).subscribe(
-          response => {
-            this.Tasks = response.Tasks;
-          }
-        );
-      }
-    );
+
+    let p1 = new Promise((resolve, reject) => {
+      this.dataService.getGroupsForClass(this.currentClass).subscribe(response => {
+        this.Groups = response.Groups;
+        resolve();
+      });
+    })
+
+    let p2 = new Promise((resolve, reject) => {
+      this.dataService.getClassTasks({ class_id: this.currentClass._id }).subscribe(response => {
+        this.Tasks = response.Tasks;
+        resolve();
+      })
+    })
+
+    Promise.all([p1, p2]).then(() => {
+      this.loaded = true;
+    })
   }
 
   getIndexOfGroups(groups,group_id) {
@@ -58,5 +70,6 @@ export class TasksComponent implements OnInit {
   	}).subscribe( response => {
   		this.Tasks.push(response.Task);
   	})
+    form.reset();
   }
 }

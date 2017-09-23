@@ -20,6 +20,11 @@
         color: $gray-dark;
         font-weight: 400;
         margin: 10px 0px 0px;
+        display: flex;
+        align-items: center;
+        i {
+            margin-right: 5px;
+        }
     }
 
     &.timeline-simple{

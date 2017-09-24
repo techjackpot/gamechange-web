@@ -1,6 +1,42 @@
-<div class="btn btn-info" (click)="goBack()">Go Back...<i class="material-icons">keyboard_return</i></div>
+<div class="btn btn-info" (click)="goBack()">Go Back <i class="material-icons">keyboard_return</i></div>
 
-<div class="student-status-info" *ngIf="loaded">
+<ng-container *ngIf="loaded">
+	<div class="col-md-12">
+	  <div class="card card-profile">
+	    <div class="card-avatar">
+	      <a>
+	        <img class="img" src="{{ getServerAssetUrl(Student.DisplayPicture) }}" />
+	      </a>
+	    </div>
+	    <div class="card-content">
+	      <h3 class="card-title">{{ Student.DisplayName }}</h3>
+
+	      <h4>Enrolled Class</h4>
+	      <div class="table-responsive">
+	      	<table class="table">
+		        <thead class="text-warning">
+		          <tr>
+		          	<th class="text-center">Week #</th>
+		          	<th class="text-center">Attendance</th>
+								<th class="text-center" *ngFor="let marktype of marktypes;">{{ marktype.Name }}</th>
+		          	<th class="text-left">Note</th>
+		          </tr>
+						</thead>
+						<tbody>
+							<tr *ngFor="let history of markHistory;">
+								<td>{{ history.Week }}</td>
+								<td>{{ history.Attendance?'/':'' }}</td>
+								<td *ngFor="let marktype of marktypes;">{{ history.Marks[getIndexOfMark(history.Marks, marktype._id)].Value || '' }}</td>
+								<td class="text-left">{{ history.Note }}</td>
+							</tr>
+						</tbody>
+	      	</table>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+</ng-container>
+<!--<div class="student-status-info" *ngIf="loaded">
 	<div class="brief-area">
 		<div class="avatar-area" [class.no-avatar]="!Student.DisplayPicture">
 			<img src="{{ getServerAssetUrl(Student.DisplayPicture) }}" class="avatar" />
@@ -10,7 +46,7 @@
 				<span class="info-item-name">Name</span>
 				<span class="info-item-content">{{ Student.DisplayName }}</span>
 			</div>
-			<!-- <div class="student-info-item">
+			<div class="student-info-item">
 				<span class="info-item-name">Title</span>
 				<span class="info-item-content"></span>
 			</div>
@@ -45,7 +81,7 @@
 			<div class="student-info-item">
 				<span class="info-item-name">Weakest Category</span>
 				<span class="info-item-content">Individual</span>
-			</div> -->
+			</div>
 		</div>
 		<div class="clearfix"></div>
 	</div>
@@ -72,4 +108,4 @@
 		</table>
 	</div>
 
-</div>
+</div>-->

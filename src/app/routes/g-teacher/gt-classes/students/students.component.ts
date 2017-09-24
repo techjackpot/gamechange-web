@@ -43,7 +43,10 @@ export class StudentsComponent implements OnInit {
   }
 
   ngOnInit() {
-    if(!this.dataService.getCurrentClass()) this.router.navigate(['/classes']);
+    if(!this.dataService.getCurrentClass()) {
+      this.router.navigate(['/classes']);
+      return false;
+    }
     this.currentClass = Object.assign( { _id: '' }, this.dataService.getCurrentClass() );
 
     let p1 = new Promise((resolve, reject) => {

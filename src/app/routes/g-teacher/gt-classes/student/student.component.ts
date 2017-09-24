@@ -22,7 +22,10 @@ export class StudentComponent implements OnInit {
   constructor(private route: ActivatedRoute, private router: Router, private dataService: DataService, private location: Location) { }
 
   ngOnInit() {
-    if(!this.dataService.getCurrentClass()) this.router.navigate(['/classes']);
+    if(!this.dataService.getCurrentClass()) {
+      this.router.navigate(['/classes']);
+      return false;
+    }
   	this.StudentID = this.route.params["_value"].student_id;
     this.currentClass = Object.assign( { _id: '' }, this.dataService.getCurrentClass() );
   	

@@ -167,7 +167,10 @@ export class RollCallComponent implements OnInit {
   }
 
   ngOnInit() {
-    if(!this.dataService.getCurrentClass()) this.router.navigate(['/classes']);
+    if(!this.dataService.getCurrentClass()) {
+      this.router.navigate(['/classes']);
+      return false;
+    }
     this.me = this.authService.getUser();
     this.currentClass = Object.assign( { _id: '' }, this.dataService.getCurrentClass() );
 

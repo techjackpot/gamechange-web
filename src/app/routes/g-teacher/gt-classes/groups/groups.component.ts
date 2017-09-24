@@ -17,7 +17,7 @@ export class GroupsComponent implements OnInit {
   currentClass = null;
 	studentList = [];
   model;
-  GroupsLoaded = false;
+  loaded = false;
   markHistory = [];
   markModel;
   week_numbers = [];
@@ -76,7 +76,10 @@ export class GroupsComponent implements OnInit {
   }
 
   ngOnInit() {
-    if(!this.dataService.getCurrentClass()) this.router.navigate(['/classes']);
+    if(!this.dataService.getCurrentClass()) {
+      this.router.navigate(['/classes']);
+      return false;
+    }
     this.currentClass = Object.assign( { _id: '' }, this.dataService.getCurrentClass() );
     this.me = this.authService.getUser();
     let p1 = new Promise((resolve, reject) => {
@@ -112,7 +115,7 @@ export class GroupsComponent implements OnInit {
     });
 
     Promise.all([p1, p2, p3, p4, p5]).then(() => {
-      this.GroupsLoaded = true;
+      this.loaded = true;
       this.resetMarkModel();
       for(let i=1;i<=this.currentClass.Weeks;i++) {
         this.week_numbers.push(i);
@@ -186,7 +189,6 @@ export class GroupsComponent implements OnInit {
       this.dataService.getGroupsForClass(this.currentClass).subscribe(
         response=> {
           this.Groups = response.Groups;
-          this.GroupsLoaded = true;
         }
       );
     });

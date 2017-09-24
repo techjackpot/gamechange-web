@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { DataService } from '../../../core/services/data.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-gt-classes',
@@ -10,12 +11,16 @@ export class GtClassesComponent implements OnInit {
 
 	currentClass = null;
 
-  constructor(private dataService: DataService) {
+  constructor(private dataService: DataService, private router: Router) {
   	this.dataService.currentClassChanged.subscribe( data => this.onCurrentClassChanged(data) );
   }
 
   ngOnInit() {
   	this.currentClass = this.dataService.getCurrentClass();
+  }
+
+  checkCurrentRoute() {
+    return this.router.url=='/classes/choose';
   }
 
   onCurrentClassChanged(data) {

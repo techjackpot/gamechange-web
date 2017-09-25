@@ -205,7 +205,7 @@
 							  <div class="form-group" *ngIf="getCondition_Target(action)">
 							    <label>Target</label>
 							    <select class="form-control" name="Target-{{ii}}" [(ngModel)]="action.Target" required>
-					          <option value="" selected>Choose Target ...</option>
+					          <option value="" disabled>Choose Target ...</option>
 					          <option *ngFor="let t of getParams_Target(ii,action)" [value]="t">{{t}}</option>
 							    </select>
 							  </div>

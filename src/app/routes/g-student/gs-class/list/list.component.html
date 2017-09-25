@@ -1,49 +1,66 @@
-<div *ngIf="detailViewMode==false">
-	<div class="class-list">
-		<div *ngIf="attendClasses.length>0">
-			<table class="classes-table">
-				<thead>
-					<th>Class Name / Day / Time / Room</th>
-					<th>Group</th>
-					<th>Class Members</th>
-				</thead>
-				<tbody>
-					<tr *ngFor="let classInfo of attendClasses;">
-						<td>{{ classInfo.Name }}<br/>{{ classInfo.DateTime | date: 'short' }}<br/>{{ classInfo.Room }}</td>
-						<td><span *ngIf="classInfo.my_group!=null">Group {{ classInfo.my_group.Title }}</span><span *ngIf="classInfo.my_group==null">No Group</span></td>
-						<td class="view-member-action" (click)="viewMembers(classInfo)">View</td>
-					</tr>
-				</tbody>
-			</table>
+<ng-container *ngIf="loaded">
+	<ng-container *ngIf="detailViewMode==false">
+		<div class="card">
+			<div class="card-header card-header-text" data-background-color="red">
+				<h4 class="card-title">Class List</h4>
+			</div>
+			<div class="card-content">
+				<ng-container *ngIf="attendClasses.length>0">
+					<div class="content table-responsive">
+						<table class="table">
+							<thead>
+								<tr>
+									<th>Class Name / Day / Time / Room</th>
+									<th>Group</th>
+									<th>Class Members</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr *ngFor="let classInfo of attendClasses;">
+									<td>{{ classInfo.Name }} ( {{ classInfo.DateTime | date : 'EEE h:mma' }} at {{ classInfo.Room }} )</td>
+									<td><span *ngIf="classInfo.my_group!=null">Group {{ classInfo.my_group.Title }}</span><span *ngIf="classInfo.my_group==null">No Group</span></td>
+									<td><a class="btn btn-danger" (click)="viewMembers(classInfo)">View</a></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</ng-container>
+				<ng-container *ngIf="attendClasses.length==0">
+					<h4 class="text-danger text-center">You don't have any active classes.</h4>
+				</ng-container>
+			</div>
 		</div>
-		<div *ngIf="attendClasses.length==0">
-			<h1>You don't have any classes.</h1>
+	</ng-container>
+	<ng-container *ngIf="detailViewMode==true">
+		<div class="clearfix">
+			<a class="btn btn-danger pull-right" (click)="goBackToList()">Go back to List<i class="material-icons">keyboard_return</i></a>
 		</div>
-	</div>
-</div>
-<div *ngIf="detailViewMode==true">
-	<div class="class-info clearfix">
-		<span class="class-name pull-left">{{ selectedClass.Name }}</span>
-		<span class="back-to-list pull-right" (click)="goBackToList()">Go back to List...</span>
-	</div>
-	<table class="students-table">
-		<tbody>
-			<tr *ngFor="let student of selectedClass.Students;">
-				<td class="img-td"><img src="{{ getServerAssetUrl(studentList[getIndexOfUsers(studentList,student.student_id)].DisplayPicture) }}" alt="{{ studentList[getIndexOfUsers(studentList,student.student_id)].DisplayName }}"></td>
-				<td><span class="student-name">{{ studentList[getIndexOfUsers(studentList,student.student_id)].DisplayName }}</span></td>
-				<td><span>In Group</span><span class="in-group" [class.ingroupyes]="student.inGroup"><span class="in-group-yes">Y</span><span>/</span><span class="in-group-no">N</span></span></td>
-				<td class="friend-status friend-status-{{checkFriendStatus(student.student_id)}}">
-					<div *ngIf="checkFriendStatus(student.student_id)=='none'">
-						<span>Add Friend</span><span class="add-friend" (click)="addFriendRequest(student.student_id)">+</span>
-					</div>
-					<div *ngIf="checkFriendStatus(student.student_id)=='waiting'">
-						<span>Friend Request is already sent!</span>
-					</div>
-					<div *ngIf="checkFriendStatus(student.student_id)=='approved'">
-						<span>Already Friend!</span>
-					</div>
-				</td>
-			</tr>
-		</tbody>
-	</table>
-</div>
+		<div class="card">
+			<div class="card-header card-header-text" data-background-color="rose">
+				<h4 class="card-title">{{ selectedClass.Name }}</h4>
+			</div>
+			<div class="card-content table-responsive">
+				<table class="students-table">
+					<tbody>
+						<tr *ngFor="let student of selectedClass.Students;">
+							<td class="img-td"><img src="{{ getServerAssetUrl(studentList[getIndexOfUsers(studentList,student.student_id)].DisplayPicture) }}" alt="{{ studentList[getIndexOfUsers(studentList,student.student_id)].DisplayName }}"></td>
+							<td><span class="student-name">{{ studentList[getIndexOfUsers(studentList,student.student_id)].DisplayName }}</span></td>
+							<td><span>In Group</span><span class="in-group" [class.ingroupyes]="student.inGroup"><span class="text-danger">Y</span><span>/</span><span class="text-muted">N</span></span></td>
+							<td class="friend-status friend-status-{{checkFriendStatus(student.student_id)}}">
+								<div *ngIf="checkFriendStatus(student.student_id)=='none'">
+									<span>Add Friend</span><span class="add-friend" (click)="addFriendRequest(student.student_id)">+</span>
+								</div>
+								<div *ngIf="checkFriendStatus(student.student_id)=='waiting'">
+									<span>Friend Request is already sent!</span>
+								</div>
+								<div *ngIf="checkFriendStatus(student.student_id)=='approved'">
+									<span>Already Friend!</span>
+								</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</ng-container>
+</ng-container>

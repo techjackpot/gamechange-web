@@ -1,21 +1,34 @@
-<div class="tasks-wrapper">
-	<div class="widget-label">Today's task</div>
-	<div *ngIf="loadComplete">
-		<div class="task-item" *ngFor="let tk of Tasks;">
-			<div class="task-label">
-				<span>{{ tk.Title }}</span>
-				<span *ngIf="tk.Group!=null"> | For Group {{ tk.Group.Title }}</span>
-				<span *ngIf="tk.Group==null"> | For All Group</span>
-				<span> | {{ tk.Class.Name }}</span>
-			</div>
-			<div class="task-content">
-				<div class="task-content-div">{{ tk.Content }}</div>
-			</div>
-		</div>
-	</div>
-	<div *ngIf="loadComplete">
-		<div *ngIf="Tasks.length==0">
-			<h2>No Tasks</h2>
-		</div>
-	</div>
-</div>
+<ng-container *ngIf="loaded">
+	<ng-container *ngIf="Tasks.length==0">
+		<h4 class="text-center text-danger">There are no tasks assigned.</h4>
+	</ng-container>
+	<ng-container *ngIf="Tasks.length>0">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card card-plain">
+          <div class="card-content">
+            <ul class="timeline">
+            	<ng-container *ngFor="let task of Tasks; let ii=index">
+                <li [class.timeline-inverted]="ii%2==0">
+                  <div class="timeline-badge" [class.danger]="task.Group!=null" [class.success]="task.Group==null">
+                  	<ng-container *ngIf="task.Group!=null">{{ Groups[getIndexOfGroups(Groups,task.Group)].Title }}</ng-container>
+                  	<ng-container *ngIf="task.Group==null"><i class="material-icons">group_work</i></ng-container>
+                  </div>
+                  <div class="timeline-panel">
+                    <div class="timeline-heading">
+                      <span class="label label-danger">{{ task.Title }}</span>
+                    </div>
+                    <div class="timeline-body">
+                      <p>{{ task.Content }}</p>
+                    </div>
+                    <h6><i class="material-icons">access_time</i> {{ task.updatedAt | date: 'longDate' }} &nbsp;<span class="label label-info">{{ task.Class.Name }}</span></h6>
+                  </div>
+                </li>
+              </ng-container>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+	</ng-container>
+</ng-container>

@@ -17,6 +17,8 @@ export class ListComponent implements OnInit {
 	detailViewMode = false;
   currentStudent;
 
+  loaded = false;
+
   constructor(private router: Router, private dataService: DataService, private authService: AuthService) { }
 
   getServerAssetUrl(url) {
@@ -35,15 +37,31 @@ export class ListComponent implements OnInit {
 
   ngOnInit() {
     this.currentStudent = this.authService.getUser();
-  	this.dataService.getAttendClasses({ student_id: this.dataService.getStudentID() }).subscribe( (response) => {
-  		this.attendClasses = response.Classes;
-      this.dataService.getStudentList().subscribe( (students) => {
-      	this.studentList = students;
+
+    let p1 = new Promise((resolve, reject) => {
+      this.dataService.getAttendClasses({ student_id: this.dataService.getStudentID() }).subscribe( (response) => {
+        this.attendClasses = response.Classes;
+        resolve();
       });
+    })
+
+    let p2 = new Promise((resolve, reject) => {
+      this.dataService.getStudentList().subscribe( (students) => {
+        this.studentList = students;
+        resolve();
+      });
+    })
+
+    let p3 = new Promise((resolve, reject) => {
       this.dataService.getStudentFriends({ student_id: this.dataService.getStudentID() }).subscribe( (response) => {
         this.friendList = response.Friends;
+        resolve();
       });
-  	});
+    })
+
+    Promise.all([p1, p2, p3]).then(() => {
+      this.loaded = true;
+    })
   }
 
   viewMembers(classInfo) {

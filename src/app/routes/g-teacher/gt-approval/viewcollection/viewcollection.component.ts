@@ -240,7 +240,7 @@ export class ViewcollectionComponent implements OnInit {
 			for(let i=0; i<actionCount-currentSize; i++) {
 				this.selectedCard.Actions.push({
 					Keyword: '',
-					Target: '',
+					Target: 'Self',
 					TargetValue: 1,
           ValueType: 'Any',
 					KeywordValue: 1,

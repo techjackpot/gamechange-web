@@ -12,7 +12,7 @@ export class TasksComponent implements OnInit {
 
   Tasks = [];
   currentStudent;
-  loadComplete = false;
+  loaded  = false;
 
   constructor(private dataService: DataService, private router: Router, private authService: AuthService) {}
 
@@ -28,10 +28,17 @@ export class TasksComponent implements OnInit {
   
   ngOnInit() {
     this.currentStudent = this.authService.getUser();
-  	this.dataService.getStudentTasks({ student_id: this.dataService.getStudentID() }).subscribe((response) => {
-  		this.Tasks = response.Tasks;
-  		this.loadComplete = true;
-  	})
+
+    let p1 = new Promise((resolve, reject) => {
+      this.dataService.getStudentTasks({ student_id: this.dataService.getStudentID() }).subscribe((response) => {
+        this.Tasks = response.Tasks;
+        resolve();
+      })
+    })
+
+    Promise.all([p1]).then(() => {
+      this.loaded = true;
+    })
   }
 
 }

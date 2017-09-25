@@ -14,6 +14,7 @@ export class FriendsComponent implements OnInit {
   currentStudent;
   requestList = [];
 
+  timer = null;
 
   loaded = false;
 
@@ -40,13 +41,19 @@ export class FriendsComponent implements OnInit {
       this.loaded = true;
     });
 
-    setInterval(() => {
+    this.timer = setInterval(() => {
       this.dataService.getStudentFriends({ student_id: this.dataService.getStudentID() }).subscribe( (response) => {
         this.requestList = response.Friends;
       });
     }, 1000 * 10);
   }
 
+  ngOnDestroy() {
+    if(this.timer) {
+      clearInterval(this.timer);
+    }
+  }
+  
   getIndexOfUsers(users,user_id) {
     let index = -1;
     users.forEach((user, i) => {

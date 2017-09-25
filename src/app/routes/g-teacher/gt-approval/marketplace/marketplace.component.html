@@ -1,0 +1,148 @@
+<ng-container *ngIf="loaded">
+  <div class="row">
+    <div class="col-md-8 col-md-offset-2">
+      <div class="nav-center">
+        <ul class="nav nav-pills nav-pills-warning nav-pills-icons" role="tablist">
+          <li class="active">
+            <a href="#itemTitles-list" role="tab" data-toggle="tab">
+              <i class="material-icons">title</i> Titles
+            </a>
+          </li>
+          <li>
+            <a href="#itemBackgrounds-list" role="tab" data-toggle="tab">
+              <i class="material-icons">collections</i> Backgrounds
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div class="tab-content">
+        <div class="tab-pane active" id="itemTitles-list">
+          <div class="card">
+            <div class="card-header card-header-text" data-background-color="rose">
+                <h4 class="card-title">Title List</h4>
+            </div>
+            <div class="card-content">
+              <div class="clearfix"></div>
+              <div class="content table-responsive">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th></th>
+                      <th>Name</th>
+                      <th>Cost</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <ng-container *ngIf="itemTitles.length>0">
+                      <tr *ngFor="let title of itemTitles; let ii=index">
+                        <td>{{ ii+1 }}</td>
+                        <td>{{ title.Name }}</td>
+                        <td>{{ title.Cost }}</td>
+                        <td class="td-actions text-right">
+                          <button class="btn btn-danger" (click)="onClickedRemoveTitle(title)"><i class="material-icons">close</i> Remove</button>
+                        </td>
+                      </tr>
+                    </ng-container>
+                    <ng-container *ngIf="itemTitles.length==0">
+                      <tr>
+                        <td colspan="4"><h4 class="text-center">There are no Titles.</h4></td>
+                      </tr>
+                    </ng-container>
+                    <tr class="edit-row">
+                      <td>#</td>
+                      <td>
+                        <div class="form-group label-floating">
+                          <label class="control-label">New Title</label>
+                          <input type="text" class="form-control" [(ngModel)]="selectedTitle.Name" required (keyup)="calcTitleEstimation()" >
+                        </div>
+                      </td>
+                      <td>
+                        <div class="form-group label-floating">
+                          <label class="control-label">Cost Estimated</label>
+                          <input type="text" class="form-control" disabled [(ngModel)]="selectedTitle.Cost">
+                        </div>
+                      </td>
+                      <td class="text-right">
+                        <button class="btn btn-success" (click)="onClickedAddTitle()"><i class="material-icons">add</i>Add</button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane" id="itemBackgrounds-list">
+          <div class="card">
+            <div class="card-header card-header-text" data-background-color="rose">
+                <h4 class="card-title">Background List</h4>
+            </div>
+            <div class="card-content">
+              <div class="clearfix"></div>
+              <form #f="ngForm">
+                <div class="content table-responsive">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th></th>
+                        <th>Name</th>
+                        <th>Cost</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <ng-container *ngIf="itemBackgrounds.length>0">
+                        <tr *ngFor="let background of itemBackgrounds; let ii=index">
+                          <td>{{ ii+1 }}</td>
+                          <td><img [src]="getServerAssetUrl(background.Picture)" /></td>
+                          <td>50</td>
+                          <td class="td-actions text-right">
+                            <button class="btn btn-danger" (click)="onClickedRemoveBackground(background)"><i class="material-icons">close</i> Remove</button>
+                          </td>
+                        </tr>
+                      </ng-container>
+                      <ng-container *ngIf="itemBackgrounds.length==0">
+                        <tr>
+                          <td colspan="4"><h4 class="text-center">There are no Backgrounds.</h4></td>
+                        </tr>
+                      </ng-container>
+                      <tr class="edit-row">
+                        <td>#</td>
+                        <td>
+                          <legend>Regular Image</legend>
+                          <div class="fileinput fileinput-new text-center" data-provides="fileinput">
+                              <div class="fileinput-preview fileinput-exists thumbnail"></div>
+                              <div>
+                                  <span class="btn btn-rose btn-round btn-file">
+                                      <span class="fileinput-new">Select image</span>
+                                      <span class="fileinput-exists">Change</span>
+                                      <input type="file" name="Picture" accept="image/*" (change)="fileChange($event)" />
+                                  </span>
+                                  <a href="#" class="btn btn-danger btn-round fileinput-exists" data-dismiss="fileinput"><i class="fa fa-times"></i> Remove</a>
+                              </div>
+                          </div>
+                          <!-- <div class="form-group label-floating">
+                            <label class="control-label">New Background</label>
+
+                            <img class="new-background-preview" />
+                            <input type="file" class="form-input-file" name="Picture" accept="image/*" (change)="fileChange($event)" required>
+                          </div> -->
+                        </td>
+                        <td>
+                        </td>
+                        <td class="text-right">
+                          <button type="submit" class="btn btn-success" (click)="onClickedAddBackground(f)"><i class="material-icons">add</i>Add</button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>

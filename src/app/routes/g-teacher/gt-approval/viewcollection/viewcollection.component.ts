@@ -1,10 +1,14 @@
-import { Component, OnInit, ElementRef } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { DataService } from '../../../../core/services/data.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { NgForm } from '@angular/forms';
 import { Http, Headers, Response, RequestOptions } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
+
+import {ImageCropperComponent, CropperSettings, Bounds} from 'ng2-img-cropper';
+
+declare var $:any;
 
 @Component({
   selector: 'app-viewcollection',
@@ -14,10 +18,12 @@ import { Observable } from 'rxjs/Observable';
 export class ViewcollectionComponent implements OnInit {
 
 	cardList = [];
+  loaded = false;
   me;
   selectedCard = null;
   selectedFile = null;
   editMode = false;
+  createMode = false;
 
 	valueList = {
 		types: ["Special", "Common", "Defence", "Offence"],
@@ -31,13 +37,59 @@ export class ViewcollectionComponent implements OnInit {
 	numberList = [1,2,3,4,5,6,7,8,9,10];
 
 
+  data:any;
+  cropperSettings:CropperSettings;
+  @ViewChild('cropper', undefined) cropper:ImageCropperComponent;
+  cropping = false;
+
+
   constructor(private router: Router, private dataService: DataService, private authService: AuthService, private element: ElementRef, private http: Http) {
+    this.cropperSettings = new CropperSettings();
+    this.cropperSettings.width = 200;
+    this.cropperSettings.height = 140;
+    this.cropperSettings.croppedWidth = 200;
+    this.cropperSettings.croppedHeight = 140;
+    this.cropperSettings.canvasWidth = 400;
+    this.cropperSettings.canvasHeight = 280;
+    this.cropperSettings.minWidth = 40;
+    this.cropperSettings.minHeight = 28;
+    this.cropperSettings.rounded = false;
+    this.cropperSettings.keepAspect = true;
+    this.cropperSettings.noFileInput = true;
+
+    this.data = {};
+  }
+
+  fileChangeListener($event) {
+    this.selectedFile = $event.target.files[0];
+    this.cropping = false;
+    if(this.selectedFile) {
+      let image:any = new Image();
+      let myReader:FileReader = new FileReader();
+      let that = this;
+      myReader.onloadend = function (loadEvent:any) {
+          image.src = loadEvent.target.result;
+          that.cropper.setImage(image);
+
+      };
+
+      myReader.readAsDataURL(this.selectedFile);
+      this.cropping = true;
+    }
   }
 
   ngOnInit() {
     this.me = this.authService.getUser();
-    this.dataService.getCards({ Creator: this.me._id }).subscribe( (response) => {
-    	this.cardList = response.Cards;
+
+    let p1 = new Promise((resolve, reject) => {
+      this.dataService.getCards({ Creator: this.me._id }).subscribe( (response) => {
+        this.cardList = response.Cards;
+        resolve();
+      })
+    })
+
+    Promise.all([p1]).then(() => {
+      this.loaded = true;
     })
   }
 
@@ -60,17 +112,33 @@ export class ViewcollectionComponent implements OnInit {
 	  this.selectedFile = event.target.files[0];
 	}
 
+  onClickedCreateCard() {
+    if(this.editMode && !confirm("Do you want to abort current edit?")) return false;
+
+    this.selectedCard = {
+      Title: '',
+      Description: '',
+      Type: '',
+      Rarity: '',
+      GoldCost: '0',
+      Picture: '',
+      Actions: [],
+      Creator: this.me._id
+    };
+    this.editMode = true;
+    this.createMode = true;
+    this.cropping = false;
+    this.getCardActions();
+  }
+
   onClickedEditCard(card) {
-  	if(this.editMode) {
-  		if(confirm("Do you want to abort current edit?")) {
-		  	this.selectedCard = Object.assign({}, card);
-		  	this.editMode = true;
-	  	}
-  	} else {
-		  this.selectedCard = Object.assign({}, card);
-	  	this.editMode = true;
-  	}
-  	this.getCardActions();
+  	if(this.editMode && !confirm("Do you want to abort current edit?")) return false;
+
+  	this.selectedCard = Object.assign({}, card);
+  	this.editMode = true;
+    this.createMode = false;
+    this.cropping = false;
+    this.getCardActions();
   }
 
   getIndexOfCards(cards,card_id) {
@@ -84,41 +152,54 @@ export class ViewcollectionComponent implements OnInit {
   }
 
   onCancelUpdateCard() {
-  	if(confirm("Do you want to cancel the update?")) {
+  	if(confirm(`Do you want to cancel ${this.createMode?'creating':'updating'} the card?`)) {
 	  	this.selectedCard = null;
 	  	this.selectedFile = null;
 	  	this.editMode = false;
+      this.cropping = false;
+      this.createMode = false;
 	  }
   }
 
   onSubmitUpdateCard(form: NgForm) {
-  	if(confirm("Do you want to update the card?")) {
+    if(this.createMode && !this.selectedFile) {
+      alert("Please select Picture to create the card.");
+      return false;
+    }
+  	if(confirm(`Do you want to ${this.createMode?'create':'update'} this card?`)) {
 
     	this.selectedCard.Actions = this.selectedCard.Actions.filter((action) => action.Keyword!='');
 
-	    let formData: FormData = new FormData();
-	    if(this.selectedFile) {
-	    	formData.append('Picture', this.selectedFile, this.selectedFile.name);
-	    }
-	    formData.append('cardData', JSON.stringify(this.selectedCard));
+	    // let formData: FormData = new FormData();
+	    // if(this.selectedFile) {
+	    // 	formData.append('Picture', this.selectedFile, this.selectedFile.name);
+	    // }
+	    // formData.append('cardData', JSON.stringify(this.selectedCard));
 
 	    let headers = new Headers();
 	    headers.set('Accept', 'application/json');
 	  	headers.append('x-chaos-token', JSON.parse(localStorage.getItem('token')));
 
-	    // let options = new RequestOptions({ headers: headers });
 	    let options = { headers: headers };
-	    this.http.post(this.dataService.url + '/api/cards/update', /*{
-	        imageData: imageData,
-	        formData: this.selectedCard
-	      }*/ formData, options)
+      let endpoint_url = this.dataService.url + '/api/cards/' + (this.createMode?'create':'update');
+
+      let formData = { 'cardData': JSON.stringify(this.selectedCard) };
+      if(this.selectedFile) {
+        formData['Picture'] = this.data.image;
+      }
+	    this.http.post(endpoint_url, formData, options)
 	    .map(res => res.json())
 	    .subscribe((response) => {
-	    	let updatedCard = response.Card;
-	    	//this.selectedCarddata.Card;
-	    	this.cardList[this.getIndexOfCards(this.cardList, updatedCard._id)] = updatedCard;
+        let returnCard = response.Card;
+        if(this.createMode) {
+          this.cardList.push(returnCard);
+        } else {
+          this.cardList[this.getIndexOfCards(this.cardList, returnCard._id)] = returnCard;
+        }
 	    	this.editMode = false;
+        this.createMode = false;
 	    	this.selectedCard = null;
+        this.cropping = false;
 	    	this.selectedFile = null;
 	    });
   	}
@@ -180,9 +261,11 @@ export class ViewcollectionComponent implements OnInit {
   }
 
 	onClickedDeleteCard(card) {
-		this.dataService.deleteCard({ card_id: card._id }).subscribe((response) => {
-			this.cardList.splice(this.getIndexOfCards(this.cardList, card._id), 1);
-		})
+    if(confirm("Do you really want to remove this card?")) {
+  		this.dataService.deleteCard({ card_id: card._id }).subscribe((response) => {
+  			this.cardList.splice(this.getIndexOfCards(this.cardList, card._id), 1);
+  		})
+    }
 	}
 
 

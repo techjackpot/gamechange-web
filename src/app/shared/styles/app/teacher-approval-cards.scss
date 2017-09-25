@@ -5,158 +5,161 @@
 		margin-bottom: 2em;
 		border-bottom: solid 1px $gc-color-accent;
 	}
-	.cards-collection {
-		.cards-table {
-			width: 100%;
-			font-size: 14px;
+
+	.cards-table {
+		width: 100%;
+		font-size: 14px;
+		text-align: center;
+		border-collapse: collapse;
+		td,th {
+			background: $gc-bg-sub;
 			text-align: center;
-			border-collapse: collapse;
-			td,th {
-				background: $gc-bg-sub;
-				text-align: center;
-				border: solid 4px $gc-bg-main;
-				padding: 6px 4px;
-			}
-			th {
-				text-transform: uppercase;
-				font-weight: 400;
-				color: $gc-color-warn;
-				font-size: 16px;
-			}
-			a {
-				color: $gc-color-warn;
-				&:hover, &:focus {
-					text-decoration: none;
-				}
-			}
-			.btn-approve, .btn-deny, .btn-preview, .btn-approved {
-				background: darken($gc-color-warn, 20%);
-				color: $gc-color-primary;
-				outline: 0;
-				transition: all 0.15s ease;
-				cursor: pointer;
-				padding: 6px 12px;
-				border-radius: 6px;
-				display: inline-block;
-				margin: 0 8px;
-				&:hover, &:focus, &:active {
-					background: darken($gc-color-warn, 30%);
-				}
-			}
-			.btn-approved {
-				background: darken($gc-color-accent, 20%);
-				&:hover, &:focus, &:active {
-					background: darken($gc-color-accent, 30%);
-				}
-			}
-			tr.active {
-				td {
-					background: darken($gc-color-accent, 30%);
-				}
-			}
+			border: solid 4px $gc-bg-main;
+			padding: 6px 4px;
 		}
-		.card-selected-preview {
-	    position: fixed;
-	    width: 100%;
-	    height: 100%;
-	    left: 0;
-	    top: 0;
-	    background: rgba(0,16,20,0.93);
-	    overflow: auto;
-	    padding: 3em;
-	    .close {
-	    	position: absolute;
-	    	right: 0;
-	    	bottom: 100%;
-	    	margin-bottom: 15px;
-	    	margin-right: 15px;
-	    	font-size: 40px;
-	    	color: $gc-color-warn;
-	    	transition: all 0.15s ease;
-	    }
-		}
-		.card-selected {
-			position: relative;
-			margin-top: 4em;
-			border-top: solid 1px $gc-color-accent;
-			padding-top: 2em;
-			color: $gc-color-primary;
+		th {
+			text-transform: uppercase;
+			font-weight: 400;
+			color: $gc-color-warn;
 			font-size: 16px;
+		}
+		a {
+			color: $gc-color-warn;
+			&:hover, &:focus {
+				text-decoration: none;
+			}
+		}
+		.btn-approve, .btn-deny, .btn-preview, .btn-approved {
+			background: darken($gc-color-warn, 20%);
+			color: $gc-color-primary;
+			outline: 0;
+			transition: all 0.15s ease;
+			cursor: pointer;
+			padding: 6px 12px;
+			border-radius: 6px;
+			display: inline-block;
+			margin: 0 8px;
+			&:hover, &:focus, &:active {
+				background: darken($gc-color-warn, 30%);
+			}
+		}
+		.btn-approved {
+			background: darken($gc-color-accent, 20%);
+			&:hover, &:focus, &:active {
+				background: darken($gc-color-accent, 30%);
+			}
+		}
+		tr.active {
+			td {
+				background: darken($gc-color-accent, 30%);
+			}
+		}
+	}
+	.card-selected {
+		position: relative;
+		margin-top: 4em;
+		border-top: solid 1px $gc-color-accent;
+		padding-top: 2em;
+		color: $gc-color-primary;
+		font-size: 16px;
+		label {
+			color: $gc-color-warn;
+		}
+		.form-group {
 			label {
-				color: $gc-color-warn;
+				margin-right: 0.5em;
 			}
-			.form-group {
-				label {
-					margin-right: 0.5em;
-				}
-			}
-			.form-control {
-				display: block;
-				width: 100%;
-				background: transparent;
-				border: solid 1px #2d4554;
-				color: #2d4554;
-				margin: 5px 0 15px;
-				line-height: 1.5em;
+		}
+		.form-control {
+			display: block;
+			width: 100%;
+			background: transparent;
+			border: solid 1px #2d4554;
+			color: #2d4554;
+			margin: 5px 0 15px;
+			line-height: 1.5em;
+			text-align: center;
+			outline: 0 none;
+			font-size: 16px;
+			padding: 0.25em 1em;
+			border-radius: 4px;
+			&.ng-touched:not(textarea) {
+				color: $gc-color-primary;
 				text-align: center;
-				outline: 0 none;
-				font-size: 16px;
-				padding: 0.25em 1em;
-				border-radius: 4px;
-				&.ng-touched:not(textarea) {
-					color: $gc-color-primary;
-					text-align: center;
-				}
-				&:focus, &:active {
-					color: $gc-color-primary;
-					border-color: $gc-color-accent;
-					text-align: left;
-				}
 			}
-			.card-creation-form {
-				img {
-			    max-width: calc(100% - 80px);
-			    max-height: 180px;
-				}
-			}
-			textarea.form-control {
-				height: 6.5em;
+			&:focus, &:active {
+				color: $gc-color-primary;
+				border-color: $gc-color-accent;
 				text-align: left;
 			}
-			.form-submit {
-				display: block;
-				width: 60%;
-				background: $gc-color-accent;
-				color: $gc-color-primary;
-				text-transform: uppercase;
-				text-align: center;
-				line-height: 40px;
-				font-size: 16px;
-				border: 0 none;
-				outline: 0 none;
-				border-radius: 4px;
-				transition: all 0.15s ease;
-				letter-spacing: 2px;
-				margin: 15px auto 20px;
-				&:disabled {
-					opacity: 0.5;
-				}
-				&:focus, &:active {
-					box-shadow: 2px inset #f00;
-				}
+		}
+		.card-creation-form {
+			img {
+		    max-width: calc(100% - 80px);
+		    max-height: 180px;
 			}
 		}
-		.card-creation-actions {
-			display: flex;
-			flex-wrap: wrap;
-			align-items: flex-start;
-			justify-content: space-evenly;
-			.card-creation-action-form {
-				flex: 0 0 280px;
-				border: solid 2px $gc-color-accent;
-				padding: 1em;
-				margin: 0.5em;
+		textarea.form-control {
+			height: 6.5em;
+			text-align: left;
+		}
+		.form-submit {
+			display: block;
+			width: 60%;
+			background: $gc-color-accent;
+			color: $gc-color-primary;
+			text-transform: uppercase;
+			text-align: center;
+			line-height: 40px;
+			font-size: 16px;
+			border: 0 none;
+			outline: 0 none;
+			border-radius: 4px;
+			transition: all 0.15s ease;
+			letter-spacing: 2px;
+			margin: 15px auto 20px;
+			&:disabled {
+				opacity: 0.5;
 			}
+			&:focus, &:active {
+				box-shadow: 2px inset #f00;
+			}
+		}
+	}
+	.card-selected-preview {
+    position: fixed;
+    width: calc(100% - 260px);
+    height: 100%;
+    right: 0;
+    top: 0;
+    background: rgba(240,240,240,0.8);
+    overflow: auto;
+    padding: 3em;
+    z-index: 9999;
+    .close {
+    	position: absolute;
+    	right: 0;
+    	top: 100%;
+    	margin-bottom: 15px;
+    	margin-right: 15px;
+    	font-size: 40px;
+    	color: $gc-color-warn;
+    	transition: all 0.15s ease;
+    	i {
+    		font-size: 100%;
+    	}
+    }
+	}
+	.card-creation-actions {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: flex-start;
+		justify-content: space-evenly;
+		.card-creation-action-form {
+			flex: 0 0 280px;
+			border: solid 2px $gc-color-accent;
+			padding: 1em;
+			margin: 0.5em;
 		}
 	}
 }

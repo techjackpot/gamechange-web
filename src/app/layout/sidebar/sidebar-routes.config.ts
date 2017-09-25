@@ -8,7 +8,7 @@ export const ROUTES: RouteInfo[] = [
     { path: '/classes/groups', title: 'Groups', icon: 'material-icons' },
     { path: '/classes/rollcall', title: 'Play Screen', icon: 'material-icons' },
     { path: '/approvals/createcard', title: 'Create a Card', icon: 'material-icons' },
-    { path: '/approvals/viewcollection', title: 'View Collection', icon: 'material-icons' },
+    { path: '/approvals/viewcollection', title: 'Cards Collection', icon: 'material-icons' },
     { path: '/approvals/cards', title: 'Cards', icon: 'material-icons' },
     { path: '/profile/home', title: 'Me', icon: 'material-icons' },
     { path: '/class/list', title: 'List', icon: 'material-icons' },
@@ -16,6 +16,7 @@ export const ROUTES: RouteInfo[] = [
     { path: '/cardgame/playgame', title: 'Play Game', icon: 'material-icons' },
     { path: '/social/friends', title: 'Friends', icon: 'material-icons' },
 
+    { path: '/approvals/marketplace', title: 'MarketPlace', icon: 'material-icons' },
     // { path: '/dashboard', title: 'Dashboard', icon: 'material-icons' },
 
     // { path: '/pages/timeline', title: 'Timeline Page', icon:'material-icons' },

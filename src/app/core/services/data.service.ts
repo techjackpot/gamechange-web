@@ -266,4 +266,25 @@ export class DataService {
     return this.http.post(this.url + '/api/marks/updatemarkhistory', data, { headers: this.getHeaders() })
       .map((response: Response) => response.json());
   }
+
+  getMarketItemTitles(data) {
+    return this.http.post(this.url + '/api/marketplace/titles/list', data, { headers: this.getHeaders() })
+      .map((response: Response) => response.json());
+  }
+  getMarketItemBackgrounds(data) {
+    return this.http.post(this.url + '/api/marketplace/backgrounds/list', data, { headers: this.getHeaders() })
+      .map((response: Response) => response.json());
+  }
+  addMarketItemTitle(data) {
+    return this.http.post(this.url + '/api/marketplace/titles/create', data, { headers: this.getHeaders() })
+      .map((response: Response) => response.json());
+  }
+  removeMarketItemTitle(data) {
+    return this.http.post(this.url + '/api/marketplace/titles/delete', data, { headers: this.getHeaders() })
+      .map((response: Response) => response.json());
+  }
+  removeMarketItemBackground(data) {
+    return this.http.post(this.url + '/api/marketplace/backgrounds/delete', data, { headers: this.getHeaders() })
+      .map((response: Response) => response.json());
+  }
 }

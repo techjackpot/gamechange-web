@@ -16,16 +16,28 @@ export class CardsComponent implements OnInit {
 	me;
 	selectedCard = null;
 	previewMode = false;
+  loaded = false;
 
   constructor(private router: Router, private authService: AuthService, private dataService: DataService) { }
 
   ngOnInit() {
     this.me = this.authService.getUser();
-    this.dataService.getCards({ Approved: false}).subscribe( (response) => {
-    	this.pendingList = response.Cards;
+    
+    let p1 = new Promise((resolve, reject) => {
+      this.dataService.getCards({ Approved: false}).subscribe( (response) => {
+      	this.pendingList = response.Cards;
+        resolve();
+      })
     })
-    this.dataService.getCards({ Approved: true}).subscribe( (response) => {
-    	this.approvedList = response.Cards;
+    let p2 = new Promise((resolve, reject) => {
+      this.dataService.getCards({ Approved: true}).subscribe( (response) => {
+      	this.approvedList = response.Cards;
+        resolve();
+      })
+    })
+
+    Promise.all([p1, p2]).then(() => {
+      this.loaded = true;
     })
   }
 

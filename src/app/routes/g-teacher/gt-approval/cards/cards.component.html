@@ -1,86 +1,216 @@
-<div class="cards-collection">
-	<div class="card-list">
-		<h4>Pending Cards</h4>
-		<div *ngIf="pendingList.length>0">
-			<table class="cards-table">
-				<thead>
-					<tr>
-						<th>Creator</th>
-						<th>Created At</th>
-						<th>Title</th>
-						<th>Status</th>
-						<th>-</th>
-						<th>-</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr *ngFor="let card of pendingList;" [class.active]="selectedCard && (card._id == selectedCard._id)">
-						<td>{{ card.Creator.DisplayName }}</td>
-						<td>{{ card.createdAt | date: 'short' }}</td>
-						<td>{{ card.Title }}</td>
-						<td>
-							<div class="btn-approved" *ngIf="card.Approved">Approved</div>
-							<div class="btn-edit" *ngIf="!card.Approved">Pending</div>
-						</td>
-						<td>
-							<button class="btn btn-preview" (click)="onClickedPreviewCard(card)">Preview</button>
-						</td>
-						<td>
-							<button class="btn btn-approve" (click)="onClickedApproveCard(card)" *ngIf="!card.Approved">Approve</button>
-							<button class="btn btn-deny" (click)="onClickedDenyCard(card)" *ngIf="!card.Approved">Reject</button>
-							<button class="btn btn-deny" (click)="onClickedUnapproveCard(card)" *ngIf="card.Approved">Unapprove</button>
-						</td>
-					</tr>
-				</tbody>
-			</table>
+<ng-container *ngIf="loaded">
+	<div class="card">
+		<div class="card-header card-header-text" data-background-color="red">
+			<h4 class="card-title">Pending Cards</h4>
 		</div>
-		<div *ngIf="pendingList.length==0">
-			<h4 class="text-center">There are no pending cards to be approved.</h4>
+		<div class="card-content">
+			<ng-container *ngIf="pendingList.length>0">
+				<div class="table-responsive">
+					<table class="table">
+						<thead class="text-danger">
+							<tr>
+								<th>Creator</th>
+								<th>Created At</th>
+								<th>Title</th>
+								<th></th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr *ngFor="let card of pendingList;" [class.active]="selectedCard && (card._id == selectedCard._id)">
+								<td>{{ card.Creator.DisplayName }}</td>
+								<td>{{ card.createdAt | date: 'short' }}</td>
+								<td>{{ card.Title }}</td>
+								<td class="td-actions text-right">
+									<button class="btn btn-info" (click)="onClickedPreviewCard(card)"><i class="material-icons">remove_red_eye</i> Preview</button>
+									<button class="btn btn-primary" (click)="onClickedApproveCard(card)"><i class="material-icons">check</i> Approve</button>
+									<button class="btn btn-danger" (click)="onClickedDenyCard(card)"><i class="material-icons">close</i> Reject</button>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</ng-container>
+			<ng-container *ngIf="pendingList.length==0">
+				<h4 class="text-center text-danger">There are no pending cards to be approved.</h4>
+			</ng-container>
 		</div>
 	</div>
-	<div class="card-list">
-		<h4>Approved Cards</h4>
-		<div *ngIf="approvedList.length>0">
-			<table class="cards-table">
-				<thead>
-					<tr>
-						<th>Creator</th>
-						<th>Created At</th>
-						<th>Title</th>
-						<th>Status</th>
-						<th>-</th>
-						<th>-</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr *ngFor="let card of approvedList;" [class.active]="selectedCard && (card._id == selectedCard._id)">
-						<td>{{ card.Creator.DisplayName }}</td>
-						<td>{{ card.createdAt | date: 'short' }}</td>
-						<td>{{ card.Title }}</td>
-						<td>
-							<div class="" *ngIf="card.Approved">Approved</div>
-							<div class="" *ngIf="!card.Approved">Pending</div>
-						</td>
-						<td>
-							<button class="btn btn-preview" (click)="onClickedPreviewCard(card)">Preview</button>
-						</td>
-						<td>
-							<button class="btn btn-approve" (click)="onClickedApproveCard(card)" *ngIf="!card.Approved">Approve</button>
-							<button class="btn btn-deny" (click)="onClickedDenyCard(card)" *ngIf="!card.Approved">Deny</button>
-							<button class="btn btn-deny" (click)="onClickedUnapproveCard(card)" *ngIf="card.Approved">Unapprove</button>
-						</td>
-					</tr>
-				</tbody>
-			</table>
+
+	<div class="card">
+		<div class="card-header card-header-text" data-background-color="orange">
+			<h4 class="card-title">Cards</h4>
 		</div>
-		<div *ngIf="approvedList.length==0">
-			<h4 class="text-center">There are no approved cards yet.</h4>
+		<div class="card-content">
+			<ng-container *ngIf="approvedList.length>0">
+				<div class="table-responsive">
+					<table class="table">
+						<thead>
+							<tr>
+								<th>Creator</th>
+								<th>Created At</th>
+								<th>Title</th>
+								<th></th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr *ngFor="let card of approvedList;" [class.active]="selectedCard && (card._id == selectedCard._id)">
+								<td>{{ card.Creator.DisplayName }}</td>
+								<td>{{ card.createdAt | date: 'short' }}</td>
+								<td>{{ card.Title }}</td>
+								<td class="td-actions text-right">
+									<button class="btn btn-info" (click)="onClickedPreviewCard(card)"><i class="material-icons">remove_red_eye</i> Preview</button>
+									<button class="btn btn-danger" (click)="onClickedUnapproveCard(card)"><i class="material-icons">do_not_disturb</i> Unapprove</button>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</ng-container>
+			<ng-container *ngIf="approvedList.length==0">
+				<h4 class="text-center text-danger">There are no approved cards yet.</h4>
+			</ng-container>
 		</div>
 	</div>
-	<div class="card-selected-preview" *ngIf="selectedCard && previewMode">
+</ng-container>
+
+<ng-container *ngIf="selectedCard && previewMode">
+	<div class="card-selected-preview">
+		<div class="card-creation container">
+	    <div class="row">
+	    	<div class="col-md-12">
+					<a class="btn btn-danger pull-right" (click)="closeCardPreview()"><i class="material-icons">close</i>Close</a>
+	    	</div>
+	      <div class="col-md-8">
+	        <div class="card">
+	          <div class="card-header card-header-text" data-background-color="rose">
+	            <h4>Card Information</h4>
+	          </div>
+	          <div class="card-content">
+	            <div class="row">
+	              <div class="col-md-3 col-sm-6">
+	                <div class="form-group">
+	                  <label class="control-label">Title</label>
+	                  <span>{{ selectedCard.Title }}</span>
+	                </div>
+	              </div>
+	              <div class="col-md-3 col-sm-6">
+	                <div class="form-group">
+	                  <label class="control-label">Type</label>
+								    <span>{{ selectedCard.Type }}</span>
+	                </div>
+	              </div>
+	              <div class="col-md-3 col-sm-6">
+	                <div class="form-group">
+	                  <label class="control-label">Gold Cost</label>
+								    <span>{{ selectedCard.GoldCost }}</span>
+	                </div>
+	              </div>
+	              <div class="col-md-3 col-sm-6">
+	                <div class="form-group">
+	                  <label class="control-label">Rarity</label>
+								    <span>{{ selectedCard.Rarity }}</span>
+	                </div>
+	              </div>
+	              <div class="col-md-12">
+	                <div class="form-group label-floating">
+	                  <label class="control-label">Description</label>
+	                  <span>{{ selectedCard.Description }}</span>
+	                </div>
+	              </div>
+	            </div>
+	            <div class="row">
+	            	<div class="col-md-12">
+	                <div class="form-group label-floating">
+	                  <label class="control-label">Card Background Info</label>
+			    					<span>{{ selectedCard.BackgroundInfo }}</span>
+	                </div>
+	            	</div>
+	            </div>
+	          </div>
+	        </div>
+	      </div>
+	      <div class="col-md-4">
+	        <div class="card">
+	          <div class="card-content">
+							<div class="card-preview-area">
+								<div class="card-preview-wrapper">
+									<div class="card-tile-preview">
+										<h4 class="text-center">Preview</h4>
+										<div class="card-tile {{ selectedCard.Type | lowercase }}">
+											<div class="card-title">
+												<span>{{ selectedCard.Title }}</span>
+											</div>
+											<div class="card-picture">
+												<!-- <img class="card-picture-preview" src="{{ getServerAssetUrl(selectedCard.Picture) }}"> -->
+												<img class="card-picture-preview" src="{{ getServerAssetUrl(selectedCard.Picture) }}" />
+											</div>
+											<div class="card-description">
+												<span>{{ selectedCard.Description }}</span>
+											</div>
+											<div class="card-type">
+												<span>{{ selectedCard.Type }}</span>
+											</div>
+											<div class="card-goldcost">
+												<span>{{ selectedCard.GoldCost }}</span>
+											</div>
+										</div>
+									</div>
+						    </div>
+							</div>
+	          </div>
+	        </div>
+	      </div>
+	      <ng-container *ngIf="selectedCard.Actions.length>0">
+		      <div class="card-creation-form col-md-12">
+						<h4>Actions</h4>
+						<div class="card-creation-actions">
+							<div class="card-creation-action-form" *ngFor="let action of selectedCard.Actions; let ii=index;">
+							  <div class="form-group">
+							    <label>Keyword</label>
+							    <span>{{ action.Keyword }}</span>
+							  </div>
+							  <div class="form-group" *ngIf="getCondition_Target(action)">
+							    <label>Target</label>
+							    <span>{{ action.Target }}</span>
+							  </div>
+							  <div class="form-group" *ngIf="getCondition_TargetValue(action)">
+							    <label>Target Value</label>
+							    <span>{{ action.TargetValue }}</span>
+							  </div>
+							  <div class="form-group" *ngIf="getCondition_ValueType(action)">
+							    <label>Value Type</label>
+							    <span>{{ action.ValueType }}</span>
+							  </div>
+							  <div class="form-group" *ngIf="getCondition_KeywordValue(action)">
+							    <label>Keyword Value</label>
+							    <span *ngIf="action.ValueType=='Any' || action.ValueType=='Percentage'">{{ action.KeywordValue }}</span>
+							  </div>
+							  <div class="form-group" *ngIf="getCondition_ValueMultiple(action)">
+							  	<label>Multiple Value</label>
+							  	<span>{{ action.ValueMultiple}}</span>
+							  </div>
+							  <div class="form-group" *ngIf="getCondition_ValueDivide(action)">
+							  	<label>Divide Value</label>
+							  	<span>{{ action.ValueDivide }}</span>
+							  </div>
+							  <div class="form-group" *ngIf="getCondition_Description(action)">
+							    <label>Action Description</label>
+							    <span>{{ action.Description }}</span>
+							  </div>
+							</div>
+						</div>
+	      	</div>
+				</ng-container>
+	  	</div>
+		</div>
+	</div>
+</ng-container>
+<!--
+<ng-container *ngIf="selectedCard && previewMode && false">
+	<div class="card-selected-preview">
 		<div class="card-selected card-form clearfix">
-			<a class="close" (click)="closeCardPreview()"><i class="fa fa-times" aria-hidden="true"></i></a>
-			<div class="card-preview-area col-md-6">
+			<a class="close" (click)="closeCardPreview()"><i class="material-icons">close</i></a>
+			<div class="card-preview-area col-md-4">
 				<div class="card-preview-wrapper">
 					<div class="card-tile-preview">
 						<h4 class="text-center"><label>Preview</label></h4>
@@ -103,32 +233,29 @@
 						</div>
 					</div>
 		    </div>
-			</div>
-			<div class="card-creation-form col-md-6">
-			  <div class="form-group">
+
+			  <div>
 			    <label>Title</label>
 			    <span>{{selectedCard.Title}}</span>
 			  </div>
-			  <div class="form-group">
+			  <div>
 			    <label>Description</label>
 			    <span>{{selectedCard.Description}}</span>
 			  </div>
-			  <div class="form-group">
+			  <div>
 			    <label>Type</label>
 			    <span>{{selectedCard.Type}}</span>
 			  </div>
-			  <div class="form-group">
-			    <label>Picture</label>
-			    <img src="{{ getServerAssetUrl(selectedCard.Picture) }}">
-			  </div>
-			  <div class="form-group">
+			  <div>
 			    <label>Gold Cost</label>
 			    <span>{{selectedCard.GoldCost}}</span>
 			  </div>
-			  <div class="form-group">
+			  <div>
 			    <label>Rarity</label>
 			    <span>{{selectedCard.Rarity}}</span>
 			  </div>
+			</div>
+			<div class="card-creation-form col-md-8">
 			</div>
 			<div class="card-creation-form col-lg-12" *ngIf="selectedCard.Actions.length>0">
 				<h4 class="text-center"><label>Actions</label></h4>
@@ -171,4 +298,4 @@
 			</div>
 		</div>
 	</div>
-</div>
+</ng-container>-->

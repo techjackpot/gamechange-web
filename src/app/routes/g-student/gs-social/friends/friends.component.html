@@ -1,8 +1,4 @@
 <ng-container *ngIf="loaded">
-	<ng-container *ngIf="requestList.length==0">
-
-	</ng-container>
-
 	<div class="card">
 		<div class="card-header card-header-text" data-background-color="rose">
 			<h4 class="card-title">Waiting Request...</h4>
@@ -86,9 +82,3 @@
 		</div>
 	</div>
 </ng-container>
-<div class="friends-list">
-	<div *ngIf="requestList.length==0">
-		<h1 class="text-warn">You don't have any friends or friend request.</h1>
-		<h2 class="text-accent">Go to Class and add friends.</h2>
-	</div>
-</div>

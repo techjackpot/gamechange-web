@@ -28,7 +28,11 @@ export class ViewcollectionComponent implements OnInit {
 	valueList = {
 		types: ["Special", "Common", "Defence", "Offence"],
 		rarity: ["Common", "Uncommon", "Rare"],
-		keywords: { "Conditional": ["Any Mark", "Specific Mark", "Any Title", "Any Background", "Any Points Value Over", "Any Points Value Under", "Any Gold Value Over", "Any Gold Value Under"], "Auto": ["Add Points", "Subtract Points", "Add Gold", "Subtract Gold", "Add Cards", "Subtract Cards"], "Manual": ["Defend Negative", "Perform Action", "Persist", "Activation Time", "Add Friend"] },
+		keywords: {
+      "Conditional": ["Any Mark", "Any Mark Over", "Any Mark Under", "Specific Mark1", "Specific Mark1 Over", "Specific Mark1 Under", "Specific Mark2", "Specific Mark2 Over", "Specific Mark2 Under", "Specific Mark3", "Specific Mark3 Over", "Specific Mark3 Under", "Any Title", "Any Background", "Any Points Value Over", "Any Points Value Under", "Any Gold Value Over", "Any Gold Value Under"],
+      "Auto": ["Add Points", "Subtract Points", "Add Gold", "Subtract Gold", "Add Cards", "Subtract Cards"],
+      "Manual": ["Defend Negative", "Perform Action", "Persist", "Activation Time", "Add Friend"]
+    },
 		targets: ["Self", "Friends", "Others", "Previous", "Highest Mark Player", "Lowest Mark Player", "Highest Gold Player", "Lowest Gold Player", "Highest Points Player", "Lowest Points Player", "Highest Mark Group", "Lowest Mark Group", "Highest Gold Group", "Lowest Gold Group", "Highest Points Group", "Lowest Points Group", "Highest Mark Friend", "Lowest Mark Friend", "Highest Gold Friend", "Lowest Gold Friend", "Highest Points Friend", "Lowest Points Friend"],
     valuetypes: ['Any', 'Percentage', 'All', 'Previous'],
 		goldcosts: [1,2,3,4,5,6,7,8,9,10], 
@@ -301,7 +305,7 @@ export class ViewcollectionComponent implements OnInit {
     return action.Keyword!='' && action.Target!='' && (action.Target=='Friends' || action.Target=='Others');
   }
   getCondition_ValueType(action) {
-    if(action.Keyword=='Any Mark' || action.Keyword=='Specific Mark' || action.Keyword=='Any Title' || action.Keyword=='Any Background' || action.Keyword=='Any Points Value Over' || action.Keyword=='Any Points Value Under' || action.Keyword=='Any Gold Value Over' || action.Keyword=='Any Gold Value Under') return false;
+    if(this.checkCondition_ConditionKeywords(action.Keyword)) return false;
     return action.Keyword!='' && action.Keyword!='Persist' && action.Keyword!='Activation Time' && action.Keyword!='Defend Negative' && action.Keyword!='Perform Action' && action.Keyword!='Add Cards' && action.Keyword!='Subtract Cards' && action.Target!='';
   }
   getCondition_KeywordValue(action) {
@@ -316,5 +320,9 @@ export class ViewcollectionComponent implements OnInit {
   }
   getCondition_ValueDivide(action) {
     return action.ValueType=='All' || action.ValueType=='Previous';
+  }
+
+  checkCondition_ConditionKeywords(keyword) {
+    return ["Any Mark", "Any Mark Over", "Any Mark Under", "Specific Mark1", "Specific Mark1 Over", "Specific Mark1 Under", "Specific Mark2", "Specific Mark2 Over", "Specific Mark2 Under", "Specific Mark3", "Specific Mark3 Over", "Specific Mark3 Under", "Any Title", "Any Background", "Any Points Value Over", "Any Points Value Under", "Any Gold Value Over", "Any Gold Value Under"].indexOf(keyword)>=0;
   }
 }

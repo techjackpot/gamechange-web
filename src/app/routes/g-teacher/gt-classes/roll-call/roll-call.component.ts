@@ -26,6 +26,9 @@ export class RollCallComponent implements OnInit {
   markHistory = [];
   Groups = [];
 
+  ownedTitles = [];
+  ownedBackgrounds = [];
+
   leftCollectionCardList = [];
   selectedLeftCards = [];
 
@@ -219,7 +222,22 @@ export class RollCallComponent implements OnInit {
       })
     })
 
-    Promise.all([p1, p2, p3, p4]).then(() => {
+    let p5 = new Promise((resolve, reject) => {
+      this.dataService.myMarketItemTitles({}).subscribe((response) => {
+        this.ownedTitles = response.OwnedTitles;
+        resolve();
+      });
+    })
+
+    let p6 = new Promise((resolve, reject) => {
+      this.dataService.myMarketItemBackgrounds({}).subscribe((response) => {
+        this.ownedBackgrounds = response.OwnedBackgrounds;
+        resolve();
+      });
+    })
+
+
+    Promise.all([p1, p2, p3, p4, p5, p6]).then(() => {
       this.leftCollectionCardList = this.leftCollectionCards();
       this.loaded = true;
     });
@@ -443,15 +461,51 @@ export class RollCallComponent implements OnInit {
                   case "Any Mark":
                     confirmed = history.Target[action_index].every((player_id) => markHistory[this.getIndexOfMarkHistory(markHistory, player_id)].Marks.some((mark) => mark.Value==action.KeywordValue))
                     break;
-                  case "Specific Mark":
-                    if(history.SpecificMarkTypes[action_index]=='') {
-                      confirmed = false;
-                    } else {
-                      confirmed = history.Target[action_index].every((player_id) => markHistory[this.getIndexOfMarkHistory(markHistory, player_id)].Marks.filter((mark) => mark.MarkType==history.SpecificMarkTypes[action_index]).every((mark) => mark.Value==action.KeywordValue))
-                    }
+                  // case "Specific Mark":
+                    // if(history.SpecificMarkTypes[action_index]=='') {
+                    //   confirmed = false;
+                    // } else {
+                    //   confirmed = history.Target[action_index].every((player_id) => markHistory[this.getIndexOfMarkHistory(markHistory, player_id)].Marks.filter((mark) => mark.MarkType==history.SpecificMarkTypes[action_index]).every((mark) => mark.Value==action.KeywordValue))
+                    // }
+                    // break;
+                  case "Any Mark Over":
+                    confirmed = history.Target[action_index].every((player_id) => markHistory[this.getIndexOfMarkHistory(markHistory, player_id)].Marks.some((mark) => mark.Value>=action.KeywordValue))
+                    break;
+                  case "Any Mark Under":
+                    confirmed = history.Target[action_index].every((player_id) => markHistory[this.getIndexOfMarkHistory(markHistory, player_id)].Marks.some((mark) => mark.Value<=action.KeywordValue))
+                    break;
+                  case "Specific Mark1":
+                    confirmed = history.Target[action_index].every((player_id) => markHistory[this.getIndexOfMarkHistory(markHistory, player_id)].Marks[0].Value==action.KeywordValue)
+                    break;
+                  case "Specific Mark1 Over":
+                    confirmed = history.Target[action_index].every((player_id) => markHistory[this.getIndexOfMarkHistory(markHistory, player_id)].Marks[0].Value>=action.KeywordValue)
+                    break;
+                  case "Specific Mark1 Under":
+                    confirmed = history.Target[action_index].every((player_id) => markHistory[this.getIndexOfMarkHistory(markHistory, player_id)].Marks[0].Value<=action.KeywordValue)
+                    break;
+                  case "Specific Mark2":
+                    confirmed = history.Target[action_index].every((player_id) => markHistory[this.getIndexOfMarkHistory(markHistory, player_id)].Marks[1].Value==action.KeywordValue)
+                    break;
+                  case "Specific Mark2 Over":
+                    confirmed = history.Target[action_index].every((player_id) => markHistory[this.getIndexOfMarkHistory(markHistory, player_id)].Marks[1].Value>=action.KeywordValue)
+                    break;
+                  case "Specific Mark2 Under":
+                    confirmed = history.Target[action_index].every((player_id) => markHistory[this.getIndexOfMarkHistory(markHistory, player_id)].Marks[1].Value<=action.KeywordValue)
+                    break;
+                  case "Specific Mark3":
+                    confirmed = history.Target[action_index].every((player_id) => markHistory[this.getIndexOfMarkHistory(markHistory, player_id)].Marks[2].Value==action.KeywordValue)
+                    break;
+                  case "Specific Mark3 Over":
+                    confirmed = history.Target[action_index].every((player_id) => markHistory[this.getIndexOfMarkHistory(markHistory, player_id)].Marks[2].Value>=action.KeywordValue)
+                    break;
+                  case "Specific Mark3 Under":
+                    confirmed = history.Target[action_index].every((player_id) => markHistory[this.getIndexOfMarkHistory(markHistory, player_id)].Marks[2].Value<=action.KeywordValue)
                     break;
                   case "Any Title":
+                    confirmed = history.Target[action_index].every((player_id) => this.ownedTitles.some((title) => title.Student==player_id))
+                    break;
                   case "Any Background":
+                    confirmed = history.Target[action_index].every((player_id) => this.ownedBackgrounds.some((background) => background.Student==player_id))
                     break;
                   case "Any Points Value Over":
                     confirmed = history.Target[action_index].every((player_id) => this.currentClass.Players[this.getIndexOfPlayers(this.currentClass.Players, player_id)].Point >= action.KeywordValue)
@@ -726,6 +780,8 @@ export class RollCallComponent implements OnInit {
         }
         console.log(i, auto_progress, action);
 
+        // let applied_value = 0;
+
         if(i==card.Actions.length-unresolved && history.TargetLeft[i].length==0) {
           auto_progress = true;
         }
@@ -807,6 +863,9 @@ export class RollCallComponent implements OnInit {
               default:
                 break;
             }
+
+            // applied_value = rValue;
+            history.Applied[i].Value = rValue;
 
             if(bonus.AddFriend) {
               this.dataService.buildFriendConnection({ from: this.me._id, to: player_id }).subscribe((response) => {});
@@ -922,7 +981,7 @@ export class RollCallComponent implements OnInit {
     return action.Keyword!='' && action.Target!='' && (action.Target=='Friends' || action.Target=='Others');
   }
   getCondition_ValueType(action) {
-    if(action.Keyword=='Any Mark' || action.Keyword=='Specific Mark' || action.Keyword=='Any Title' || action.Keyword=='Any Background' || action.Keyword=='Any Points Value Over' || action.Keyword=='Any Points Value Under' || action.Keyword=='Any Gold Value Over' || action.Keyword=='Any Gold Value Under') return false;
+    if(this.checkCondition_ConditionKeywords(action.Keyword)) return false;
     return action.Keyword!='' && action.Keyword!='Persist' && action.Keyword!='Activation Time' && action.Keyword!='Defend Negative' && action.Keyword!='Perform Action' && action.Keyword!='Add Cards' && action.Keyword!='Subtract Cards' && action.Target!='';
   }
   getCondition_KeywordValue(action) {
@@ -940,6 +999,6 @@ export class RollCallComponent implements OnInit {
   }
 
   checkCondition_ConditionKeywords(keyword) {
-    return ["Any Mark", "Specific Mark", "Any Title", "Any Background", "Any Points Value Over", "Any Points Value Under", "Any Gold Value Over", "Any Gold Value Under"].indexOf(keyword)>=0;
+    return ["Any Mark", "Any Mark Over", "Any Mark Under", "Specific Mark1", "Specific Mark1 Over", "Specific Mark1 Under", "Specific Mark2", "Specific Mark2 Over", "Specific Mark2 Under", "Specific Mark3", "Specific Mark3 Over", "Specific Mark3 Under", "Any Title", "Any Background", "Any Points Value Over", "Any Points Value Under", "Any Gold Value Over", "Any Gold Value Under"].indexOf(keyword)>=0;
   }
 }

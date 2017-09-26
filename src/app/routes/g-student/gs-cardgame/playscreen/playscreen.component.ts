@@ -22,7 +22,7 @@ export class PlayscreenComponent implements OnInit {
 
   selectedCard = null;
   selectedCardTargets = [[],[],[],[],[]];
-  selectedCardMarkTypeTargets = ['','','','',''];
+  // selectedCardMarkTypeTargets = ['','','','',''];
 
   timer = null;
 
@@ -367,7 +367,7 @@ export class PlayscreenComponent implements OnInit {
 
   resetSelectedCardTargets() {
     this.selectedCardTargets = [[],[],[],[],[]];
-    this.selectedCardMarkTypeTargets = ['','','','',''];
+    // this.selectedCardMarkTypeTargets = ['','','','',''];
     if(this.selectedCard) {
       this.selectedCard.Actions.forEach((action, i) => {
         let friend = null;
@@ -639,7 +639,7 @@ export class PlayscreenComponent implements OnInit {
         Target: total_targets,
         TargetLeft: total_targets_left,
         Applied: applied,
-        SpecificMarkTypes: this.selectedCardMarkTypeTargets,
+        // SpecificMarkTypes: this.selectedCardMarkTypeTargets,
         Card: card_id,
         UnResolved: unresolved,
         Delay: delay,
@@ -712,7 +712,7 @@ export class PlayscreenComponent implements OnInit {
     return action.Keyword!='' && action.Target!='' && (action.Target=='Friends' || action.Target=='Others');
   }
   getCondition_ValueType(action) {
-    if(action.Keyword=='Any Mark' || action.Keyword=='Specific Mark' || action.Keyword=='Any Title' || action.Keyword=='Any Background' || action.Keyword=='Any Points Value Over' || action.Keyword=='Any Points Value Under' || action.Keyword=='Any Gold Value Over' || action.Keyword=='Any Gold Value Under') return false;
+    if(this.checkCondition_ConditionKeywords(action.Keyword)) return false;
     return action.Keyword!='' && action.Keyword!='Persist' && action.Keyword!='Activation Time' && action.Keyword!='Defend Negative' && action.Keyword!='Perform Action' && action.Keyword!='Add Cards' && action.Keyword!='Subtract Cards' && action.Target!='';
   }
   getCondition_KeywordValue(action) {
@@ -727,5 +727,9 @@ export class PlayscreenComponent implements OnInit {
   }
   getCondition_ValueDivide(action) {
     return action.ValueType=='All' || action.ValueType=='Previous';
+  }
+
+  checkCondition_ConditionKeywords(keyword) {
+    return ["Any Mark", "Any Mark Over", "Any Mark Under", "Specific Mark1", "Specific Mark1 Over", "Specific Mark1 Under", "Specific Mark2", "Specific Mark2 Over", "Specific Mark2 Under", "Specific Mark3", "Specific Mark3 Over", "Specific Mark3 Under", "Any Title", "Any Background", "Any Points Value Over", "Any Points Value Under", "Any Gold Value Over", "Any Gold Value Under"].indexOf(keyword)>=0;
   }
 }

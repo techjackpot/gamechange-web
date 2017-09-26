@@ -7,6 +7,7 @@ import { BordersComponent } from './borders/borders.component';
 import { TitlesComponent } from './titles/titles.component';
 import { HomeComponent } from './home/home.component';
 import { AvatarComponent } from './avatar/avatar.component';
+import { ItemsComponent } from './items/items.component';
 
 import {ImageCropperComponent, CropperSettings, Bounds} from 'ng2-img-cropper';
 
@@ -18,7 +19,8 @@ const routes: Routes = [
       { path: 'home', component: HomeComponent },
       { path: 'avatar', component: AvatarComponent },
       { path: 'borders', component: BordersComponent },
-      { path: 'titles', component: TitlesComponent }
+      { path: 'titles', component: TitlesComponent },
+      { path: 'items', component: ItemsComponent }
     ]
   }
 ];
@@ -30,7 +32,7 @@ const routes: Routes = [
     FormsModule,
     ReactiveFormsModule
   ],
-  declarations: [GsProfileComponent, BordersComponent, TitlesComponent, HomeComponent, AvatarComponent, ImageCropperComponent],
+  declarations: [GsProfileComponent, BordersComponent, TitlesComponent, HomeComponent, AvatarComponent, ImageCropperComponent, ItemsComponent],
   exports: [
   	RouterModule
   ]

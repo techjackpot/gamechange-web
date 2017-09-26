@@ -35,6 +35,11 @@ export class DataService {
       .map((response: Response) => response.json());
   }
 
+  updateUser(data) {
+    return this.http.post(this.url + '/api/user/update', { Data: data}, { headers: this.getHeaders() })
+      .map((response: Response) => response.json());
+  }
+
   getClassesList() {
 		return this.http.post(this.url + '/api/user/classes/list', {}, { headers: this.getHeaders() })
 			.map((response: Response) => response.json());
@@ -285,6 +290,22 @@ export class DataService {
   }
   removeMarketItemBackground(data) {
     return this.http.post(this.url + '/api/marketplace/backgrounds/delete', data, { headers: this.getHeaders() })
+      .map((response: Response) => response.json());
+  }
+  buyMarketItemTitle(data) {
+    return this.http.post(this.url + '/api/marketplace/titles/buy', data, { headers: this.getHeaders() })
+      .map((response: Response) => response.json());
+  }
+  buyMarketItemBackground(data) {
+    return this.http.post(this.url + '/api/marketplace/backgrounds/buy', data, { headers: this.getHeaders() })
+      .map((response: Response) => response.json());
+  }
+  myMarketItemTitles(data) {
+    return this.http.post(this.url + '/api/marketplace/titles/my', data, { headers: this.getHeaders() })
+      .map((response: Response) => response.json());
+  }
+  myMarketItemBackgrounds(data) {
+    return this.http.post(this.url + '/api/marketplace/backgrounds/my', data, { headers: this.getHeaders() })
       .map((response: Response) => response.json());
   }
 }

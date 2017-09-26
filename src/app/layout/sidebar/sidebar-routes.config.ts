@@ -17,6 +17,8 @@ export const ROUTES: RouteInfo[] = [
     { path: '/social/friends', title: 'Friends', icon: 'material-icons' },
 
     { path: '/approvals/marketplace', title: 'MarketPlace', icon: 'material-icons' },
+    { path: '/social/marketplace', title: 'MarketPlace', icon: 'material-icons' },
+    { path: '/profile/items', title: 'Items', icon: 'material-icons' },
     // { path: '/dashboard', title: 'Dashboard', icon: 'material-icons' },
 
     // { path: '/pages/timeline', title: 'Timeline Page', icon:'material-icons' },

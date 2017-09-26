@@ -1,0 +1,100 @@
+<ng-container *ngIf="loaded">
+  <div class="row">
+    <div class="col-md-8 col-md-offset-2">
+      <div class="nav-center">
+        <ul class="nav nav-pills nav-pills-warning nav-pills-icons" role="tablist">
+          <li class="active">
+            <a href="#itemTitles-list" role="tab" data-toggle="tab">
+              <i class="material-icons">title</i> Titles
+            </a>
+          </li>
+          <li>
+            <a href="#itemBackgrounds-list" role="tab" data-toggle="tab">
+              <i class="material-icons">collections</i> Backgrounds
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div class="tab-content">
+        <div class="tab-pane active" id="itemTitles-list">
+          <div class="card">
+            <div class="card-header card-header-icon" data-background-color="rose">
+              <i class="material-icons">title</i>
+            </div>
+            <div class="card-content">
+              <div class="clearfix"></div>
+              <div class="content table-responsive">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th></th>
+                      <th>Name</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <ng-container *ngIf="itemTitles.length>0">
+                      <tr *ngFor="let title of itemTitles; let ii=index" [class.success]="me.Title._id==title._id">
+                        <td>{{ ii+1 }}</td>
+                        <td>{{ title.Name }}</td>
+                        <td class="td-actions text-right">
+                          <ng-container *ngIf="me.Title._id!=title._id">
+                            <button class="btn btn-danger" (click)="onClickedSelectTitle(title)"><i class="material-icons">get_app</i> Select</button>
+                          </ng-container>
+                        </td>
+                      </tr>
+                    </ng-container>
+                    <ng-container *ngIf="itemTitles.length==0">
+                      <tr>
+                        <td colspan="4"><h4 class="text-center">There are no Titles.</h4></td>
+                      </tr>
+                    </ng-container>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane" id="itemBackgrounds-list">
+          <div class="card">
+            <div class="card-header card-header-icon" data-background-color="rose">
+              <i class="material-icons">collections</i>
+            </div>
+            <div class="card-content">
+              <div class="clearfix"></div>
+              <div class="content table-responsive">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th></th>
+                      <th>Name</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <ng-container *ngIf="itemBackgrounds.length>0">
+                      <tr *ngFor="let background of itemBackgrounds; let ii=index" [class.success]="me.Background._id==background._id">
+                        <td>{{ ii+1 }}</td>
+                        <td><img [src]="getServerAssetUrl(background.Picture)" /></td>
+                        <td class="td-actions text-right">
+                          <ng-container *ngIf="me.Background._id!=background._id">
+                            <button class="btn btn-danger" (click)="onClickedSelectBackground(background)"><i class="material-icons">get_app</i> Select</button>
+                          </ng-container>
+                        </td>
+                      </tr>
+                    </ng-container>
+                    <ng-container *ngIf="itemBackgrounds.length==0">
+                      <tr>
+                        <td colspan="4"><h4 class="text-center">There are no Backgrounds.</h4></td>
+                      </tr>
+                    </ng-container>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>

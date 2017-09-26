@@ -53,7 +53,7 @@ export class FriendsComponent implements OnInit {
       clearInterval(this.timer);
     }
   }
-  
+
   getIndexOfUsers(users,user_id) {
     let index = -1;
     users.forEach((user, i) => {
@@ -74,9 +74,9 @@ export class FriendsComponent implements OnInit {
 
   getFriend(request) {
     if(request.From._id == this.currentStudent._id) {
-      return this.studentList[this.getIndexOfFriends(this.studentList, request.To._id)];
+      return request.To;
     } else {
-      return this.studentList[this.getIndexOfFriends(this.studentList, request.From._id)];
+      return request.From;
     }
   }
 

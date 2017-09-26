@@ -34,11 +34,11 @@
                   </thead>
                   <tbody>
                     <ng-container *ngIf="itemTitles.length>0">
-                      <tr *ngFor="let title of itemTitles; let ii=index" [class.success]="me.Title._id==title._id">
+                      <tr *ngFor="let title of itemTitles; let ii=index" [class.success]="me.Title && me.Title._id==title._id">
                         <td>{{ ii+1 }}</td>
                         <td>{{ title.Name }}</td>
                         <td class="td-actions text-right">
-                          <ng-container *ngIf="me.Title._id!=title._id">
+                          <ng-container *ngIf="!me.Title || me.Title._id!=title._id">
                             <button class="btn btn-danger" (click)="onClickedSelectTitle(title)"><i class="material-icons">get_app</i> Select</button>
                           </ng-container>
                         </td>
@@ -73,11 +73,11 @@
                   </thead>
                   <tbody>
                     <ng-container *ngIf="itemBackgrounds.length>0">
-                      <tr *ngFor="let background of itemBackgrounds; let ii=index" [class.success]="me.Background._id==background._id">
+                      <tr *ngFor="let background of itemBackgrounds; let ii=index" [class.success]="me.Background && me.Background._id==background._id">
                         <td>{{ ii+1 }}</td>
                         <td><img [src]="getServerAssetUrl(background.Picture)" /></td>
                         <td class="td-actions text-right">
-                          <ng-container *ngIf="me.Background._id!=background._id">
+                          <ng-container *ngIf="!me.Background || me.Background._id!=background._id">
                             <button class="btn btn-danger" (click)="onClickedSelectBackground(background)"><i class="material-icons">get_app</i> Select</button>
                           </ng-container>
                         </td>

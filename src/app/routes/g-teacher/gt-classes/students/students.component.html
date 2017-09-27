@@ -46,6 +46,17 @@
 		        </tbody>
 		      </table>
 	    	</div>
+	    	<div class="clearfix">
+		    	<div class="col-md-8">
+		    		<!-- <div class="form-group"> -->
+		    			<label class="control-label">Select a csv/file to import students into this Class</label>
+			  			<input type="file" (change)="onFileSelect($event)" accept="text/csv" />
+			  		<!-- </div> -->
+			  	</div>
+			  	<div class="col-md-4">
+				  	<button class="btn btn-danger" (click)="importStudentsTo()"><i class="material-icons">edit</i> Import into this Class</button>
+		    	</div>
+		    </div>
 	    </ng-container>
 	  </div>
 	</div>

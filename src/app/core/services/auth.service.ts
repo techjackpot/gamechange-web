@@ -95,6 +95,11 @@ export class AuthService {
       .map((response: Response) => response.json());
   }
 
+  sendEmail(data) {
+    return this.http.post(this.url + '/api/sendemail', data, { headers: this.getHeaders() })
+      .map((response: Response) => response.json());
+  }
+
   updateUserData() {
     this.userInfo().subscribe(
       user => {

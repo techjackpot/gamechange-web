@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, Pipe, PipeTransform } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
@@ -7,6 +7,18 @@ import { PlaygameComponent } from './playgame/playgame.component';
 import { ViewcollectionComponent } from './viewcollection/viewcollection.component';
 import { CreatecardComponent } from './createcard/createcard.component';
 import { PlayscreenComponent } from './playscreen/playscreen.component';
+import { DomSanitizer } from '@angular/platform-browser';
+
+@Pipe({name: 'safe'})
+class Safe {
+  constructor(private sanitizer:DomSanitizer){
+    this.sanitizer = sanitizer;
+  }
+
+  transform(style) {
+    return this.sanitizer.bypassSecurityTrustStyle(style);
+  }
+}
 
 const routes: Routes = [
   {
@@ -28,7 +40,7 @@ const routes: Routes = [
     FormsModule,
     ReactiveFormsModule,
   ],
-  declarations: [GsCardgameComponent, PlaygameComponent, ViewcollectionComponent, CreatecardComponent, PlayscreenComponent],
+  declarations: [GsCardgameComponent, PlaygameComponent, ViewcollectionComponent, CreatecardComponent, PlayscreenComponent, Safe],
   exports: [
   	RouterModule
 	]

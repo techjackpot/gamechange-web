@@ -1,56 +1,66 @@
-<div class="play-game-list">
-	<div *ngIf="!selectedClass">
-		<div class="class-list">
-			<div *ngIf="attendClasses.length>0">
-				<table class="classes-table">
+<ng-container *ngIf="loaded">
+	<ng-container *ngIf="!selectedClass">
+		<div class="card">
+			<div class="card-header card-header-title" data-background-color="red">
+				<h4 class="card-title">Class List</h4>
+			</div>
+			<div class="card-content table-responsive">
+				<ng-container *ngIf="attendClasses.length>0">
+					<table class="table">
+						<thead>
+							<tr>
+								<th>Class Info <!--: Name / Day / Time / Room / Total Weeks--></th>
+								<th>Group</th>
+								<th>Weeks</th>
+								<th>Status</th>
+								<th>Action</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr *ngFor="let classInfo of attendClasses;">
+								<td>Name: {{ classInfo.Name }}<br/>Day/Time: {{ classInfo.DateTime | date: 'short' }}<br/>Location: {{ classInfo.Room }}<br/>Total Weeks: {{ classInfo.TotalWeeks }}<br/><a class="btn btn-success link_leaderboard" (click)="viewLeaderboard(classInfo)">View Leaderboard</a></td>
+								<td><span *ngIf="classInfo.my_group!=null">Group {{ classInfo.my_group.Title }}</span><span *ngIf="classInfo.my_group==null">No Group</span></td>
+								<td>{{ classInfo.Weeks }}</td>
+								<td>{{ classInfo.Status }}</td>
+								<td><ng-container *ngIf="classInfo.Status=='Started'"><a class="btn" [class.btn-danger]="classInfo.Status=='Started'" (click)="classInfo.Status=='Started' && playGame(classInfo)">{{ classInfo.Status=='Started'?'Play':'' }}</a></ng-container></td>
+							</tr>
+						</tbody>
+					</table>
+				</ng-container>
+				<ng-container *ngIf="attendClasses.length==0">
+					<h4 class="text-center text-danger">You don't have any classes/games.</h4>
+				</ng-container>
+			</div>
+		</div>
+	</ng-container>
+	<ng-container *ngIf="selectedClass">
+		<a class="btn btn-danger" (click)="cancelLeaderboard()">Go Back To List<i class="material-icons">keyboard_return</i></a>
+		<div class="card">
+			<div class="card-header card-header-title" data-background-color="orange">
+				<h4 class="card-title">{{ selectedClass.Name }}</h4>
+			</div>
+			<div class="card-content table-responsive">
+				<table class="table">
 					<thead>
 						<tr>
-							<th>Class Info <!--: Name / Day / Time / Room / Total Weeks--></th>
-							<th>Group</th>
-							<th>Weeks</th>
-							<th>Status</th>
-							<th>Action</th>
+							<th></th>
+							<th>Name</th>
+							<th>Point</th>
+							<th>Gold</th>
+							<th>Rank</th>
 						</tr>
 					</thead>
 					<tbody>
-						<tr *ngFor="let classInfo of attendClasses;">
-							<td>Name: {{ classInfo.Name }}<br/>Day/Time: {{ classInfo.DateTime | date: 'short' }}<br/>Location: {{ classInfo.Room }}<br/>Total Weeks: {{ classInfo.TotalWeeks }}<br/><a class="link_leaderboard" (click)="viewLeaderboard(classInfo)">View Leaderboard</a></td>
-							<td><span *ngIf="classInfo.my_group!=null">Group {{ classInfo.my_group.Title }}</span><span *ngIf="classInfo.my_group==null">No Group</span></td>
-							<td>{{ classInfo.Weeks }}</td>
-							<td>{{ classInfo.Status }}</td>
-							<td [class.play-game-action]="classInfo.Status=='Started'" (click)="classInfo.Status=='Started' && playGame(classInfo)">{{ classInfo.Status=='Started'?'Play':'' }}</td>
+						<tr *ngFor="let player of selectedClass.Players; let idx = index;" [style.background-image]="'url(' + getPlayerBackground(player) + ')' | safe">
+							<th><img src="{{ getServerAssetUrl(studentList[getIndexOfUsers(studentList, player.Player)].DisplayPicture) }}"></th>
+							<td>{{ studentList[getIndexOfUsers(studentList, player.Player)].DisplayName }}{{ getPlayerTitle(player) }}</td>
+							<td>{{ player.Point }}</td>
+							<td>{{ player.Gold }}</td>
+							<td>{{ idx+1 }}</td>
 						</tr>
 					</tbody>
 				</table>
 			</div>
-			<div *ngIf="attendClasses.length==0">
-				<h1>You don't have any classes/games.</h1>
-			</div>
 		</div>
-	</div>
-	<div *ngIf="selectedClass">
-		<div class="student-list">
-			<div class="actions-list clearfix">
-				<div class="goback" (click)="cancelLeaderboard()">Go Back To List ...</div>
-			</div>
-			<table class="classes-table">
-				<thead>
-					<tr>
-						<th>Name</th>
-						<th>Point</th>
-						<th>Gold</th>
-						<th>Rank</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr *ngFor="let player of selectedClass.Players; let idx = index;">
-						<td>{{ studentList[getIndexOfUsers(studentList, player.Player)].DisplayName }}</td>
-						<td>{{ player.Point }}</td>
-						<td>{{ player.Gold }}</td>
-						<td>{{ idx+1 }}</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-	</div>
-</div>
+	</ng-container>
+</ng-container>

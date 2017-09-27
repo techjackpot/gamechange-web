@@ -10,7 +10,7 @@ import { PlayscreenComponent } from './playscreen/playscreen.component';
 import { DomSanitizer } from '@angular/platform-browser';
 
 @Pipe({name: 'safe'})
-class Safe {
+export class Safe {
   constructor(private sanitizer:DomSanitizer){
     this.sanitizer = sanitizer;
   }

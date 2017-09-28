@@ -10,6 +10,7 @@ import { GroupsComponent } from './groups/groups.component';
 import { RollCallComponent } from './roll-call/roll-call.component';
 import { GtClassesComponent } from './gt-classes.component';
 import { DragulaModule } from 'ng2-dragula';
+import { GamescreenComponent } from './gamescreen/gamescreen.component';
 
 const routes: Routes = [
   {
@@ -22,6 +23,7 @@ const routes: Routes = [
       { path: 'tasks', component: TasksComponent },
       { path: 'groups', component: GroupsComponent },
       { path: 'rollcall', component: RollCallComponent },
+      { path: 'gamescreen', component: GamescreenComponent },
     ]
   }
 ];
@@ -34,7 +36,7 @@ const routes: Routes = [
     ReactiveFormsModule,
     DragulaModule
   ],
-  declarations: [ClassesComponent, StudentComponent, StudentsComponent, TasksComponent, GroupsComponent, RollCallComponent, GtClassesComponent],
+  declarations: [ClassesComponent, StudentComponent, StudentsComponent, TasksComponent, GroupsComponent, RollCallComponent, GtClassesComponent, GamescreenComponent],
   exports: [
   	RouterModule
   ]

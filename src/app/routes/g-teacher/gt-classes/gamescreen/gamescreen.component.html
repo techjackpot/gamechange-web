@@ -1,0 +1,41 @@
+<ng-container *ngIf="loaded">
+	<div class="row">
+		<div class="col-md-8 col-md-offset-2">
+			<div class="card">
+				<div class="card-header card-header-title" data-background-color="red">
+					<h4>Week {{ cardHistory[pos].Week }}</h4>
+				</div>
+				<div class="card-content">
+					<div class="game-history-info">
+						<div class="player-photo">
+							<img [src]="getServerAssetUrl(studentList[getIndexOfUsers(studentList, cardHistory[pos].Source)].DisplayPicture)">
+						</div>
+						<div class="card-preview-area">
+							<div class="card-preview-wrapper">
+								<div class="card-tile-preview">
+									<div class="card-tile {{ cards[getIndexOfCards(cards,cardHistory[pos].Card)].Type | lowercase }}">
+										<div class="card-title">
+											<span>{{ cards[getIndexOfCards(cards,cardHistory[pos].Card)].Title }}</span>
+										</div>
+										<div class="card-picture">
+											<img class="card-picture-preview" src="{{ getServerAssetUrl(cards[getIndexOfCards(cards,cardHistory[pos].Card)].Picture) }}">
+										</div>
+										<div class="card-description">
+											<span>{{ cards[getIndexOfCards(cards,cardHistory[pos].Card)].Description }}</span>
+										</div>
+										<div class="card-goldcost">
+											<span>{{ cards[getIndexOfCards(cards,cardHistory[pos].Card)].GoldCost }}</span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="card-play-explain">
+							<span class="player-source">{{ studentList[getIndexOfUsers(studentList, cardHistory[pos].Source)].DisplayName }}</span> played <span class="text-danger">{{ cards[getIndexOfCards(cards,cardHistory[pos].Card)].Title }}</span> on <ng-container *ngFor="let target of getTargetPlayers(pos)"><span class="player-target">{{ target }}</span></ng-container>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</ng-container>

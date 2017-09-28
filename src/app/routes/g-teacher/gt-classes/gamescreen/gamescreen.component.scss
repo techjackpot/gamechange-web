@@ -1,0 +1,15 @@
+.game-history-info {
+	display: flex;
+	.player-photo {
+		flex: 0 0 150px;
+		margin-right: 30px;
+	}
+	.card-play-explain {
+		padding: 1rem;
+	}
+	.player-target+.player-target {
+		&:before {
+			content: ', ';
+		}
+	}
+}

@@ -1,23 +1,65 @@
-.playscreen {
-	.score-board {
-		display: flex;
-		margin: 30px 0;
-		.score-board-item {
-			font-size: 24px;
-			width: 50%;
-			text-align: center;
-			.value {
-				margin: 1em;
-				color: $gc-color-warn;
+// .playscreen {
+	.player-board {
+		width: 450px;
+		height: 200px;
+    margin: 30px auto;
+		.card {
+			height: 100%;
+			margin: 0;
+			background-repeat: repeat-x !important;
+			background-position: bottom center !important;
+			.card-content {
+				display: flex;
+		    height: 100%;
+		    align-items: center;
+		    .player-profile {
+		    	flex: 1 0 30%;
+			    box-shadow: 0 0 8px 2px #000;
+			    border-radius: 8px;
+			    overflow: hidden;
+		    }
+		    .player-info {
+			    flex: 1 0 70%;
+			    padding-left: 2rem;
+			    display: inline-flex;
+			    flex-direction: column;
+			    height: 100%;
+			    .player-title {
+				    color: #fff;
+				    text-shadow: 0 0 3px #000;
+				    font-size: 2rem;
+				    text-align: center;
+				    line-height: 1.5em;
+			    }
+					.score-board {
+						display: flex;
+						flex-direction: column;
+						align-items: flex-end;
+						.score-board-item {
+					    font-size: 24px;
+					    width: auto;
+					    text-align: right;
+					    background: #fff;
+					    margin: 4px 0;
+					    box-shadow: 0 0 8px 0px #000;
+					    padding: 4px 12px;
+					    border-radius: 8px;
+							.value {
+    						margin: 0 0.5em 0 1em;
+								color: $gc-color-warn;
+							}
+						}
+					}
+		    }
 			}
 		}
 	}
 	.cards-list {
 		max-width: 9999px;
 		overflow-x: auto;
-		margin: 30px 0;
-		padding: 10px 24px;
-		box-shadow: inset 0px 0px 64px $gc-bg-sub;
+		// margin: 30px 0;
+		// padding: 10px 24px;
+		// box-shadow: inset 0px 0px 64px $gc-bg-sub;
 		.card-tile-wrapper-overlay {
 			display: inline-flex;
 		}
@@ -154,10 +196,22 @@
 		}
 	}
 
-
+	.cardForBackground {
+    position: fixed;
+    right: 2rem;
+    top: 2rem;
+    z-index: 9999;
+    width: 300px;
+    .card {
+    	background: #e8e8e8;
+    }
+    .material-icons {
+    	cursor: pointer;
+    }
+	}
 
 	.play-pane {
 		border: double 4px $gc-color-accent;
 		padding: 1em;
 	}
-}
+// }

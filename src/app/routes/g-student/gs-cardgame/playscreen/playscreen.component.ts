@@ -15,10 +15,14 @@ export class PlayscreenComponent implements OnInit {
   cards = null;
   me = null;
 
+
+
   list_friends = [];
   list_others = [];
 
   studentList = [];
+
+  selectedCardForBackground = null;
 
   selectedCard = null;
   selectedCardTargets = [[],[],[],[],[]];
@@ -42,6 +46,7 @@ export class PlayscreenComponent implements OnInit {
   ngOnInit() {
   	this.GameID = this.route.params["_value"].game_id;
     this.me = this.authService.getUser();
+    console.log(this.me);
 
 
     let p1 = new Promise((resolve, reject) => {
@@ -142,6 +147,23 @@ export class PlayscreenComponent implements OnInit {
     })
 
     return Promise.all([p1, p2, p3]);
+  }
+
+  getMyTitle() {
+    let Title;
+    if(Title = this.me.Title) {
+      return ' - ' + Title.Name;
+    } else {
+      return '';
+    }
+  }
+  getMyBackground() {
+    let Background;
+    if(Background = this.me.Background) {
+      return this.getServerAssetUrl(Background.Picture);
+    } else {
+      return '';
+    }
   }
 
   array_diff(a, b) {
@@ -451,8 +473,13 @@ export class PlayscreenComponent implements OnInit {
     }
   }
 
+  closeBackgroundCard() {
+    this.selectedCardForBackground = null;
+  }
+
   onClickedHand(card_id) {
     this.selectedCard = this.getCardByCardId(card_id);
+    this.selectedCardForBackground = this.getCardByCardId(card_id);
     this.resetSelectedCardTargets();
   }
 

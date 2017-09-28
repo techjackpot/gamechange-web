@@ -1,0 +1,24 @@
+<ng-container *ngIf="loaded">
+
+	<ng-container *ngFor="let player of currentClass.Players;">
+		<div class="player-board" *ngIf="!player.hidden">
+			<div class="card" [style.background-image]="'url(' + getMyBackground(player.Player) + ')' | safe">
+				<div class="card-content">
+					<div class="player-profile">
+						<img [src]="getServerAssetUrl(getPlayerByID(player.Player).DisplayPicture)">
+					</div>
+					<div class="player-info">
+						<div class="player-title text-danger">
+							{{ getPlayerByID(player.Player).DisplayName + getMyTitle(player.Player)}}
+						</div>
+						<div class="buttons">
+							<div class="btn btn-success" (click)="onClickedAttend(player.Player)"><i class="material-icons">check</i></div>
+							<div class="btn btn-danger" (click)="onClickedAbsent(player.Player)"><i class="material-icons">close</i></div>
+							<div class="btn btn-github" *ngFor="let marktype of marktypes; let ii=index" (click)="onClickedIncraseMark(player.Player,ii)">{{ studentBook[getIndexOfMarkHistory(studentBook, player.Player)].Marks[ii].Value }}</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</ng-container>
+</ng-container>

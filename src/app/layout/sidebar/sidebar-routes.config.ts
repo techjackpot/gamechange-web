@@ -21,6 +21,7 @@ export const ROUTES: RouteInfo[] = [
     { path: '/profile/items', title: 'Items', icon: 'material-icons' },
     { path: '/staff/staff', title: 'Profile', icon: 'material-icons' },
     { path: '/classes/gamescreen/', title: 'Game Screen', icon: 'material-icons' },
+    { path: '/classes/marking/', title: 'Roll Call', icon: 'material-icons' },
     // { path: '/dashboard', title: 'Dashboard', icon: 'material-icons' },
 
     // { path: '/pages/timeline', title: 'Timeline Page', icon:'material-icons' },

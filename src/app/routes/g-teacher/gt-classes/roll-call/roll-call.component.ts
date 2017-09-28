@@ -209,7 +209,7 @@ export class RollCallComponent implements OnInit {
     let p3 = new Promise((resolve, reject) => {
       this.dataService.getStudentList().subscribe(response => {
         this.studentList = response;
-        console.log(this.studentList);
+        // console.log(this.studentList);
 
         resolve();
       });
@@ -447,7 +447,7 @@ export class RollCallComponent implements OnInit {
             }
 
             while(this.currentClass.CardHistory[i].UnResolved > 0) {
-              console.log(this.currentClass.CardHistory[i].UnResolved);
+              // console.log(this.currentClass.CardHistory[i].UnResolved);
               let history = this.currentClass.CardHistory[i];
               let card = this.cards[this.getIndexOfCards(this.cards,history.Card)];
               let action_index = history.Target.length-history.UnResolved;
@@ -525,18 +525,18 @@ export class RollCallComponent implements OnInit {
                 if(confirmed) {
                   this.currentClass.CardHistory[i].TargetLeft[action_index] = [];
                   this.currentClass.CardHistory[i].TargetLeft[action_index].length = 0;
-                  console.log('this is conditional keyword', action_index, this.currentClass.CardHistory[i].UnResolved );
+                  // console.log('this is conditional keyword', action_index, this.currentClass.CardHistory[i].UnResolved );
                   this._performCardActions(i, action_index);
                   this.currentClass.CardHistory[i].TargetLeft[action_index] = this.currentClass.CardHistory[i].Target[action_index].concat();
-                  console.log('done: this is conditional keyword', action_index, this.currentClass.CardHistory[i].UnResolved );
+                  // console.log('done: this is conditional keyword', action_index, this.currentClass.CardHistory[i].UnResolved );
                 } else {
-                  console.log('finding next action_index', action_index, this.currentClass.CardHistory[i].UnResolved );
+                  // console.log('finding next action_index', action_index, this.currentClass.CardHistory[i].UnResolved );
                   while(++action_index<card.Actions.length && !this.checkCondition_ConditionKeywords(card.Actions[action_index].Keyword));
                   this.currentClass.CardHistory[i].UnResolved = history.Target.length - action_index;
-                  console.log('found next action_index', action_index, this.currentClass.CardHistory[i].UnResolved );
+                  // console.log('found next action_index', action_index, this.currentClass.CardHistory[i].UnResolved );
                 }
               } else {
-                console.log('found next action_index', action_index, this.currentClass.CardHistory[i].UnResolved );
+                // console.log('found next action_index', action_index, this.currentClass.CardHistory[i].UnResolved );
                 break;
               }
             }
@@ -747,7 +747,7 @@ export class RollCallComponent implements OnInit {
 
       let auto_progress = true, unresolved = history.UnResolved, delay = history.Delay, repeat = history.Repeat, start_at = history.StartAt;
 
-      console.log(history,ActionTargetIndex);
+      // console.log(history,ActionTargetIndex);
 
       card.Actions.every((action, i) => {
         if(i<card.Actions.length-unresolved) {
@@ -778,7 +778,7 @@ export class RollCallComponent implements OnInit {
             auto_progress = false;
             break;
         }
-        console.log(i, auto_progress, action);
+        // console.log(i, auto_progress, action);
 
         // let applied_value = 0;
 
@@ -794,8 +794,8 @@ export class RollCallComponent implements OnInit {
           history.UnResolved--;
           unresolved = history.UnResolved;
 
-          console.log(targets, targets_left);
-          console.log(unresolved);
+          // console.log(targets, targets_left);
+          // console.log(unresolved);
 
           targets.forEach((player_id) => {
 
@@ -817,7 +817,7 @@ export class RollCallComponent implements OnInit {
                 rValue = action.KeywordValue;
                 break;
             }
-            console.log(player, rValue);
+            // console.log(player, rValue);
             switch(action.ValueType) {
               case 'All':
                 // rValue *= action.ValueMultiple / action.ValueDivide;
@@ -833,7 +833,7 @@ export class RollCallComponent implements OnInit {
                 break;
             }
             rValue *= action.ValueMultiple / action.ValueDivide;
-            console.log(player, rValue);
+            // console.log(player, rValue);
 
             switch(action.Keyword) {
               case "Add Points":

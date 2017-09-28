@@ -17,6 +17,20 @@
 	// 		text-align: left;
 	// 	}
 	// }
+	.profile_info {
+		display: flex;
+		align-items: center;
+		img {
+			height: 50px;
+			width: auto;
+			max-width: 80px;
+			flex-grow: 0;
+		}
+		span {
+			margin: 0 0.5em;
+			flex-grow: 1;
+		}
+	}
 	.roll-calls-wrapper {
 		.roll-call-list {
 			.roll-call-item-wrapper {
@@ -259,33 +273,19 @@
 		input[type=text] {
 			text-align: left;
 		}
-		.profile_info {
-			display: flex;
-			align-items: center;
-			img {
-				height: 50px;
-				width: auto;
-				max-width: 80px;
-				flex-grow: 0;
-			}
-			span {
-				margin: 0 0.5em;
-				flex-grow: 1;
-			}
-		}
 	}
 	.bonus-player-list {
 		max-width: 9999px;
 		overflow-x: auto;
-    margin: 30px 0;
-    padding: 10px 24px;
-    box-shadow: inset 0px 0px 64px $gc-bg-sub;
+    // margin: 30px 0;
+    // padding: 10px 24px;
+    // box-shadow: inset 0px 0px 64px $gc-bg-sub;
 		.players-list {
 			display: inline-flex;
 			.bonus-player {
 				border: dotted 1px $gc-color-primary;
 				width: 150px;
-				margin: 30px 10px;
+				margin: 0px 10px 10px;
 				cursor: pointer;
 				transition: all 0.15s ease;
 				&.selected {
@@ -316,17 +316,17 @@
 		}
 	}
 	.cards-list-container {
-		box-shadow: inset 0px 0px 64px $gc-bg-sub;
+		// box-shadow: inset 0px 0px 64px $gc-bg-sub;
 		.cards-list-wrapper {
 			max-width: 9999px;
 			overflow-x: auto;
-			margin: 30px 0;
-			padding: 10px 24px;
+			// margin: 30px 0;
+			// padding: 10px 24px;
 			.cards-list {
 				display: inline-flex;
-				.card {
-					transform: scale(0.8);
-					margin: -30px -20px;
+				// .card {
+					// transform: scale(0.8);
+					// margin: -30px -20px;
 					.card-tile {
 						border: 0 none;
 						margin: 0 15px;
@@ -342,7 +342,7 @@
 							box-shadow: 0 0 6px $gc-color-accent;
 						}
 					}
-				}
+				// }
 			}
 		}
 	}

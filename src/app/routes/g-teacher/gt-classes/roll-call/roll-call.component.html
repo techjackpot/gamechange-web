@@ -1,44 +1,65 @@
-<div class="roll-calls-wrapper" *ngIf="loaded">
-	<div class="game-settings clearfix" *ngIf="currentClass.Weeks==1 && currentClass.Status=='Stopped'">
-		<h3 class="widget-label text-center text-accent" style="margin-bottom: 1em;">Game Settings</h3>
-	  <div class="form-group col-sm-3">
-	    <label>Pickup Pile Size</label>
-	    <input type="number" class="form-control" placeholder="Pickup Pile Size" name="PickupPileSize" [(ngModel)]="currentClass.Player_PickupPileSize" required>
-	  </div>
-	  <div class="form-group col-sm-3">
-	    <label>User Collection Size</label>
-	    <input type="number" class="form-control" placeholder="User Collection Size" name="CollectionSize" [(ngModel)]="currentClass.Player_CollectionSize" required>
-	  </div>
-	  <div class="form-group col-sm-3">
-	    <label>Stack Size</label>
-	    <input type="number" class="form-control" placeholder="Stack Size" name="StackSize" [(ngModel)]="currentClass.Player_StackSize" required>
-	  </div>
-	  <div class="form-group col-sm-3">
-	    <label>Hand Size</label>
-	    <input type="number" class="form-control" placeholder="Hand Size" name="HandSize" [(ngModel)]="currentClass.Player_HandSize" required>
-	  </div>
+<ng-container *ngIf="loaded">
+	<ng-container *ngIf="currentClass.Weeks==1 && currentClass.Status=='Stopped'">
+		<div class="card">
+			<div class="card-header card-header-title" data-background-color="green">
+				<h4 class="card-title">Game Settings</h4>
+			</div>
+			<div class="card-content">
+				<div class="game-settings clearfix">
+				  <div class="form-group col-sm-3">
+				    <label>Pickup Pile Size</label>
+				    <input type="number" class="form-control" placeholder="Pickup Pile Size" name="PickupPileSize" [(ngModel)]="currentClass.Player_PickupPileSize" required>
+				  </div>
+				  <div class="form-group col-sm-3">
+				    <label>User Collection Size</label>
+				    <input type="number" class="form-control" placeholder="User Collection Size" name="CollectionSize" [(ngModel)]="currentClass.Player_CollectionSize" required>
+				  </div>
+				  <div class="form-group col-sm-3">
+				    <label>Stack Size</label>
+				    <input type="number" class="form-control" placeholder="Stack Size" name="StackSize" [(ngModel)]="currentClass.Player_StackSize" required>
+				  </div>
+				  <div class="form-group col-sm-3">
+				    <label>Hand Size</label>
+				    <input type="number" class="form-control" placeholder="Hand Size" name="HandSize" [(ngModel)]="currentClass.Player_HandSize" required>
+				  </div>
+				</div>
+			</div>
+		</div>
+	</ng-container>
+
+	<div class="card">
+		<div class="card-header card-header-title" data-background-color="rose">
+			<h4 class="card-title">Current Week: <span class="">{{currentClass.Weeks}} out of {{currentClass.TotalWeeks}}</span> - <span class="">{{currentClass.Status}}</span></h4>
+		</div>
+		<div class="card-content">
+			<button class="btn btn-primary" (click)="startGameClicked()" [disabled]="currentClass.Status=='Started' || (currentClass.TotalWeeks==currentClass.Weeks && currentClass.Status=='Stopped')">Start</button>
+			<button class="btn btn-danger" (click)="stopGameClicked()" [disabled]="currentClass.Status!='Started' || currentClass.TotalWeeks!=currentClass.Weeks">Stop</button>
+			<button class="btn btn-warning" (click)="rollCallClicked()" [disabled]="currentClass.Status!='Started' || currentClass.TotalWeeks==currentClass.Weeks">End Turn</button>
+			<!-- <div class="text-large">Current Class Status: <span class="text-warn">{{currentClass.Status}}</span></div> -->
+			<!-- <div class="text-large">Current Week: <span class="text-success">{{currentClass.Weeks}} out of {{currentClass.TotalWeeks}}</span></div> -->
+		</div>
 	</div>
-	<div class="game-settings" *ngIf="!(currentClass.Weeks==1 && currentClass.Status=='Stopped')">
-		<div class="cards-list-container">
-			<div class="cards-list-wrapper">
-				<div>Current Game Collection</div>
+	<ng-container *ngIf="!(currentClass.Weeks==1 && currentClass.Status=='Stopped')">
+		<div class="card">
+			<div class="card-header card-header-title" data-background-color="green">
+				<h4 class="card-title">Current Game Collection</h4>
+			</div>
+			<div class="card-content">
 				<div class="cards-list">
-					<div class="card" *ngFor="let card_id of currentClass.Collection">
-						<div class="card-preview-area">
-							<div class="card-tile-preview">
-								<div class="card-tile {{ cards[getIndexOfCards(cards,card_id)].Type | lowercase }}">
-									<div class="card-title">
-										<span>{{ cards[getIndexOfCards(cards,card_id)].Title }}</span>
-									</div>
-									<div class="card-picture">
-										<img class="card-picture-preview" src="{{ getServerAssetUrl(cards[getIndexOfCards(cards,card_id)].Picture) }}">
-									</div>
-									<div class="card-description">
-										<span>{{ cards[getIndexOfCards(cards,card_id)].Description }}</span>
-									</div>
-									<div class="card-goldcost">
-										<span>{{ cards[getIndexOfCards(cards,card_id)].GoldCost }}</span>
-									</div>
+					<div class="card-tile-wrapper-overlay">
+						<div class="card-tile-wrapper" *ngFor="let card_id of currentClass.Collection">
+							<div class="card-tile {{ cards[getIndexOfCards(cards,card_id)].Type | lowercase }}">
+								<div class="card-title">
+									<span>{{ cards[getIndexOfCards(cards,card_id)].Title }}</span>
+								</div>
+								<div class="card-picture">
+									<img class="card-picture-preview" src="{{ getServerAssetUrl(cards[getIndexOfCards(cards,card_id)].Picture) }}">
+								</div>
+								<div class="card-description">
+									<span>{{ cards[getIndexOfCards(cards,card_id)].Description }}</span>
+								</div>
+								<div class="card-goldcost">
+									<span>{{ cards[getIndexOfCards(cards,card_id)].GoldCost }}</span>
 								</div>
 							</div>
 						</div>
@@ -46,209 +67,242 @@
 				</div>
 			</div>
 		</div>
-		<div class="cards-list-container" *ngIf="leftCollectionCardList.length>0">
-			<div class="cards-list-wrapper">
-				<div>Available Cards Left</div>
-				<div class="cards-list">
-					<div class="card" *ngFor="let card_id of leftCollectionCardList">
-						<div class="card-preview-area">
-							<div class="card-tile-preview">
-								<div class="card-tile {{ cards[getIndexOfCards(cards,card_id)].Type | lowercase }}" (click)="selectLeftCard(card_id)" [class.selected]="selectedLeftCards.indexOf(card_id)>=0">
-									<div class="card-title">
-										<span>{{ cards[getIndexOfCards(cards,card_id)].Title }}</span>
-									</div>
-									<div class="card-picture">
-										<img class="card-picture-preview" src="{{ getServerAssetUrl(cards[getIndexOfCards(cards,card_id)].Picture) }}">
-									</div>
-									<div class="card-description">
-										<span>{{ cards[getIndexOfCards(cards,card_id)].Description }}</span>
-									</div>
-									<div class="card-goldcost">
-										<span>{{ cards[getIndexOfCards(cards,card_id)].GoldCost }}</span>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
+		<ng-container *ngIf="leftCollectionCardList.length>0">
+			<div class="card">
+				<div class="card-header card-header-title" data-background-color="orange">
+					<h4 class="card-title">Available Cards Left</h4>
 				</div>
-				<div class="">
-			  	<div class="btn btn-update-collection" (click)="addCardsToCollection()">Add Cards to Current Collection</div>
-			  </div>
-			</div>
-
-		</div>
-	</div>
-	<div class="roll-call-status">
-		<h3 class="widget-label text-center text-accent" style="margin-bottom: 1em;">Game Status</h3>
-		<div class="" style="margin-bottom: 10px;"><button class="btn btn-primary" (click)="startGameClicked()" [disabled]="currentClass.Status=='Started' || (currentClass.TotalWeeks==currentClass.Weeks && currentClass.Status=='Stopped')">Start</button> <button class="btn btn-danger" (click)="stopGameClicked()" [disabled]="currentClass.Status!='Started' || currentClass.TotalWeeks!=currentClass.Weeks">Stop</button> <button class="btn btn-warning" (click)="rollCallClicked()" [disabled]="currentClass.Status!='Started' || currentClass.TotalWeeks==currentClass.Weeks">End Turn</button></div>
-		<div class="text-large">Current Class Status: <span class="text-warn">{{currentClass.Status}}</span></div>
-		<div class="text-large">Current Week: <span class="text-warn">{{currentClass.Weeks}} out of {{currentClass.TotalWeeks}}</span></div>
-	</div>
-	<div class="student-record-list" *ngIf="currentClass.Weeks!=1 ||currentClass.Status!='Stopped'">
-		<h3 class="widget-label text-center text-accent" style="margin-bottom: 1em;">Student Record Book</h3>
-		<div class="form-group col-sm-4 col-sm-offset-4">
-			<label>Week</label>
-			<select class="form-control" [(ngModel)]="week_studentbook" (change)="updateCurrentStudentBook()"><option *ngFor="let t of week_numbers;" [value]="t">{{ t }}</option></select>
-		</div>
-		<table class="student-book" *ngIf="marktypes.length>0 && currentClass && studentList.length>0 && studentBook.length>0">
-			<tr>
-				<td></td>
-				<td>Attendance</td>
-				<td *ngFor="let marktype of marktypes;">{{ marktype.Name }}</td>
-				<td>Note</td>
-			</tr>
-			<tr *ngFor="let student_id of currentClass.Students;">
-				<td><div class="profile_info"><img src="{{ getServerAssetUrl(studentList[getIndexOfUsers(studentList, student_id)].DisplayPicture) }}"><span>{{ studentList[getIndexOfUsers(studentList, student_id)].DisplayName }}</span></div></td>
-				<td><input type="checkbox" [(ngModel)]="studentBook[getIndexOfMarkHistory(studentBook, student_id)].Attendance" /></td>
-				<td *ngFor="let marktype of marktypes;"><input type="number" [(ngModel)]="studentBook[getIndexOfMarkHistory(studentBook, student_id)].Marks[getIndexOfMark(studentBook[getIndexOfMarkHistory(studentBook, student_id)].Marks, marktype._id)].Value" (mouseup)="$event.target.select()" /></td>
-				<td><input type="text" [(ngModel)]="studentBook[getIndexOfMarkHistory(studentBook, student_id)].Note" /></td>
-			</tr>
-		</table>
-		<div>
-      <button class="btn btn-update" (click)="updateStudentBook()">Update Student Book{{loading}}</button>
-    </div>
-	</div>
-
-
-	<div class="card-history-list" *ngIf="currentClass.CardHistory.length>0 && studentList.length>0 && cards.length>0">
-		<h3 class="widget-label text-center text-accent" style="margin-bottom: 1em;">UnResolved Cards</h3>
-		<div *ngFor="let history of currentClass.CardHistory; let i=index;" class="card-history">
-			<div *ngIf="history.UnResolved>0 || history.Repeat>0">
-				<div class="card-preview-area">
-					<div class="card-tile-preview">
-						<h4 class="text-center">
-							<span class="source">{{ studentList[getIndexOfUsers(studentList,history.Source)].DisplayName }}</span>
-						</h4>
-						<div class="card-tile {{ cards[getIndexOfCards(cards,history.Card)].Type | lowercase }}">
-							<div class="card-title">
-								<span>{{ cards[getIndexOfCards(cards,history.Card)].Title }}</span>
-							</div>
-							<div class="card-picture">
-								<img class="card-picture-preview" src="{{ getServerAssetUrl(cards[getIndexOfCards(cards,history.Card)].Picture) }}">
-							</div>
-							<div class="card-description">
-								<span>{{ cards[getIndexOfCards(cards,history.Card)].Description }}</span>
-							</div>
-							<div class="card-goldcost">
-								<span>{{ cards[getIndexOfCards(cards,history.Card)].GoldCost }}</span>
-							</div>
-						</div>
-						<div *ngFor="let action of cards[getIndexOfCards(cards,history.Card)].Actions; let ii=index;" [class.activated]="ii<history.Target.length-history.UnResolved" class="card-actions-section">
-							<div class="card-tile-actions" *ngIf="ii==history.Target.length-history.UnResolved">
-								<div class="card-creation-action-form">
-								  <div class="form-group">
-								    <label>Keyword</label>
-								    <span>{{ action.Keyword }}</span>
-								  </div>
-								  <div class="form-group" *ngIf="getCondition_Target(action)">
-								    <label>Target</label>
-								    <span>{{ action.Target }}</span>
-								  </div>
-								  <div class="form-group" *ngIf="getCondition_TargetValue(action)">
-								    <label>Target Value</label>
-								    <span>{{ action.TargetValue }}</span>
-								  </div>
-								  <div class="form-group" *ngIf="getCondition_ValueType(action)">
-								    <label>Value Type</label>
-								    <span>{{ action.ValueType }}</span>
-								  </div>
-								  <div class="form-group" *ngIf="getCondition_KeywordValue(action)">
-								    <label>Keyword Value</label>
-								    <span>{{ action.KeywordValue }}</span>
-								  </div>
-								  <div class="form-group" *ngIf="getCondition_ValueMultiple(action)">
-								  	<label>Multiple Value</label>
-								    <span>{{ action.ValueMultiple }}</span>
-								  </div>
-								  <div class="form-group" *ngIf="getCondition_ValueDivide(action)">
-								  	<label>Divide Value</label>
-								    <span>{{ action.ValueDivide }}</span>
-								  </div>
-								  <div class="form-group" *ngIf="getCondition_Description(action)">
-								    <label>Action Description</label>
-								    <span>{{ action.Description }}</span>
-								  </div>
-								</div>
-								<div class="card-action-targets" *ngIf="checkCondition_ConditionKeywords(action.Keyword)">
-									This card will be evaluated with this condition at the end of turn.
-								</div>
-								<div class="card-action-targets" *ngIf="action.Keyword=='Perform Action'">
-									<div *ngFor="let player of history.TargetLeft[ii];" class="card-action-target-wrapper">
-										<div class="card-action-target">
-											<img src="{{ getServerAssetUrl(getPlayerByID(player).DisplayPicture) }}"><span>{{ getPlayerByID(player).DisplayName }}</span>
+				<div class="card-content">
+					<div class="cards-list">
+						<div class="card-tile-wrapper-overlay">
+							<ng-container *ngFor="let card_id of leftCollectionCardList">
+								<div class="card-tile-wrapper">
+									<div class="card-tile {{ cards[getIndexOfCards(cards,card_id)].Type | lowercase }}" (click)="selectLeftCard(card_id)" [class.card-selected]="selectedLeftCards.indexOf(card_id)>=0">
+										<div class="card-title">
+											<span>{{ cards[getIndexOfCards(cards,card_id)].Title }}</span>
 										</div>
-										<button class="btn btn-confirm" (click)="confirmCardActionTarget(i,ii,player)">√</button>
-										<button class="btn btn-deny" (click)="denyCardActionTarget(i,ii,player)">x</button>
+										<div class="card-picture">
+											<img class="card-picture-preview" src="{{ getServerAssetUrl(cards[getIndexOfCards(cards,card_id)].Picture) }}">
+										</div>
+										<div class="card-description">
+											<span>{{ cards[getIndexOfCards(cards,card_id)].Description }}</span>
+										</div>
+										<div class="card-goldcost">
+											<span>{{ cards[getIndexOfCards(cards,card_id)].GoldCost }}</span>
+										</div>
 									</div>
 								</div>
-								<div class="card-action-targets" *ngIf="action.Keyword=='Activation Time'">
-									This card will be activated in {{history.Delay}} weeks.
-								</div>
-							</div>
-							<div class="card-tile-actions" *ngIf="history.Delay==0 && history.UnResolved==0 && history.Repeat>0">
-								<div class="card-action-targets" *ngIf="action.Keyword=='Persist'">
-									This card will be repeated for {{history.Repeat}} weeks.
+							</ng-container>
+						</div>
+					</div>
+				  <div class="btn btn-success" (click)="addCardsToCollection()"><i class="material-icons">add</i>Add Cards to Current Collection</div>
+				</div>
+			</div>
+		</ng-container>
+	</ng-container>
+	<ng-container *ngIf="currentClass.Weeks!=1 ||currentClass.Status!='Stopped'">
+		<div class="card">
+			<div class="card-header card-header-title" data-background-color="orange">
+				<h4 class="card-title">Student Record Book</h4>
+			</div>
+			<div class="card-content">
+				<div class="row">
+					<div class="col-sm-4 col-sm-offset-4">
+						<div class="form-group">
+							<label class="control-label">Week</label>
+							<select class="form-control" [(ngModel)]="week_studentbook" (change)="updateCurrentStudentBook()"><option *ngFor="let t of week_numbers;" [value]="t">{{ t }}</option></select>
+						</div>
+					</div>
+				</div>
+				<ng-container *ngIf="marktypes.length>0 && currentClass && studentList.length>0 && studentBook.length>0">
+					<div class="table-responsive student-mark-book">
+						<table class="table">
+							<thead>
+								<tr class="text-danger">
+									<td></td>
+									<td>Attendance</td>
+									<td *ngFor="let marktype of marktypes;">{{ marktype.Name }}</td>
+									<td>Note</td>
+								</tr>
+							</thead>
+							<tbody>
+								<tr *ngFor="let student_id of currentClass.Students;">
+									<td><div class="profile_info"><img src="{{ getServerAssetUrl(studentList[getIndexOfUsers(studentList, student_id)].DisplayPicture) }}"><span>{{ studentList[getIndexOfUsers(studentList, student_id)].DisplayName }}</span></div></td>
+									<td align="center"><input type="checkbox" [(ngModel)]="studentBook[getIndexOfMarkHistory(studentBook, student_id)].Attendance" /></td>
+									<td *ngFor="let marktype of marktypes;">
+										<div class="form-group">
+											<input class="form-control" type="number" [(ngModel)]="studentBook[getIndexOfMarkHistory(studentBook, student_id)].Marks[getIndexOfMark(studentBook[getIndexOfMarkHistory(studentBook, student_id)].Marks, marktype._id)].Value" (mouseup)="$event.target.select()" />
+										</div>
+									</td>
+									<td>
+										<div class="form-group">
+											<input class="form-control" type="text" [(ngModel)]="studentBook[getIndexOfMarkHistory(studentBook, student_id)].Note" />
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</ng-container>
+				<div class="text-center">
+	      	<button class="btn btn-success" (click)="updateStudentBook()">Update Student Book{{loading}}</button>
+	      </div>
+			</div>
+		</div>
+	</ng-container>
+	<ng-container *ngIf="currentClass.CardHistory.length>0 && studentList.length>0 && cards.length>0">
+		<div class="card">
+			<div class="card-header card-header-title" data-background-color="red">
+				<h4 class="card-title">UnResolved Cards</h4>
+			</div>
+			<div class="card-content card-history-list">
+				<ng-container *ngFor="let history of currentClass.CardHistory; let i=index;">
+					<ng-container *ngIf="history.UnResolved>0 || history.Repeat>0">
+						<div class="card-history">
+							<div class="card-preview-area">
+								<div class="card-tile-preview">
+									<h4 class="text-center">
+										<span class="source">{{ studentList[getIndexOfUsers(studentList,history.Source)].DisplayName }}</span>
+									</h4>
+									<div class="card-tile {{ cards[getIndexOfCards(cards,history.Card)].Type | lowercase }}">
+										<div class="card-title">
+											<span>{{ cards[getIndexOfCards(cards,history.Card)].Title }}</span>
+										</div>
+										<div class="card-picture">
+											<img class="card-picture-preview" src="{{ getServerAssetUrl(cards[getIndexOfCards(cards,history.Card)].Picture) }}">
+										</div>
+										<div class="card-description">
+											<span>{{ cards[getIndexOfCards(cards,history.Card)].Description }}</span>
+										</div>
+										<div class="card-goldcost">
+											<span>{{ cards[getIndexOfCards(cards,history.Card)].GoldCost }}</span>
+										</div>
+									</div>
+									<div *ngFor="let action of cards[getIndexOfCards(cards,history.Card)].Actions; let ii=index;" [class.activated]="ii<history.Target.length-history.UnResolved" class="card-actions-section">
+										<div class="card-tile-actions" *ngIf="ii==history.Target.length-history.UnResolved">
+											<div class="card-creation-action-form">
+											  <div class="form-group">
+											    <label>Keyword</label>
+											    <span>{{ action.Keyword }}</span>
+											  </div>
+											  <div class="form-group" *ngIf="getCondition_Target(action)">
+											    <label>Target</label>
+											    <span>{{ action.Target }}</span>
+											  </div>
+											  <div class="form-group" *ngIf="getCondition_TargetValue(action)">
+											    <label>Target Value</label>
+											    <span>{{ action.TargetValue }}</span>
+											  </div>
+											  <div class="form-group" *ngIf="getCondition_ValueType(action)">
+											    <label>Value Type</label>
+											    <span>{{ action.ValueType }}</span>
+											  </div>
+											  <div class="form-group" *ngIf="getCondition_KeywordValue(action)">
+											    <label>Keyword Value</label>
+											    <span>{{ action.KeywordValue }}</span>
+											  </div>
+											  <div class="form-group" *ngIf="getCondition_ValueMultiple(action)">
+											  	<label>Multiple Value</label>
+											    <span>{{ action.ValueMultiple }}</span>
+											  </div>
+											  <div class="form-group" *ngIf="getCondition_ValueDivide(action)">
+											  	<label>Divide Value</label>
+											    <span>{{ action.ValueDivide }}</span>
+											  </div>
+											  <div class="form-group" *ngIf="getCondition_Description(action)">
+											    <label>Action Description</label>
+											    <span>{{ action.Description }}</span>
+											  </div>
+											</div>
+											<div class="card-action-targets" *ngIf="checkCondition_ConditionKeywords(action.Keyword)">
+												This card will be evaluated with this condition at the end of turn.
+											</div>
+											<div class="card-action-targets" *ngIf="action.Keyword=='Perform Action'">
+												<div *ngFor="let player of history.TargetLeft[ii];" class="card-action-target-wrapper">
+													<div class="card-action-target">
+														<img src="{{ getServerAssetUrl(getPlayerByID(player).DisplayPicture) }}"><span>{{ getPlayerByID(player).DisplayName }}</span>
+													</div>
+													<button class="btn btn-confirm" (click)="confirmCardActionTarget(i,ii,player)">√</button>
+													<button class="btn btn-deny" (click)="denyCardActionTarget(i,ii,player)">x</button>
+												</div>
+											</div>
+											<div class="card-action-targets" *ngIf="action.Keyword=='Activation Time'">
+												This card will be activated in {{history.Delay}} weeks.
+											</div>
+										</div>
+										<div class="card-tile-actions" *ngIf="history.Delay==0 && history.UnResolved==0 && history.Repeat>0">
+											<div class="card-action-targets" *ngIf="action.Keyword=='Persist'">
+												This card will be repeated for {{history.Repeat}} weeks.
+											</div>
+										</div>
+									</div>
+									<!--<div class="confirm-actions" *ngIf="false">
+										<button class="btn btn-confirm" (click)="confirmCardAction(history)">Confirm</button>
+										<button class="btn btn-deny" (click)="denyCardAction(history)">Deny</button>
+									</div>-->
 								</div>
 							</div>
 						</div>
-						<!--<div class="confirm-actions" *ngIf="false">
-							<button class="btn btn-confirm" (click)="confirmCardAction(history)">Confirm</button>
-							<button class="btn btn-deny" (click)="denyCardAction(history)">Deny</button>
-						</div>-->
+					</ng-container>
+				</ng-container>
+			</div>
+		</div>
+	</ng-container>
+	<ng-container *ngIf="(currentClass.Weeks!=1 || currentClass.Status!='Stopped') && (currentClass.Weeks!=currentClass.TotalWeeks || currentClass.Status!='Stopped')">
+		<div class="card">
+			<div class="card-header card-header-title" data-background-color="green">
+				<h4 class="card-title">Add Bonus to Player</h4>
+			</div>
+			<div class="card-content">
+				<h4 class="text-center text-success">Select Player</h4>
+				<div class="bonus-player-list">
+					<div class="players-list">
+						<div class="bonus-player" *ngFor="let student of currentClass.Students;" (click)="choosePlayerToGiveBonus(student)" [class.selected]="selectedBonusPlayer==student">
+							<div class="bonus-player-tile"><img src="{{ getServerAssetUrl(studentList[getIndexOfUsers(studentList,student)].DisplayPicture) }}"><span>{{ studentList[getIndexOfUsers(studentList,student)].DisplayName }}</span></div>
+						</div>
+					</div>
+				</div>
+				<div class="player-bonus-set cards-list-container" *ngIf="selectedBonusPlayer">
+					<h4 class="text-center text-danger">Select Bonus Card</h4>
+					<div class="bonus-set-card-list cards-list-wrapper">
+						<div class="bonus-cards-list cards-list" *ngIf="cards.length>0">
+							<div class="bonus-card" *ngFor="let card of cards">
+								<div class="card-preview-area">
+									<div class="card-tile-preview">
+										<div class="card-tile {{ cards[getIndexOfCards(cards,card._id)].Type | lowercase }}" (click)="selectPlayerBonusCard(card._id)" [class.selected]="playerBonusSet.Card==card._id">
+											<div class="card-title">
+												<span>{{ cards[getIndexOfCards(cards,card._id)].Title }}</span>
+											</div>
+											<div class="card-picture">
+												<img class="card-picture-preview" src="{{ getServerAssetUrl(cards[getIndexOfCards(cards,card._id)].Picture) }}">
+											</div>
+											<div class="card-description">
+												<span>{{ cards[getIndexOfCards(cards,card._id)].Description }}</span>
+											</div>
+											<div class="card-goldcost">
+												<span>{{ cards[getIndexOfCards(cards,card._id)].GoldCost }}</span>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="bonus-set-point-gold clearfix">
+					  <div class="form-group col-sm-4">
+					    <label>Bonus Point</label>
+					    <input type="number" class="form-control" placeholder="Bonus Point" name="BonusPoint" [(ngModel)]="playerBonusSet.Point" required>
+					  </div>
+					  <div class="form-group col-sm-4">
+					    <label>Bonus Gold</label>
+					    <input type="number" class="form-control" placeholder="Bonus Gold" name="BonusGold" [(ngModel)]="playerBonusSet.Gold" required>
+					  </div>
+					  <div class="col-sm-4 text-center">
+					  	<div class="btn btn-success" (click)="givePlayerBonusSet()"><i class="material-icons">add</i>Give Bonus</div>
+					  </div>
 					</div>
 				</div>
 			</div>
 		</div>
-	</div>
-	<div class="set-bonus-to-player" *ngIf="(currentClass.Weeks!=1 || currentClass.Status!='Stopped') && (currentClass.Weeks!=currentClass.TotalWeeks || currentClass.Status!='Stopped')">
-		<h3 class="widget-label text-center text-accent" style="margin-bottom: 1em;">Add Bonus to Player</h3>
-		<div class="bonus-player-list">
-			<div>Choose Player</div>
-			<div class="players-list">
-				<div class="bonus-player" *ngFor="let student of currentClass.Students;" (click)="choosePlayerToGiveBonus(student)" [class.selected]="selectedBonusPlayer==student">
-					<div class="bonus-player-tile"><img src="{{ getServerAssetUrl(studentList[getIndexOfUsers(studentList,student)].DisplayPicture) }}"><span>{{ studentList[getIndexOfUsers(studentList,student)].DisplayName }}</span></div>
-				</div>
-			</div>
-		</div>
-		<div class="player-bonus-set cards-list-container" *ngIf="selectedBonusPlayer">
-			<div class="bonus-set-card-list cards-list-wrapper">
-				<div>Choose Card</div>
-				<div class="bonus-cards-list cards-list" *ngIf="cards.length>0">
-					<div class="bonus-card card" *ngFor="let card of cards">
-						<div class="card-preview-area">
-							<div class="card-tile-preview">
-								<div class="card-tile {{ cards[getIndexOfCards(cards,card._id)].Type | lowercase }}" (click)="selectPlayerBonusCard(card._id)" [class.selected]="playerBonusSet.Card==card._id">
-									<div class="card-title">
-										<span>{{ cards[getIndexOfCards(cards,card._id)].Title }}</span>
-									</div>
-									<div class="card-picture">
-										<img class="card-picture-preview" src="{{ getServerAssetUrl(cards[getIndexOfCards(cards,card._id)].Picture) }}">
-									</div>
-									<div class="card-description">
-										<span>{{ cards[getIndexOfCards(cards,card._id)].Description }}</span>
-									</div>
-									<div class="card-goldcost">
-										<span>{{ cards[getIndexOfCards(cards,card._id)].GoldCost }}</span>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="bonus-set-point-gold clearfix">
-			  <div class="form-group col-sm-4">
-			    <label>Bonus Point</label>
-			    <input type="number" class="form-control" placeholder="Bonus Point" name="BonusPoint" [(ngModel)]="playerBonusSet.Point" required>
-			  </div>
-			  <div class="form-group col-sm-4">
-			    <label>Bonus Gold</label>
-			    <input type="number" class="form-control" placeholder="Bonus Gold" name="BonusGold" [(ngModel)]="playerBonusSet.Gold" required>
-			  </div>
-			  <div class="col-sm-4 text-center">
-			  	<div class="btn btn-give-bonus" (click)="givePlayerBonusSet()">Give Bonus</div>
-			  </div>
-			</div>
-		</div>
-	</div>
-</div>
+	</ng-container>
+</ng-container>

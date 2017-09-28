@@ -21,6 +21,20 @@ export class HomeComponent implements OnInit {
   marktypes = [];
   markHistory = [];
 
+  itemTitles = [];
+  itemBackgrounds = [];
+
+  myTitles = [];
+  myBackgrounds = [];
+
+  totalPointSpent = 0;
+  totalPoints = 0;
+
+  loaded = false;
+
+
+  selectedClassRank = 0;
+  pointsBehind = 0;
 
   data:any;
   cropperSettings:CropperSettings;
@@ -95,9 +109,55 @@ export class HomeComponent implements OnInit {
   ngOnInit() {
     this.me = this.authService.getUser();
     this.currentStudent = this.authService.getUser();
-    this.dataService.getAttendClasses({ student_id: this.dataService.getStudentID() }).subscribe( (response) => {
-      this.attendClasses = response.Classes;
-    });
+
+    console.log(this.me, this.currentStudent);
+
+    let p1 = new Promise((resolve, reject) => {
+      this.dataService.getAttendClasses({ student_id: this.dataService.getStudentID() }).subscribe( (response) => {
+        this.attendClasses = response.Classes;
+        resolve();
+      });
+    })
+
+    let p2 = new Promise((resolve, reject) => {
+      this.dataService.getMarketItemTitles({}).subscribe( (response) => {
+        this.itemTitles = response.ItemTitles;
+        resolve();
+      })
+    })
+
+    let p3 = new Promise((resolve, reject) => {
+      this.dataService.getMarketItemBackgrounds({}).subscribe( (response) => {
+        this.itemBackgrounds = response.ItemBackgrounds;
+        resolve();
+      })
+    })
+
+    let p4 = new Promise((resolve, reject) => {
+      this.dataService.myMarketItemTitles({Student: this.me._id}).subscribe( (response) => {
+        this.myTitles = response.OwnedTitles;
+        resolve();
+      })
+    })
+    let p5 = new Promise((resolve, reject) => {
+      this.dataService.myMarketItemBackgrounds({Student: this.me._id}).subscribe( (response) => {
+        this.myBackgrounds = response.OwnedBackgrounds;
+        resolve();
+      })
+    })
+
+    Promise.all([p1, p2, p3, p4, p5]).then(() => {
+      this.itemTitles = this.itemTitles.filter((title) => this.myTitles.some((mtitle) => title._id == mtitle.Title));
+      this.itemBackgrounds = this.itemBackgrounds.filter((background) => this.myBackgrounds.some((mbackground) => background._id == mbackground.Background));
+
+      this.totalPointSpent += this.itemTitles.reduce((s, item) => s+item.Cost, 0);
+      this.totalPointSpent += this.itemBackgrounds.reduce((s, item) => s+item.Cost, 0);
+
+      this.totalPoints = this.attendClasses.reduce((s, cls) => s + cls.Players.reduce((ss, player) => ss + (player.Player==this.me._id?player.Point:0), 0), 0);
+
+      console.log(this.attendClasses);
+      this.loaded = true;
+    })
   }
 
   getServerAssetUrl(url) {
@@ -130,6 +190,17 @@ export class HomeComponent implements OnInit {
 
   viewStatistics(classInfo) {
     this.selectedClass = Object.assign({},classInfo);
+    this.selectedClass.Players.sort(function(a, b) {
+      return parseFloat(b.Point) - parseFloat(a.Point);
+    });
+    this.selectedClass.Players.every((player, ii) => {
+      if(player.Player==this.me._id) {
+        this.selectedClassRank = ii+1;
+        this.pointsBehind = this.selectedClass.Players[0].Point - player.Point;
+        return false;
+      }
+      return true;
+    })
     this.dataService.getClassMarkTypes({ Class: this.selectedClass._id }).subscribe(response => {
       this.marktypes = response.MarkTypes;
 
@@ -162,4 +233,13 @@ export class HomeComponent implements OnInit {
     });
     // console.log(this.selectedClass);
   }
+
+  resetPassword() {
+    if(!confirm("Do you really want to reset your password?")) return false;
+    this.authService.resetPassword({}).subscribe((response) => {
+      this.authService.logout();
+      location.href="/";
+    })
+  }
+
 }

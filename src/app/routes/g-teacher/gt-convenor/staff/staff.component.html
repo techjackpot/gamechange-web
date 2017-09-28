@@ -1,3 +1,9 @@
-<p>
-  staff works!
-</p>
+<div class="card">
+	<div class="card-header card-header-title" data-background-color="red">
+		<h4 class="card-title">{{ me.DisplayName }}</h4>
+	</div>
+	<div class="card-content">
+		<h5 class="text-center text-danger">New password will be sent to your email address. ({{ me.Email }})</h5>
+		<p class="text-center"><a class="btn btn-danger" (click)="resetPassword()">Reset Password</a></p>
+	</div>
+</div>

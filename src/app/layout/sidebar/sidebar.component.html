@@ -130,6 +130,30 @@
                             </ul>
                         </div>
                     </li>
+                    <li routerLinkActive="active" *ngIf="isTeacher()">
+                        <a data-toggle="collapse" href="#nav-account">
+                            <i class="material-icons">playlist_add_check</i>
+                            <p>Account
+                                <b class="caret"></b>
+                            </p>
+                        </a>
+                        <div class="collapse" id="nav-account">
+                            <ul class="nav">
+                                <!-- <li routerLinkActive="active">
+                                    <a  [routerLink]="[menuItems[6].path]">
+                                        <span class="sidebar-mini">CC</span>
+                                        <span class="sidebar-normal">{{menuItems[6].title}}</span>
+                                    </a>
+                                </li> -->
+                                <li routerLinkActive="active">
+                                    <a  [routerLink]="[menuItems[17].path]">
+                                        <span class="sidebar-mini">P</span>
+                                        <span class="sidebar-normal">{{menuItems[17].title}}</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
                     <li routerLinkActive="active" *ngIf="isStudent()">
                         <a data-toggle="collapse" href="#nav-profile">
                             <i class="material-icons">person</i>

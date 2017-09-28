@@ -100,31 +100,32 @@
 			}
 		}
 	}
-	table {
-		width: 100%;
-		border-collapse: collapse;
-		td, th {
-			background: $gc-bg-sub;
-			border: solid 4px $gc-bg-main;
-			padding: 1em;
-			text-align: center;
-		}
-		th {
-			text-transform: uppercase;
-			font-weight: 400;
-			text-align: center;
-			color: $gc-color-warn;
-			font-size: 18px;
-		}
-		a {
-			color: $gc-color-warn;
-			&:hover, &:focus {
-				text-decoration: none;
-			}
-		}
-	}
+	// table {
+	// 	width: 100%;
+	// 	border-collapse: collapse;
+	// 	td, th {
+	// 		background: $gc-bg-sub;
+	// 		border: solid 4px $gc-bg-main;
+	// 		padding: 1em;
+	// 		text-align: center;
+	// 	}
+	// 	th {
+	// 		text-transform: uppercase;
+	// 		font-weight: 400;
+	// 		text-align: center;
+	// 		color: $gc-color-warn;
+	// 		font-size: 18px;
+	// 	}
+	// 	a {
+	// 		color: $gc-color-warn;
+	// 		&:hover, &:focus {
+	// 			text-decoration: none;
+	// 		}
+	// 	}
+	// }
 	.class-list {
 		display: flex;
+		flex-wrap: wrap;
 	}
 	.btn-view-class {
 		cursor: pointer;

@@ -100,6 +100,11 @@ export class AuthService {
       .map((response: Response) => response.json());
   }
 
+  resetPassword(data) {
+    return this.http.post(this.url + '/api/secret/resetpassword', data, { headers: this.getHeaders() })
+      .map((response: Response) => response.json());
+  }
+
   updateUserData() {
     this.userInfo().subscribe(
       user => {

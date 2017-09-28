@@ -1,120 +1,120 @@
 <div class="card" *ngIf="opened && selectedClass">
-    <div class="card-header card-header-icon" data-background-color="rose">
-        <i class="material-icons">assignment</i>
-    </div>
-    <div class="card-content">
-        <h4 class="card-title">Edit Class
-        </h4>
-        <form #f="ngForm">
-            <div class="row">
-                <div class="col-md-5">
-                    <div class="form-group">
-                        <label class="control-label">Name</label>
-                        <input type="text" class="form-control" name="Name" [(ngModel)]="selectedClass.Name" required />
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <!-- <div class="form-group">
-                        <label class="label-control">Datetime Picker</label>
-                        <input type="text" class="form-control datetimepicker" name="DateTime" [(ngModel)]="selectedClass.DateTime" required />
-                    </div> -->
-                    <div class="form-group">
-                        <label class="control-label">Start Date</label>
-			    							<input type="datetime-local" class="form-control" name="DateTime" [(ngModel)]="selectedClass.DateTime" required>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label class="control-label">Total Weeks</label>
-			    							<input type="number" class="form-control" name="TotalWeeks" min="1" step="1" [(ngModel)]="selectedClass.TotalWeeks" required>
-                    </div>
-                </div>
+  <div class="card-header card-header-icon" data-background-color="rose">
+    <i class="material-icons">assignment</i>
+  </div>
+  <div class="card-content">
+    <h4 class="card-title">Edit Class
+    </h4>
+    <form #f="ngForm">
+      <div class="row">
+        <div class="col-md-5">
+          <div class="form-group">
+            <label class="control-label">Name</label>
+            <input type="text" class="form-control" name="Name" [(ngModel)]="selectedClass.Name" required />
+          </div>
+        </div>
+        <div class="col-md-4">
+          <!-- <div class="form-group">
+            <label class="label-control">Datetime Picker</label>
+            <input type="text" class="form-control datetimepicker" name="DateTime" [(ngModel)]="selectedClass.DateTime" required />
+          </div> -->
+          <div class="form-group">
+            <label class="control-label">Start Date</label>
+            <input type="datetime-local" class="form-control" name="DateTime" [(ngModel)]="selectedClass.DateTime" required>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-group">
+            <label class="control-label">Total Weeks</label>
+            <input type="number" class="form-control" name="TotalWeeks" min="1" step="1" [(ngModel)]="selectedClass.TotalWeeks" required>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group label-floating">
+            <label>Description</label>
+            <textarea class="form-control" name="Description" [(ngModel)]="selectedClass.Description" rows="3"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group label-floating">
+            <label class="control-label">Location</label>
+            <input type="text" class="form-control" name="Room" [(ngModel)]="selectedClass.Room">
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group label-floating">
+            <label class="control-label">Subject</label>
+            <input type="text" class="form-control" name="Subject" [(ngModel)]="selectedClass.Subject">
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group">
+            <label class="control-label">Teachers</label>
+            <div>
+              <div class="checkbox checkbox-inline" *ngFor="let teacher of teachersList;">
+                <label>
+                  <input type="checkbox" name="Teacher-{{ teacher._id }}" [(ngModel)]="selectedClass.Teachers[getIndexOfUsers(selectedClass.Teachers, teacher._id)].use" />{{ teacher.DisplayName }}
+                </label>
+              </div>
             </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-group label-floating">
-                        <label>Description</label>
-			    							<textarea class="form-control" name="Description" [(ngModel)]="selectedClass.Description" rows="3"></textarea>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group label-floating">
-                        <label class="control-label">Location</label>
-			    							<input type="text" class="form-control" name="Room" [(ngModel)]="selectedClass.Room">
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group label-floating">
-                        <label class="control-label">Subject</label>
-			    							<input type="text" class="form-control" name="Subject" [(ngModel)]="selectedClass.Subject">
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <label class="control-label">Teachers</label>
-                        <div>
-											    	<div class="checkbox checkbox-inline" *ngFor="let teacher of teachersList;">
-											    			<label>
-											    					<input type="checkbox" name="Teacher-{{ teacher._id }}" [(ngModel)]="selectedClass.Teachers[getIndexOfUsers(selectedClass.Teachers, teacher._id)].use" />{{ teacher.DisplayName }}
-											    			</label>
-											    	</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-						<button class="btn btn-danger pull-right" *ngIf="opened" (click)="cancelNewClass()"><i class="material-icons">close</i> Cancel</button>
-            <button type="submit" class="btn btn-success pull-right" *ngIf="updating" [disabled]="!f.form.valid" (click)="onSubmitUpdateClass(f)">Update Class</button>
-            <button type="submit" class="btn btn-success pull-right" *ngIf="!updating" [disabled]="!f.form.valid" (click)="onSubmitCreateClass(f)">Create Class</button>
-            <div class="clearfix"></div>
-        </form>
-    </div>
+          </div>
+        </div>
+      </div>
+      <button class="btn btn-danger pull-right" *ngIf="opened" (click)="cancelNewClass()"><i class="material-icons">close</i> Cancel</button>
+      <button type="submit" class="btn btn-success pull-right" *ngIf="updating" [disabled]="!f.form.valid" (click)="onSubmitUpdateClass(f)">Update Class</button>
+      <button type="submit" class="btn btn-success pull-right" *ngIf="!updating" [disabled]="!f.form.valid" (click)="onSubmitCreateClass(f)">Create Class</button>
+      <div class="clearfix"></div>
+    </form>
+  </div>
 </div>
 
 
 <button class="btn btn-success pull-right" (click)="createNewClass()"><span class="btn-label"><i class="material-icons" >add</i></span>Create New Class</button>
 
 <div class="card">
-    <div class="card-header card-header-icon" data-background-color="rose">
-        <i class="material-icons">assignment</i>
+  <div class="card-header card-header-icon" data-background-color="rose">
+      <i class="material-icons">assignment</i>
+  </div>
+  <div class="card-content">
+    <h4 class="card-title">Classes</h4>
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Class Name</th>
+            <th>Date Time</th>
+            <th>Teacher/Convenor</th>
+            <th>Room</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let classInfo of classesList;">
+            <td>{{ classInfo.Name }}</td>
+            <td>{{ classInfo.DateTime | date: 'short' }}</td>
+            <td>
+              <div class="class-teachers" *ngIf="teachersList.length>0">
+                <div class="class-teacher block" *ngFor="let user of classInfo.Teachers;">{{ teachersList[getIndexOfUsers(teachersList, user)]['DisplayName'] }}</div>
+              </div>
+            </td>
+            <td>{{ classInfo.Room }}</td>
+            <td class="td-actions text-right">
+              <button type="button" rel="tooltip" class="btn btn-success" (click)="editClass(classInfo);">
+                <i class="material-icons">edit</i>
+              </button>
+              <button type="button" rel="tooltip" class="btn btn-danger" (click)="removeClass(classInfo);">
+                <i class="material-icons">close</i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-    <div class="card-content">
-        <h4 class="card-title">Classes</h4>
-        <div class="table-responsive">
-            <table class="table">
-                <thead>
-                    <tr>
-											<th>Class Name</th>
-											<th>Date Time</th>
-											<th>Teacher/Convenor</th>
-											<th>Room</th>
-											<th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-										<tr *ngFor="let classInfo of classesList;">
-											<td>{{ classInfo.Name }}</td>
-											<td>{{ classInfo.DateTime | date: 'short' }}</td>
-											<td>
-												<div class="class-teachers" *ngIf="teachersList.length>0">
-													<div class="class-teacher block" *ngFor="let user of classInfo.Teachers;">{{ teachersList[getIndexOfUsers(teachersList, user)]['DisplayName'] }}</div>
-												</div>
-											</td>
-											<td>{{ classInfo.Room }}</td>
-											<td class="td-actions text-right">
-                        <button type="button" rel="tooltip" class="btn btn-success" (click)="editClass(classInfo);">
-                            <i class="material-icons">edit</i>
-                        </button>
-                        <button type="button" rel="tooltip" class="btn btn-danger" (click)="removeClass(classInfo);">
-                            <i class="material-icons">close</i>
-                        </button>
-											</td>
-										</tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
+  </div>
 </div>

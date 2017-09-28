@@ -17,40 +17,42 @@
 			</div>
 			<div class="student-info-item">
 				<span class="info-item-name">Title</span>
-				<span class="info-item-content"></span>
-			</div>
-			<div class="student-info-item">
-				<span class="info-item-name">Class</span>
-				<span class="info-item-content">Wednesday 3pm</span>
+				<span class="info-item-content">{{ me.Title?me.Title.Name:'' }}</span>
 			</div>
 			<div class="student-info-item">
 				<span class="info-item-name">Total Points</span>
-				<span class="info-item-content">53</span>
+				<span class="info-item-content">{{ totalPoints }}</span>
 			</div>
 			<div class="student-info-item">
 				<span class="info-item-name">Points Spent</span>
-				<span class="info-item-content">47</span>
+				<span class="info-item-content">{{ totalPointSpent }}</span>
 			</div>
-			<div class="student-info-item">
-				<span class="info-item-name">Class Rank</span>
-				<span class="info-item-content">4</span>
-			</div>
-			<div class="student-info-item">
-				<span class="info-item-name">Points Behind</span>
-				<span class="info-item-content">7</span>
-			</div>
-			<div class="student-info-item">
-				<span class="info-item-name">Weekly Average</span>
-				<span class="info-item-content">4.5/6.0</span>
-			</div>
-			<div class="student-info-item">
-				<span class="info-item-name">Strongest Category</span>
-				<span class="info-item-content">YMCA</span>
-			</div>
-			<div class="student-info-item">
-				<span class="info-item-name">Weakest Category</span>
-				<span class="info-item-content">Individual</span>
-			</div>
+			<ng-container *ngIf="selectedClass">
+				<div class="student-info-item">
+					<span class="info-item-name">Class</span>
+					<span class="info-item-content">{{ selectedClass.DateTime | date : 'EEE h:mma' }}</span>
+				</div>
+				<div class="student-info-item">
+					<span class="info-item-name">Class Rank</span>
+					<span class="info-item-content">{{ selectedClassRank }}</span>
+				</div>
+				<div class="student-info-item">
+					<span class="info-item-name">Points Behind</span>
+					<span class="info-item-content">{{ pointsBehind }}</span>
+				</div>
+				<div class="student-info-item">
+					<span class="info-item-name">Weekly Average</span>
+					<span class="info-item-content">4.5/6.0</span>
+				</div>
+				<div class="student-info-item">
+					<span class="info-item-name">Strongest Category</span>
+					<span class="info-item-content">YMCA</span>
+				</div>
+				<div class="student-info-item">
+					<span class="info-item-name">Weakest Category</span>
+					<span class="info-item-content">Individual</span>
+				</div>
+			</ng-container>
 		</div>
 		<div class="clearfix"></div>
 		<div class="avatar-edit-area" *ngIf="cropping">
@@ -62,35 +64,51 @@
 		</div>
 	</div>
 
-	<h3 class="widget-label text-center text-accent" style="margin-bottom: 1em;">Enrolled Courses</h3>
-	<div *ngIf="attendClasses.length>0">
-		<div class="class-list">
-			<div *ngFor="let classInfo of attendClasses;" class="btn-view-class" (click)="viewStatistics(classInfo)" [class.active-class]="selectedClass && classInfo._id==selectedClass._id">
-				{{ classInfo.Name }} - {{ classInfo.DateTime | date: 'short' }}
-			</div>
+	<div class="card">
+		<div class="card-header card-header-title" data-background-color="green">
+			<h4 class="card-title">Enrolled Courses</h4>
 		</div>
-	</div>
-	<div *ngIf="selectedClass">
-		<div class="class-info clearfix">
-			<table>
-				<thead>
-					<tr>
-						<td>Week #</td>
-						<td>Attendance</td>
-						<td *ngFor="let marktype of marktypes;">{{ marktype.Name }}</td>
-						<td>Note</td>
-					</tr>
-				</thead>
-				<tbody>
-					<tr *ngFor="let history of markHistory;">
-						<td>{{ history.Week }}</td>
-						<td>{{ history.Attendance?'/':'' }}</td>
-						<td *ngFor="let marktype of marktypes;">{{ history.Marks[getIndexOfMark(history.Marks, marktype._id)].Value || '' }}</td>
-						<td>{{ history.Note }}</td>
-					</tr>
-				</tbody>
-			</table>
+		<div class="card-content">
+			<div class="class-list">
+				<a *ngFor="let classInfo of attendClasses;" class="btn" (click)="viewStatistics(classInfo)" [class.btn-success]="selectedClass && classInfo._id==selectedClass._id">
+					{{ classInfo.Name }} ( {{ classInfo.DateTime | date : 'EEE h:mma' }} at {{ classInfo.Room }} )
+				</a>
+			</div>
+			<ng-container *ngIf="selectedClass">
+				<div class="table-responsive">
+					<table class="table">
+						<thead>
+							<tr class="text-danger">
+								<td>Week #</td>
+								<td>Attendance</td>
+								<td *ngFor="let marktype of marktypes;">{{ marktype.Name }}</td>
+								<td>Note</td>
+							</tr>
+						</thead>
+						<tbody>
+							<tr *ngFor="let history of markHistory;">
+								<td>{{ history.Week }}</td>
+								<td>{{ history.Attendance?'/':'' }}</td>
+								<td *ngFor="let marktype of marktypes;">{{ history.Marks[getIndexOfMark(history.Marks, marktype._id)].Value || '' }}</td>
+								<td>{{ history.Note }}</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</ng-container>
 		</div>
 	</div>
 
+</div>
+
+
+
+<div class="card">
+	<div class="card-header card-header-title" data-background-color="red">
+		<h4 class="card-title">{{ me.DisplayName }}</h4>
+	</div>
+	<div class="card-content">
+		<h5 class="text-center text-danger">New password will be sent to your email address. ({{ me.Email }})</h5>
+		<p class="text-center"><a class="btn btn-danger" (click)="resetPassword()">Reset Password</a></p>
+	</div>
 </div>

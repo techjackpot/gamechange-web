@@ -22,7 +22,8 @@ export class StudentsComponent implements OnInit {
     Multiplier: 1.5,
     Weeks: 3,
     MinValue: 5,
-    ForGroup: false
+    ForGroup: false,
+    ForRollCall: false
   };
 
   editingMark = false;
@@ -139,7 +140,8 @@ export class StudentsComponent implements OnInit {
       Multiplier: 1.5,
       Weeks: 3,
       MinValue: 5,
-      ForGroup: false
+      ForGroup: false,
+      ForRollCall: false
     };
     this.editingMark = false;
   }

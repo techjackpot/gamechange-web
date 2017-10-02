@@ -214,6 +214,7 @@ export class GroupsComponent implements OnInit {
   }
 
   onSubmitMarkGroup(form: NgForm) {
+    console.log(form);
     if(confirm('Do you really want to set this mark to group?')) {
 
       let studentBook;

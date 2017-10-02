@@ -20,7 +20,7 @@
 		</div>
 		<div class="class-groups">
 			<div class="groups-list">
-				<div class="group-item" *ngFor="let group of Groups;">
+				<div class="group-item" *ngFor="let group of Groups; let ii=index">
 					<div class="card">
 					  <div class="card-header card-header-icon" data-background-color="red">
 					    <h4 class="card-title">{{ group.Title }}</h4>
@@ -33,6 +33,50 @@
 									<img src="{{ getServerAssetUrl(studentList[getIndexOfUsers(studentList, st)].DisplayPicture) }}" alt="{{ studentList[getIndexOfUsers(studentList, st)].DisplayName }}" draggable="false" />
 									<span class="group-member-name" (click)="viewPlayerProfile(st)">{{ studentList[getIndexOfUsers(studentList, st)].DisplayName }}</span>
 								</div>
+							</div>
+							<div class="group-quick-mark-box">
+			    			<form (ngSubmit)="'[onSubmitMarkGroup(mg'+ii+')]'" #mg="ngForm" name="givemark">
+			    				<div class="row">
+			    					<div class="col-md-6">
+					            <div class="form-group">
+					              <label class="control-label">Group</label>
+										    <select name="markModel-group" required class="form-control">
+										    	<option value="">Select a Group...</option>
+										    	<option *ngFor="let group of Groups;" [value]="group._id">{{ group.Title }}</option>
+										    </select>
+					            </div>
+					          </div>
+					          <div class="col-md-6">
+										  <div class="form-group">
+										    <label class="control-label">Week</label>
+										    <select name="markModel-week" required class="form-control">
+										    	<option value="0">Select Week</option>
+										    	<option *ngFor="let w of week_numbers;" [value]="w">{{ w }}</option>
+										    </select>
+										  </div>
+										</div>
+										<div class="col-md-6">
+										  <div class="form-group">
+										    <label class="control-label">Mark Type</label>
+										    <select name="markModel-marktype" required class="form-control">
+										    	<option value="">Select Mark Type</option>
+										    	<option *ngFor="let marktype of groupmarktypes;" [value]="marktype._id">{{ marktype.Name }}</option>
+										    </select>
+										  </div>
+										</div>
+										<div class="col-md-6">
+										  <div class="form-group">
+										    <label class="control-label">Mark Value</label>
+										    <input type="number" class="form-control" placeholder="Mark Value" name="markModel-value" required>
+										  </div>
+										</div>
+										<div class="col-lg-12 text-center">
+										  <div class="form-group">
+								      	<button type="submit" [disabled]="!mg.form.valid" class="btn btn-rose">Set Mark</button>
+								      </div>
+								    </div>
+							    </div>
+			          </form>
 							</div>
 					  </div>
 					</div>

@@ -14,7 +14,11 @@
 						<div class="buttons">
 							<div class="btn btn-success" (click)="onClickedAttend(player.Player)"><i class="material-icons">check</i></div>
 							<div class="btn btn-danger" (click)="onClickedAbsent(player.Player)"><i class="material-icons">close</i></div>
-							<div class="btn btn-github" *ngFor="let marktype of marktypes; let ii=index" (click)="onClickedIncraseMark(player.Player,ii)">{{ studentBook[getIndexOfMarkHistory(studentBook, player.Player)].Marks[ii].Value }}</div>
+							<ng-container *ngFor="let marktype of marktypes; let ii=index">
+								<ng-container *ngIf="marktype.ForRollCall==true">
+									<div class="btn btn-github" (click)="onClickedIncraseMark(player.Player,ii)">{{ studentBook[getIndexOfMarkHistory(studentBook, player.Player)].Marks[ii].Value }}</div>
+								</ng-container>
+							</ng-container>
 						</div>
 					</div>
 				</div>

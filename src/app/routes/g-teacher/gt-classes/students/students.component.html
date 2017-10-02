@@ -75,6 +75,7 @@
 						<th width="10%">Weeks</th>
 						<th width="10%">Minimum Value</th>
 						<th>For Group?</th>
+						<th>For RollCall?</th>
 						<th class="text-center">Actions</th>
 	  			</thead>
 	  			<tbody>
@@ -85,6 +86,7 @@
 							<td>{{ marktype.Weeks }}</td>
 							<td>{{ marktype.MinValue }}</td>
 							<td>{{ marktype.ForGroup?'Yes':'No' }}</td>
+							<td>{{ marktype.ForRollCall?'Yes':'No' }}</td>
 							<td class="td-actions text-center">
 								<button class="btn btn-success" (click)="editMarkType(marktype)"><i class="material-icons">edit</i></button>
 								<button class="btn btn-danger" (click)="removeMarkTypeFromClass(marktype)"><i class="material-icons">close</i></button>
@@ -123,6 +125,9 @@
 							</td>
 							<td>
                 <div class="checkbox"><label><input type="checkbox" [(ngModel)]="selectedMarkType.ForGroup"></label></div>
+							</td>
+							<td>
+                <div class="checkbox"><label><input type="checkbox" [(ngModel)]="selectedMarkType.ForRollCall"></label></div>
 							</td>
 							<td class="text-center">
 								<button class="btn btn-success" (click)="addMarkTypeToClass()" *ngIf="!editingMark"><i class="material-icons">add</i>Add</button>

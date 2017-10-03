@@ -1,0 +1,14 @@
+.marktypes-table {
+	thead {
+		th {
+			text-align: center;
+			position: relative;
+			&:before {
+				content: '|';
+				position: absolute;
+				right: 100%;
+				color: #f00;
+			}
+		}
+	}
+}

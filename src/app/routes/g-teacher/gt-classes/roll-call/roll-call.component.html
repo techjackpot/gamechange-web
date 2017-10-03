@@ -110,47 +110,49 @@
 				<h4 class="card-title">Student Record Book <button class="btn btn-info pull-right" (click)="exportStudentBookToCSV()"><i class="material-icons">view_list</i> Export Marks</button></h4>
 			</div>
 			<div class="card-content">
-				<div class="row">
-					<div class="col-sm-4 col-sm-offset-4">
-						<div class="form-group">
-							<label class="control-label">Week</label>
-							<select class="form-control" [(ngModel)]="week_studentbook" (change)="updateCurrentStudentBook()"><option *ngFor="let t of week_numbers;" [value]="t">{{ t }}</option></select>
+				<form #f="ngForm">
+					<div class="row">
+						<div class="col-sm-4 col-sm-offset-4">
+							<div class="form-group">
+								<label class="control-label">Week</label>
+								<select class="form-control" name="week_studentbook" required [(ngModel)]="week_studentbook" (change)="updateCurrentStudentBook()"><option *ngFor="let t of week_numbers;" [value]="t">{{ t }}</option></select>
+							</div>
 						</div>
 					</div>
-				</div>
-				<ng-container *ngIf="marktypes.length>0 && currentClass && studentList.length>0 && studentBook.length>0">
-					<div class="table-responsive student-mark-book">
-						<table class="table">
-							<thead>
-								<tr class="text-danger">
-									<td></td>
-									<td>Attendance</td>
-									<td *ngFor="let marktype of marktypes;">{{ marktype.Name }}</td>
-									<td>Note</td>
-								</tr>
-							</thead>
-							<tbody>
-								<tr *ngFor="let student_id of currentClass.Students;">
-									<td><div class="profile_info"><img src="{{ getServerAssetUrl(studentList[getIndexOfUsers(studentList, student_id)].DisplayPicture) }}"><span>{{ studentList[getIndexOfUsers(studentList, student_id)].DisplayName }}</span></div></td>
-									<td align="center"><input type="checkbox" [(ngModel)]="studentBook[getIndexOfMarkHistory(studentBook, student_id)].Attendance" /></td>
-									<td *ngFor="let marktype of marktypes;">
-										<div class="form-group">
-											<input class="form-control" type="number" [(ngModel)]="studentBook[getIndexOfMarkHistory(studentBook, student_id)].Marks[getIndexOfMark(studentBook[getIndexOfMarkHistory(studentBook, student_id)].Marks, marktype._id)].Value" (mouseup)="$event.target.select()" />
-										</div>
-									</td>
-									<td>
-										<div class="form-group">
-											<input class="form-control" type="text" [(ngModel)]="studentBook[getIndexOfMarkHistory(studentBook, student_id)].Note" />
-										</div>
-									</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-				</ng-container>
-				<div class="text-center">
-	      	<button class="btn btn-success" (click)="updateStudentBook()">Update Student Book{{loading}}</button>
-	      </div>
+					<ng-container *ngIf="marktypes.length>0 && currentClass && studentList.length>0 && studentBook.length>0">
+						<div class="table-responsive student-mark-book">
+							<table class="table">
+								<thead>
+									<tr class="text-danger">
+										<td></td>
+										<td>Attendance</td>
+										<td *ngFor="let marktype of marktypes;">{{ marktype.Name }}</td>
+										<td>Note</td>
+									</tr>
+								</thead>
+								<tbody>
+									<tr *ngFor="let student_id of currentClass.Students; let iii=index">
+										<td><div class="profile_info"><img src="{{ getServerAssetUrl(studentList[getIndexOfUsers(studentList, student_id)].DisplayPicture) }}"><span>{{ studentList[getIndexOfUsers(studentList, student_id)].DisplayName }}</span></div></td>
+										<td align="center"><input type="checkbox" name="attendance-{{iii}}" [(ngModel)]="studentBook[getIndexOfMarkHistory(studentBook, student_id)].Attendance" /></td>
+										<td *ngFor="let marktype of marktypes; let jjj=index">
+											<div class="form-group">
+												<input class="form-control" type="number" name="mark-{{iii}}-{{jjj}}" [(ngModel)]="studentBook[getIndexOfMarkHistory(studentBook, student_id)].Marks[getIndexOfMark(studentBook[getIndexOfMarkHistory(studentBook, student_id)].Marks, marktype._id)].Value" (mouseup)="$event.target.select()"  min="0" max="5" required />
+											</div>
+										</td>
+										<td>
+											<div class="form-group">
+												<input class="form-control" type="text" name="note-{{iii}}" [(ngModel)]="studentBook[getIndexOfMarkHistory(studentBook, student_id)].Note" />
+											</div>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</ng-container>
+					<div class="text-center">
+		      	<button class="btn btn-success" [disabled]="!f.form.valid" (click)="updateStudentBook()">Update Student Book{{loading}}</button>
+		      </div>
+		    </form>
 			</div>
 		</div>
 	</ng-container>

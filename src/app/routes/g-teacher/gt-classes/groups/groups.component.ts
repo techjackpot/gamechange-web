@@ -23,6 +23,8 @@ export class GroupsComponent implements OnInit {
   week_numbers = [];
   groupmarktypes = [];
   marktypes = [];
+  groupMarkModel = {};
+  cards = [];
 
   constructor(private dataService: DataService, private router: Router, private dragulaService: DragulaService, private authService: AuthService) {
     this.model = {
@@ -113,13 +115,28 @@ export class GroupsComponent implements OnInit {
         resolve();
       });
     });
+    let p6 = new Promise((resolve, reject) => {
+      this.dataService.getAllCards({Approved: true}).subscribe((response) => {
+        this.cards = response.Cards;
 
-    Promise.all([p1, p2, p3, p4, p5]).then(() => {
+        resolve();
+      });
+    })
+
+    Promise.all([p1, p2, p3, p4, p5, p6]).then(() => {
       this.loaded = true;
       this.resetMarkModel();
       for(let i=1;i<=this.currentClass.Weeks;i++) {
         this.week_numbers.push(i);
       }
+      this.Groups.forEach((group) => {
+        this.groupMarkModel[group._id] = {
+          group: group._id,
+          week: this.currentClass.Weeks,
+          marktype: this.groupmarktypes[0]._id,
+          value: 0
+        }
+      })
     });
   }
 
@@ -214,7 +231,6 @@ export class GroupsComponent implements OnInit {
   }
 
   onSubmitMarkGroup(form: NgForm) {
-    console.log(form);
     if(confirm('Do you really want to set this mark to group?')) {
 
       let studentBook;
@@ -259,5 +275,118 @@ export class GroupsComponent implements OnInit {
   }
   viewPlayerProfile(student) {
     this.router.navigate(['/classes/student', student]);
+  }
+
+  onSubmitMarkEachGroup(group_id) {
+    let studentBook;
+
+    this.dataService.getStudentBook({ Class: this.currentClass._id, Week: this.groupMarkModel[group_id].week}).subscribe((response) => {
+      studentBook = this.Groups[this.getIndexOfGroups(this.Groups, this.groupMarkModel[group_id].group)].Students.map((student) => {
+        let index = this.getIndexOfMarkHistory(response.MarkHistory, student);
+        if(index<0) {
+          return {
+            Class: this.currentClass._id,
+            Staff: this.me._id,
+            Week: this.groupMarkModel[group_id].week,
+            Student: student,
+            Marks: this.marktypes.map((marktype) => { return { MarkType: marktype._id, Value: 0 }; } ),
+            Attendance: false,
+            Date: new Date().toJSON(),
+            Note: ''
+          };
+        } else {
+          let markhistory = response.MarkHistory[index];
+          markhistory.Marks = markhistory.Marks.map((mark) => {
+            if(mark.MarkType == this.groupMarkModel[group_id].marktype) {
+              return {
+                MarkType: mark.MarkType,
+                Value: this.groupMarkModel[group_id].value
+              }
+            } else {
+              return mark;
+            }
+          });
+          return markhistory;
+        }
+      });
+      this.dataService.updateStudentBook({ data: studentBook }).subscribe((response) => {
+        this.dataService.getStudentBook({ Class: this.currentClass._id }).subscribe( response => {
+          this.markHistory = response.MarkHistory;
+          this.resetMarkModel();
+        })
+      });
+    });
+  }
+
+  chooseCard(collection, target) {
+    if(collection.length == 0) return null;
+
+    //rarity
+
+    let candidate = [];
+    let rand, rarity;
+    let candidate_card, pass=false;
+
+    while(candidate.length==0) {
+      rand = Math.floor(Math.random()*10);
+      rarity = rand<2?'Rare':(rand<5?'Uncommon':'Common');
+
+
+      collection.forEach((card_id) => {
+        if(this.cards[this.getIndexOfCards(this.cards,card_id)].Rarity == rarity) candidate.push(card_id);
+      });
+    }
+
+
+    while(!pass) {
+      candidate_card = candidate[Math.floor(Math.random()*candidate.length)];
+
+      if(target.indexOf(candidate_card)<0) {
+        pass = true;
+      } else {
+        rand = Math.floor(Math.random()*5);
+        if(rand < 2) {
+          pass = true;
+        } else if(rand < 4) {
+          pass = false;
+        } else {
+          candidate = [];
+          while(candidate.length==0) {
+            rand = Math.floor(Math.random()*10);
+            rarity = rand<2?'Rare':(rand<5?'Uncommon':'Common');
+
+
+            collection.forEach((card_id) => {
+              if(this.cards[this.getIndexOfCards(this.cards,card_id)].Rarity == rarity) candidate.push(card_id);
+            });
+          }
+
+        }
+      }
+    }
+
+    return candidate_card;
+
+  }
+
+  getIndexOfCards(cards,card_id) {
+    let index = -1;
+    cards.forEach((card, i) => {
+      if(card._id == card_id) {
+        index = i;
+      }
+    });
+    return index;
+  }
+
+  onSubmitAddCardEachMember(group_id) {
+
+    this.Groups[this.getIndexOfGroups(this.Groups, group_id)].Students.forEach((player_id) => {
+      this.currentClass.Players[this.getIndexOfPlayers(this.currentClass.Players, player_id)].Hand.push(this.currentClass.Collection[Math.floor(this.currentClass.Collection.length*Math.random())]);
+    })
+
+    this.dataService.updateClassInfo({_id: this.currentClass._id, Players: this.currentClass.Players}).subscribe((response) => {
+      this.currentClass = response.Class;
+    });
   }
 }

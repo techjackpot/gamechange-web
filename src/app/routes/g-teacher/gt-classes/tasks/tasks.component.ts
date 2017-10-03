@@ -15,11 +15,12 @@ export class TasksComponent implements OnInit {
   currentClass = null;
   Tasks = [];
   loaded = false;
+  isEditMode = false;
 
   resetModel() {
     this.model = {
       title: '',
-      group: '',
+      group: '-1',
       content: ''
     }
   }
@@ -54,7 +55,7 @@ export class TasksComponent implements OnInit {
     })
   }
 
-  getIndexOfGroups(groups,group_id) {
+  getIndexOfGroups(groups, group_id) {
     let index = -1;
     groups.forEach((group, i) => {
       if(group._id == group_id) {
@@ -63,16 +64,64 @@ export class TasksComponent implements OnInit {
     });
     return index;
   }
+  getIndexOfTasks(tasks, task_id) {
+    let index = -1;
+    tasks.forEach((task, i) => {
+      if(task._id == task_id) {
+        index = i;
+      }
+    });
+    return index;
+  }
 
-  onSubmitTask(form: NgForm) {
+  onSubmitNewTask() {
+    if(!confirm("Do you really want to create this Task?")) return false;
   	this.dataService.createNewTask({
   		Title: this.model.title,
   		Content: this.model.content,
   		Class: this.currentClass._id,
   		Group: this.model.group!=0?this.model.group:null
   	}).subscribe( response => {
-  		this.Tasks.push(response.Task);
+  		this.Tasks.unshift(response.Task);
   	})
-    form.reset();
+    this.resetModel();
+  }
+
+  onSubmitUpdateTask() {
+    if(!confirm("Do you really want to update this Task?")) return false;
+    this.dataService.updateClassTask({
+      _id: this.model._id,
+      Title: this.model.title,
+      Content: this.model.content,
+      Class: this.currentClass._id,
+      Group: this.model.group!=0?this.model.group:null
+    }).subscribe( response => {
+      this.Tasks.splice(this.getIndexOfTasks(this.Tasks, this.model._id), 1, response.Task);
+      this.resetModel();
+      this.isEditMode = false;
+    })
+  }
+
+  onClickedEditTask(task_ind) {
+    if(!confirm("Do you really want to edit this Task?")) return false;
+    this.isEditMode = true;
+    this.model = {
+      _id: this.Tasks[task_ind]._id,
+      title: this.Tasks[task_ind].Title,      
+      group: this.Tasks[task_ind].Group==null?0:this.Tasks[task_ind].Group,
+      content: this.Tasks[task_ind].Content
+    };
+  }
+  onClickedDeleteTask(task_ind) {
+    if(!confirm("Do you really want to remove this Task?")) return false;
+    this.dataService.deleteClassTask({
+      _id: this.Tasks[task_ind]
+    }).subscribe( response => {
+      this.Tasks.splice(task_ind, 1);
+    })
+  }
+  onClickedCancelUpdate() {
+    this.isEditMode = false;
+    this.resetModel();
   }
 }

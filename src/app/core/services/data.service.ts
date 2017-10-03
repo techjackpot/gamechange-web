@@ -136,6 +136,14 @@ export class DataService {
     return this.http.post(this.url + '/api/tasks/create', data, { headers: this.getHeaders() })
       .map((response: Response) => response.json());
   }
+  updateClassTask(data) {
+    return this.http.post(this.url + '/api/tasks/update', data, { headers: this.getHeaders() })
+      .map((response: Response) => response.json());
+  }
+  deleteClassTask(data) {
+    return this.http.post(this.url + '/api/tasks/delete', data, { headers: this.getHeaders() })
+      .map((response: Response) => response.json());
+  }
 
   getClassTasks(data) {
     return this.http.post(this.url + '/api/tasks/list', data, { headers: this.getHeaders() })

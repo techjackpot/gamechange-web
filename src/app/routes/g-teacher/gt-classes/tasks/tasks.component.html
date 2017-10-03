@@ -4,13 +4,13 @@
 	    <h4 class="card-title">Create New Task</h4>
 	  </div>
 	  <div class="card-content">
-      <form #f="ngForm" (ngSubmit)="onSubmitTask(f)">
+      <form #f="ngForm">
         <div class="row">
         	<div class="col-md-4">
-        		<div class="form-group label-floating">
+        		<div class="form-group">
         			<label class="control-label">Group</label>
         			<select name="Group" class="form-control" required [(ngModel)]="model.group">
-        				<option value=""></option>
+        				<!-- <option value=""></option> -->
 			          <option value="-1" selected>Select Groups</option>
 			          <option value="0">All Groups</option>
 			          <option *ngFor="let g of Groups" [value]="g._id">Group {{g.Title}} Only</option>
@@ -18,7 +18,7 @@
         		</div>
         	</div>
           <div class="col-md-8">
-            <div class="form-group label-floating">
+            <div class="form-group">
               <label class="control-label">Name</label>
               <input type="text" class="form-control" name="Name" [(ngModel)]="model.title" required />
             </div>
@@ -26,7 +26,7 @@
         </div>
         <div class="row">
           <div class="col-md-12">
-            <div class="form-group label-floating">
+            <div class="form-group">
               <label>Enter task information here</label>
 							<textarea class="form-control" name="Description" [(ngModel)]="model.content" rows="4"></textarea>
             </div>
@@ -34,7 +34,9 @@
         </div>
         <div class="row">
         	<div class="col-md-12 text-right">
-      			<button type="submit" [disabled]="!f.form.valid || model.group==-1 || model.title=='' || model.content==''" class="btn btn-success"><i class="material-icons">add</i>Create Task</button>
+      			<button type="submit" [disabled]="!f.form.valid || model.group==-1 || model.title=='' || model.content==''" class="btn btn-success" (click)="onSubmitNewTask()" *ngIf="!isEditMode"><i class="material-icons">add</i> Create Task</button>
+            <button *ngIf="isEditMode" [disabled]="!f.form.valid || model.group==-1 || model.title=='' || model.content==''" class="btn btn-danger" (click)="onClickedCancelUpdate()"><i class="material-icons">close</i> Cancel</button>
+            <button *ngIf="isEditMode" [disabled]="!f.form.valid || model.group==-1 || model.title=='' || model.content==''" class="btn btn-danger" (click)="onSubmitUpdateTask()"><i class="material-icons">edit</i> Update Task</button>
         	</div>
         </div>
       </form>
@@ -61,6 +63,8 @@
 	                  <div class="timeline-panel">
 	                    <div class="timeline-heading">
 	                      <span class="label label-danger">{{ task.Title }}</span>
+                        <a (click)="onClickedEditTask(ii)" class="btn btn-xs btn-info pull-right"><i class="material-icons">edit</i> edit</a>
+                        <a (click)="onClickedDeleteTask(ii)" class="btn btn-xs btn-danger pull-right"><i class="material-icons">close</i> remove</a>
 	                    </div>
 	                    <div class="timeline-body">
 	                      <p>{{ task.Content }}</p>

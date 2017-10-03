@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { DataService } from '../../../../core/services/data.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { Router } from '@angular/router';
+import { Angular2Csv } from 'angular2-csv/Angular2-csv';
 
 @Component({
   selector: 'app-roll-call',
@@ -141,9 +142,11 @@ export class RollCallComponent implements OnInit {
   }
 
   updateCurrentStudentBook() {
-    this.dataService.getStudentBook({ Class: this.currentClass._id, Week: this.week_studentbook}).subscribe((response) => {
+    this.dataService.getStudentBook({ Class: this.currentClass._id }).subscribe((response) => {
+      this.markHistory = response.MarkHistory;
+      let currentWeekHistory = this.markHistory.filter((history) => history.Week==this.week_studentbook);
       this.studentBook = this.currentClass.Students.map((student) => {
-        let index = this.getIndexOfMarkHistory(response.MarkHistory, student);
+        let index = this.getIndexOfMarkHistory(currentWeekHistory, student);
         if(index<0) {
           return {
             Class: this.currentClass._id,
@@ -156,7 +159,7 @@ export class RollCallComponent implements OnInit {
             Note: ''
           };
         } else {
-          return response.MarkHistory[index];
+          return currentWeekHistory[index];
         }
       });
     })
@@ -165,6 +168,9 @@ export class RollCallComponent implements OnInit {
     this.loading = '...';
     this.dataService.updateStudentBook({ data: this.studentBook }).subscribe((response) => {
       this.studentBook = response.MarkHistory;
+      this.dataService.getStudentBook({ Class: this.currentClass._id }).subscribe((response) => {
+        this.markHistory = response.MarkHistory;
+      });
       this.loading = '';
     })
   }
@@ -236,8 +242,15 @@ export class RollCallComponent implements OnInit {
       });
     })
 
+    let p7 = new Promise((resolve, reject) => {
+      this.dataService.getStudentBook({ Class: this.currentClass._id }).subscribe( response => {
+        this.markHistory = response.MarkHistory;
+        resolve();
+      });
+    })
 
-    Promise.all([p1, p2, p3, p4, p5, p6]).then(() => {
+
+    Promise.all([p1, p2, p3, p4, p5, p6, p7]).then(() => {
       this.leftCollectionCardList = this.leftCollectionCards();
       this.loaded = true;
     });
@@ -507,11 +520,17 @@ export class RollCallComponent implements OnInit {
                   case "Any Background":
                     confirmed = history.Target[action_index].every((player_id) => this.ownedBackgrounds.some((background) => background.Student==player_id))
                     break;
+                  case "Any Point":
+                    confirmed = history.Target[action_index].every((player_id) => this.currentClass.Players[this.getIndexOfPlayers(this.currentClass.Players, player_id)].Point == action.KeywordValue)
+                    break;
                   case "Any Points Value Over":
                     confirmed = history.Target[action_index].every((player_id) => this.currentClass.Players[this.getIndexOfPlayers(this.currentClass.Players, player_id)].Point >= action.KeywordValue)
                     break;
                   case "Any Points Value Under":
                     confirmed = history.Target[action_index].every((player_id) => this.currentClass.Players[this.getIndexOfPlayers(this.currentClass.Players, player_id)].Point <= action.KeywordValue)
+                    break;
+                  case "Any Gold":
+                    confirmed = history.Target[action_index].every((player_id) => this.currentClass.Players[this.getIndexOfPlayers(this.currentClass.Players, player_id)].Gold == action.KeywordValue)
                     break;
                   case "Any Gold Value Over":
                     confirmed = history.Target[action_index].every((player_id) => this.currentClass.Players[this.getIndexOfPlayers(this.currentClass.Players, player_id)].Gold >= action.KeywordValue)
@@ -573,12 +592,6 @@ export class RollCallComponent implements OnInit {
       });
     });
 
-    let p2 = new Promise((resolve, reject) => {
-      this.dataService.getStudentBook({ Class: this.currentClass._id }).subscribe( response => {
-        this.markHistory = response.MarkHistory;
-        resolve();
-      });
-    })
 
     let p3 = new Promise((resolve, reject) => {
       this.dataService.getGroupsForClass({_id: this.currentClass._id}).subscribe( response => {
@@ -587,7 +600,7 @@ export class RollCallComponent implements OnInit {
       })
     })
 
-    return Promise.all([p1, p2, p3]);
+    return Promise.all([p1, p3]);
     // return new Promise((resolve, reject) => {
     //   this.dataService.getGameInfo({_id: this.currentClass._id}).subscribe(response => {
     //     this.currentClass = response.Class;
@@ -628,113 +641,55 @@ export class RollCallComponent implements OnInit {
     return this.studentList[this.getIndexOfPlayersID(this.studentList, player_id)];
   }
 
-  /*confirmCardAction(history) {
-    if(confirm('Do you confirm this action?')) {
-      this.loadCurrentGameStatus().then(() => {
-        let card = this.cards[this.getIndexOfCards(this.cards, history.Card)];
+  exportStudentBookToCSV() {
 
-        let auto_progress = true, unresolved = history.UnResolved;
-        
-        card.Actions.every((action, i) => {
-          if(i<card.Actions.length-unresolved) {
-            return true;
-          }
-          //"Add Points", "Subtract Points", "Add Gold", "Subtract Gold", "Add Cards", "Subtract Cards"
-          let bonus = { Point: 0, Gold: 0, Cards: 0, Defence: 0, AddFriend: false };
-          switch(action.Keyword) {
-            case "Add Points":
-              bonus.Point = action.KeywordValue;
-              break;
-            case "Subtract Points":
-              bonus.Point = -action.KeywordValue;
-              break;
-            case "Add Gold":
-              bonus.Gold = action.KeywordValue;
-              break;
-            case "Subtract Gold":
-              bonus.Gold = -action.KeywordValue;
-              break;
-            case "Add Cards":
-              bonus.Cards = action.KeywordValue;
-              break;
-            case "Subtract Cards":
-              bonus.Cards = -action.KeywordValue;
-              break;
-            case "Defend Negative":
-              bonus.Defence = action.KeywordValue;
-              break;
-            case "Add Friend":
-              bonus.AddFriend = true;
-              break;
-            default:
-              auto_progress = false;
-              break;
-          }
-          if(i==card.Actions.length-unresolved) {
-            auto_progress = true;
-          }
+    let data = this.currentClass.Students.map((student_id) => {
 
-          if(auto_progress) {
-            let targets = history.Target[history.Target.length-history.UnResolved];
-            let targets_left = history.TargetLeft[history.Target.length-history.UnResolved];
+      return [
+        this.studentList[this.getIndexOfUsers(this.studentList, student_id)].DisplayName,
+        ...[
+          ...this.markHistory.filter((history) => history.Student == student_id).sort((a,b) => a.Week-b.Week).map((history) => {
+            return [
+              history.Attendance==true?'√':'',
+              ...history.Marks.map((mark) => mark.Value)
+            ]
+          })
+        ]
+      ]
+    })
 
-            history.UnResolved--;
 
-            targets.forEach((player_id) => {
+    data.unshift([
+      '',
+      ...[
+        ...this.week_numbers.map((week) => {
+          return [
+            'Week ' + week,
+            ...this.marktypes.map((marktype) => marktype.Name)
+          ]
+        })
+      ]
+    ])
 
-              if(bonus.AddFriend) {
-                this.dataService.buildFriendConnection({ from: this.me._id, to: player_id }).subscribe((response) => {});
-              }
+    // console.log(data);
 
-              let player = this.currentClass.Players[this.getIndexOfPlayers(this.currentClass.Players, player_id)];
-              if(player.Defence>0 && (bonus.Point<0 || bonus.Gold<0 || bonus.Cards<0)) {
-                player.Defence --;
-                bonus.Point = 0;
-                bonus.Gold = 0;
-                bonus.Cards = 0;
-              }
-              player.Point += bonus.Point;
-              player.Gold += bonus.Gold;
-              player.Defence += bonus.Defence;
+    let options = { 
+        fieldSeparator: ',',
+        quoteStrings: '"',
+        decimalseparator: '.',
+        showLabels: false, 
+        showTitle: false,
+        useBom: true
+      };
 
-              if(bonus.Cards>0) {
-                player.Stack.splice(0,bonus.Cards).forEach((card_id) => {
-                  player.Hand.push(card_id);
-                })
-                if(player.Collection.length>0) {
-                  while(player.Stack.length<this.currentClass.Player_StackSize) {
-                    player.Stack.push(this.chooseCard(player.Collection, player.Stack));
-                  }
-                }
-              } else if(bonus.Cards<0) {
-                let cnt = bonus.Cards;
-                while(player.Hand.length>=0 && cnt>0) {
-                  player.Hand.splice(Math.floor(Math.random()*player.Hand.length),1);
-                  cnt--;
-                }
-              }
+    let today = new Date();
 
-              this.currentClass.Players[this.getIndexOfPlayers(this.currentClass.Players, player_id)] = player;
-            })
-          }
-        });
+    let title = this.currentClass.Name + '-' + (today.getFullYear() + '.' + (today.getMonth()+1) + '.' + today.getDay());
 
-        // total_targets.forEach((target) => {
-        //   this.currentGame.CardHistory.push({
-        //     Source: this.me._id,
-        //     Target: target,
-        //     Card: card_id,
-        //     Resolved: false
-        //   })
-        // })
-        this.currentClass.CardHistory[this.getIndexOfHistory(this.currentClass.CardHistory, history._id)] = history;
+    new Angular2Csv(data, title, options);
 
-        this.dataService.updateClassInfo({_id: this.currentClass._id, Players: this.currentClass.Players, CardHistory: this.currentClass.CardHistory}).subscribe((response) => {
-          // console.log(response.Class);
-        });
-      });
-    }
-  }*/
+  }
+
 
   _performCardActions(historyIndex, ActionTargetIndex) {
 
@@ -999,6 +954,6 @@ export class RollCallComponent implements OnInit {
   }
 
   checkCondition_ConditionKeywords(keyword) {
-    return ["Any Mark", "Any Mark Over", "Any Mark Under", "Specific Mark1", "Specific Mark1 Over", "Specific Mark1 Under", "Specific Mark2", "Specific Mark2 Over", "Specific Mark2 Under", "Specific Mark3", "Specific Mark3 Over", "Specific Mark3 Under", "Any Title", "Any Background", "Any Points Value Over", "Any Points Value Under", "Any Gold Value Over", "Any Gold Value Under"].indexOf(keyword)>=0;
+    return ["Any Mark", "Any Mark Over", "Any Mark Under", "Specific Mark1", "Specific Mark1 Over", "Specific Mark1 Under", "Specific Mark2", "Specific Mark2 Over", "Specific Mark2 Under", "Specific Mark3", "Specific Mark3 Over", "Specific Mark3 Under", "Any Title", "Any Background", "Any Point", "Any Points Value Over", "Any Points Value Under", "Any Gold", "Any Gold Value Over", "Any Gold Value Under"].indexOf(keyword)>=0;
   }
 }

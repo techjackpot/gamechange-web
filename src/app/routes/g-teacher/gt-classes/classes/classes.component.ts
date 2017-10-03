@@ -1,5 +1,6 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthService } from '../../../../core/services/auth.service';
 import { DataService } from '../../../../core/services/data.service';
 
 @Component({
@@ -12,15 +13,15 @@ export class ClassesComponent implements OnInit {
 	assignedClasses = [];
 	currentClass = null;
 
-  constructor(private router: Router, private dataService: DataService) { }
+  constructor(private router: Router, private dataService: DataService, private authService: AuthService) { }
 
   ngOnInit() {
   	this.currentClass = Object.assign( { _id: ''}, this.dataService.getCurrentClass() );
     this.dataService.getClassesList().subscribe(
       response => {
       	let teacherId = this.dataService.getTeacherID();
-        this.assignedClasses = (response.Classes || []).filter(function (classInfo) {
-        	return classInfo.Teachers.indexOf(teacherId)>-1;
+        this.assignedClasses = (response.Classes || []).filter((classInfo) => {
+        	return classInfo.Teachers.indexOf(teacherId)>-1 || this.authService.getUserRole()=='Convenor';
         });
       },
       (error) => {

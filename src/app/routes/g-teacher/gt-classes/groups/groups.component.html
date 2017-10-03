@@ -35,48 +35,31 @@
 								</div>
 							</div>
 							<div class="group-quick-mark-box">
-			    			<form (ngSubmit)="'[onSubmitMarkGroup(mg'+ii+')]'" #mg="ngForm" name="givemark">
-			    				<div class="row">
-			    					<div class="col-md-6">
-					            <div class="form-group">
-					              <label class="control-label">Group</label>
-										    <select name="markModel-group" required class="form-control">
-										    	<option value="">Select a Group...</option>
-										    	<option *ngFor="let group of Groups;" [value]="group._id">{{ group.Title }}</option>
-										    </select>
-					            </div>
-					          </div>
-					          <div class="col-md-6">
-										  <div class="form-group">
-										    <label class="control-label">Week</label>
-										    <select name="markModel-week" required class="form-control">
-										    	<option value="0">Select Week</option>
-										    	<option *ngFor="let w of week_numbers;" [value]="w">{{ w }}</option>
-										    </select>
-										  </div>
-										</div>
-										<div class="col-md-6">
-										  <div class="form-group">
-										    <label class="control-label">Mark Type</label>
-										    <select name="markModel-marktype" required class="form-control">
-										    	<option value="">Select Mark Type</option>
-										    	<option *ngFor="let marktype of groupmarktypes;" [value]="marktype._id">{{ marktype.Name }}</option>
-										    </select>
-										  </div>
-										</div>
-										<div class="col-md-6">
-										  <div class="form-group">
-										    <label class="control-label">Mark Value</label>
-										    <input type="number" class="form-control" placeholder="Mark Value" name="markModel-value" required>
-										  </div>
-										</div>
-										<div class="col-lg-12 text-center">
-										  <div class="form-group">
-								      	<button type="submit" [disabled]="!mg.form.valid" class="btn btn-rose">Set Mark</button>
-								      </div>
-								    </div>
+		    				<div class="row">
+									<input type="hidden" [(ngModel)]="groupMarkModel[group._id].group">
+							    <input type="hidden" [(ngModel)]="groupMarkModel[group._id].week">
+									<div class="col-md-6">
+									  <div class="form-group">
+									    <label class="control-label">Mark Type</label>
+									    <select [(ngModel)]="groupMarkModel[group._id].marktype" required class="form-control">
+									    	<option value="">Select Mark Type</option>
+									    	<option *ngFor="let marktype of groupmarktypes;" [value]="marktype._id">{{ marktype.Name }}</option>
+									    </select>
+									  </div>
+									</div>
+									<div class="col-md-6">
+									  <div class="form-group">
+									    <label class="control-label">Mark Value</label>
+									    <input type="number" class="form-control" placeholder="Mark Value" [(ngModel)]="groupMarkModel[group._id].value" equired>
+									  </div>
+									</div>
+									<div class="col-lg-12 text-center">
+									  <div class="form-group">
+							      	<button type="submit" [disabled]="!groupMarkModel[group._id].marktype || !groupMarkModel[group._id].value" (click)="onSubmitMarkEachGroup(group._id)" class="btn btn-rose">Set Mark</button>
+							      	<button [disabled]="currentClass.Status=='Stopped'" (click)="onSubmitAddCardEachMember(group._id)" class="btn btn-primary">Give Cards to Entire Group</button>
+							      </div>
 							    </div>
-			          </form>
+						    </div>
 							</div>
 					  </div>
 					</div>

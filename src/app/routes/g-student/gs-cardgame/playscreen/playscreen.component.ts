@@ -757,6 +757,6 @@ export class PlayscreenComponent implements OnInit {
   }
 
   checkCondition_ConditionKeywords(keyword) {
-    return ["Any Mark", "Any Mark Over", "Any Mark Under", "Specific Mark1", "Specific Mark1 Over", "Specific Mark1 Under", "Specific Mark2", "Specific Mark2 Over", "Specific Mark2 Under", "Specific Mark3", "Specific Mark3 Over", "Specific Mark3 Under", "Any Title", "Any Background", "Any Points Value Over", "Any Points Value Under", "Any Gold Value Over", "Any Gold Value Under"].indexOf(keyword)>=0;
+    return ["Any Mark", "Any Mark Over", "Any Mark Under", "Specific Mark1", "Specific Mark1 Over", "Specific Mark1 Under", "Specific Mark2", "Specific Mark2 Over", "Specific Mark2 Under", "Specific Mark3", "Specific Mark3 Over", "Specific Mark3 Under", "Any Title", "Any Background", "Any Point", "Any Points Value Over", "Any Points Value Under", "Any Gold", "Any Gold Value Over", "Any Gold Value Under"].indexOf(keyword)>=0;
   }
 }

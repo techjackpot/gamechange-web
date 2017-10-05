@@ -1,7 +1,9 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { DataService } from '../../../../core/services/data.service';
 import { AuthService } from '../../../../core/services/auth.service';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
+import { Location } from "@angular/common";
+
 
 @Component({
   selector: 'app-spreadsheet',
@@ -34,9 +36,16 @@ export class SpreadsheetComponent implements OnInit {
 
   timer = null;
 
-  constructor(private dataService: DataService, private router: Router, private authService: AuthService) { }
+  target_student = null;
+
+  constructor(private route: ActivatedRoute, private dataService: DataService, private router: Router, private authService: AuthService, private location: Location) { }
 
   ngOnInit() {
+
+    if(this.route.params['_value'].student_id) {
+      this.target_student = this.route.params['_value'].student_id;
+    }
+
     if(!this.dataService.getCurrentClass()) {
       this.router.navigate(['/classes']);
       return false;
@@ -300,5 +309,9 @@ export class SpreadsheetComponent implements OnInit {
 
   getMultiplierValue(student_id) {
     return this.currentClass.Players[this.getIndexOfPlayers(this.currentClass.Players,student_id)].Multiplier.reduce((sum, multiplier) => sum+multiplier.Value, 0);
+  }
+
+  goBack() {
+    this.location.back();
   }
 }

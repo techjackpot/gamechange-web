@@ -275,7 +275,7 @@ export class GroupsComponent implements OnInit {
     }
   }
   viewPlayerProfile(student) {
-    this.router.navigate(['/classes/student', student]);
+    this.router.navigate(['/classes/spreadsheet', student]);
   }
 
   onSubmitMarkEachGroup(group_id) {

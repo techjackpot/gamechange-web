@@ -28,7 +28,8 @@ const routes: Routes = [
       { path: 'rollcall', component: RollCallComponent },
       { path: 'gamescreen', component: GamescreenComponent },
       { path: 'marking', component: MarkingComponent },
-      { path: 'spreadsheet', component: SpreadsheetComponent }
+      { path: 'spreadsheet', component: SpreadsheetComponent },
+      { path: 'spreadsheet/:student_id', component: SpreadsheetComponent }
     ]
   }
 ];

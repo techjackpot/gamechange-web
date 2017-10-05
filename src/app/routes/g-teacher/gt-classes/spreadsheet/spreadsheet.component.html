@@ -1,4 +1,5 @@
 <ng-container *ngIf="loaded">
+	<div class="btn btn-info" (click)="goBack()" *ngIf="target_student">Go Back <i class="material-icons">keyboard_return</i></div>
 	<ng-container *ngIf="currentClass.Weeks!=1 ||currentClass.Status!='Stopped'">
 		<div class="card">
 			<div class="card-header card-header-title" data-background-color="orange">
@@ -29,25 +30,27 @@
 									</tr>
 								</thead>
 								<tbody>
-									<tr *ngFor="let student_id of currentClass.Students; let iii=index">
-										<td><div class="profile_info"><img src="{{ getServerAssetUrl(studentList[getIndexOfUsers(studentList, student_id)].DisplayPicture) }}"><span>{{ studentList[getIndexOfUsers(studentList, student_id)].DisplayName }}</span></div></td>
-										<td>{{ findStudentGroupLabel(student_id) }}</td>
-										<td align="center"><input type="checkbox" name="attendance-{{iii}}" [(ngModel)]="studentBook[getIndexOfMarkHistory(studentBook, student_id)].Attendance" (change)="formValueChanged()" /></td>
-										<td align="center"><input type="checkbox" name="explained-{{iii}}" [(ngModel)]="studentBook[getIndexOfMarkHistory(studentBook, student_id)].Explained" (change)="formValueChanged()" /></td>
-										<td *ngFor="let marktype of marktypes; let jjj=index">
-											<div class="mark-form">
-												<div class="mark-value alert alert-info">{{ studentBook[getIndexOfMarkHistory(studentBook, student_id)].Marks[getIndexOfMark(studentBook[getIndexOfMarkHistory(studentBook, student_id)].Marks, marktype._id)].Value }}</div>
-												<div class="mark-buttons">
-													<button class="mark-plus btn btn-rose btn-xs btn-just-icon" (click)="clickUpdateMarkValue(student_id, marktype._id, 1)"><i class="material-icons">add</i></button>
-													<button class="mark-minus btn btn-rose btn-xs btn-just-icon" (click)="clickUpdateMarkValue(student_id, marktype._id, -1)"><i class="material-icons">remove</i></button>
+									<ng-container *ngFor="let student_id of currentClass.Students; let iii=index">
+										<tr *ngIf="target_student?target_student==student_id:true">
+											<td><div class="profile_info"><img src="{{ getServerAssetUrl(studentList[getIndexOfUsers(studentList, student_id)].DisplayPicture) }}"><span>{{ studentList[getIndexOfUsers(studentList, student_id)].DisplayName }}</span></div></td>
+											<td>{{ findStudentGroupLabel(student_id) }}</td>
+											<td align="center"><input type="checkbox" name="attendance-{{iii}}" [(ngModel)]="studentBook[getIndexOfMarkHistory(studentBook, student_id)].Attendance" (change)="formValueChanged()" /></td>
+											<td align="center"><input type="checkbox" name="explained-{{iii}}" [(ngModel)]="studentBook[getIndexOfMarkHistory(studentBook, student_id)].Explained" (change)="formValueChanged()" /></td>
+											<td *ngFor="let marktype of marktypes; let jjj=index">
+												<div class="mark-form">
+													<div class="mark-value alert alert-info">{{ studentBook[getIndexOfMarkHistory(studentBook, student_id)].Marks[getIndexOfMark(studentBook[getIndexOfMarkHistory(studentBook, student_id)].Marks, marktype._id)].Value }}</div>
+													<div class="mark-buttons">
+														<button class="mark-plus btn btn-rose btn-xs btn-just-icon" (click)="clickUpdateMarkValue(student_id, marktype._id, 1)"><i class="material-icons">add</i></button>
+														<button class="mark-minus btn btn-rose btn-xs btn-just-icon" (click)="clickUpdateMarkValue(student_id, marktype._id, -1)"><i class="material-icons">remove</i></button>
+													</div>
+													<!-- <input class="form-control" type="number" name="mark-{{iii}}-{{jjj}}" [(ngModel)]="studentBook[getIndexOfMarkHistory(studentBook, student_id)].Marks[getIndexOfMark(studentBook[getIndexOfMarkHistory(studentBook, student_id)].Marks, marktype._id)].Value" (mouseup)="$event.target.select()"  min="0" max="5" required /> -->
 												</div>
-												<!-- <input class="form-control" type="number" name="mark-{{iii}}-{{jjj}}" [(ngModel)]="studentBook[getIndexOfMarkHistory(studentBook, student_id)].Marks[getIndexOfMark(studentBook[getIndexOfMarkHistory(studentBook, student_id)].Marks, marktype._id)].Value" (mouseup)="$event.target.select()"  min="0" max="5" required /> -->
-											</div>
-											<div class="avg-mark">Avg. {{ getAverageMarkValue(student_id, marktype._id) }}</div>
-										</td>
-										<td>{{ currentClass.Players[getIndexOfPlayers(currentClass.Players, student_id)].Point }}<span class="value-multiplier" *ngIf="getMultiplierValue(student_id)>0">{{ getMultiplierValue(student_id) }}</span></td>
-										<td>{{ currentClass.Players[getIndexOfPlayers(currentClass.Players, student_id)].Gold }}</td>
-									</tr>
+												<div class="avg-mark">Avg. {{ getAverageMarkValue(student_id, marktype._id) }}</div>
+											</td>
+											<td>{{ currentClass.Players[getIndexOfPlayers(currentClass.Players, student_id)].Point }}<span class="value-multiplier" *ngIf="getMultiplierValue(student_id)>0">{{ getMultiplierValue(student_id) }}</span></td>
+											<td>{{ currentClass.Players[getIndexOfPlayers(currentClass.Players, student_id)].Gold }}</td>
+										</tr>
+									</ng-container>
 								</tbody>
 							</table>
 						</div>

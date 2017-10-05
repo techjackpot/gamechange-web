@@ -585,6 +585,10 @@ export class RollCallComponent implements OnInit {
     return false;
   }
 
+  viewPlayerProfile(student) {
+    this.router.navigate(['/classes/spreadsheet', student]);
+  }
+  
   loadCurrentGameStatus() {
     let p1 = new Promise((resolve, reject) => {
       this.dataService.getGameInfo({_id: this.currentClass._id}).subscribe(response => {

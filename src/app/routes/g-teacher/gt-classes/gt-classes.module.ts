@@ -13,6 +13,7 @@ import { DragulaModule } from 'ng2-dragula';
 import { GamescreenComponent } from './gamescreen/gamescreen.component';
 import { MarkingComponent } from './marking/marking.component';
 import { DomSanitizer } from '@angular/platform-browser';
+import { SpreadsheetComponent } from './spreadsheet/spreadsheet.component';
 
 const routes: Routes = [
   {
@@ -26,7 +27,8 @@ const routes: Routes = [
       { path: 'groups', component: GroupsComponent },
       { path: 'rollcall', component: RollCallComponent },
       { path: 'gamescreen', component: GamescreenComponent },
-      { path: 'marking', component: MarkingComponent }
+      { path: 'marking', component: MarkingComponent },
+      { path: 'spreadsheet', component: SpreadsheetComponent }
     ]
   }
 ];
@@ -50,7 +52,7 @@ export class Safe {
     ReactiveFormsModule,
     DragulaModule
   ],
-  declarations: [ClassesComponent, StudentComponent, StudentsComponent, TasksComponent, GroupsComponent, RollCallComponent, GtClassesComponent, GamescreenComponent, MarkingComponent, Safe],
+  declarations: [ClassesComponent, StudentComponent, StudentsComponent, TasksComponent, GroupsComponent, RollCallComponent, GtClassesComponent, GamescreenComponent, MarkingComponent, Safe, SpreadsheetComponent],
   exports: [
   	RouterModule
   ]

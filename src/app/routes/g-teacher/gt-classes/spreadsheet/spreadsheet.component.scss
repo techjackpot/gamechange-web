@@ -1,0 +1,25 @@
+.mark-form {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	.mark-value {
+		flex: 1 0;
+		text-align: center;
+		margin: 0 1px;
+	}
+	.mark-buttons {
+		display: flex;
+		flex-direction: column;
+		button {
+			margin: 1px 0;
+		}
+	}
+}
+
+.value-multiplier {
+	color: #3a3;
+	font-size: 0.7em;
+	&:before {
+		content: ' x';
+	}
+}

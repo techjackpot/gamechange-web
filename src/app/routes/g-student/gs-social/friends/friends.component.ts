@@ -13,6 +13,9 @@ export class FriendsComponent implements OnInit {
 	studentList = [];
   currentStudent;
   requestList = [];
+  attendClasses = [];
+
+  totalGold = 0;
 
   timer = null;
 
@@ -37,7 +40,20 @@ export class FriendsComponent implements OnInit {
       })
     })
 
-    Promise.all([p1, p2]).then(() => {
+    let p3 = new Promise((resolve, reject) => {
+      this.dataService.getAttendClasses({ student_id: this.dataService.getStudentID() }).subscribe( (response) => {
+        this.attendClasses = response.Classes.filter((t_class) => this.getIndexOfPlayers(t_class.Players, this.currentStudent._id)>=0 );
+        this.attendClasses.sort((a, b) => {
+          return parseFloat(b.Players[this.getIndexOfPlayers(b.Players, this.currentStudent._id)].Gold) - parseFloat(a.Players[this.getIndexOfPlayers(a.Players, this.currentStudent._id)].Gold);
+        });
+        resolve();
+      });
+    })
+
+    Promise.all([p1, p2, p3]).then(() => {
+      this.totalGold = this.attendClasses.reduce((sum, t_class) => {
+        return sum + t_class.Players[this.getIndexOfPlayers(t_class.Players, this.currentStudent._id)].Gold;
+      }, 0)
       this.loaded = true;
     });
 
@@ -52,6 +68,16 @@ export class FriendsComponent implements OnInit {
     if(this.timer) {
       clearInterval(this.timer);
     }
+  }
+
+  getIndexOfPlayers(users,user_id) {
+    let index = -1;
+    users.forEach((user, i) => {
+      if(user.Player == user_id) {
+        index = i;
+      }
+    });
+    return index;
   }
 
   getIndexOfUsers(users,user_id) {
@@ -117,12 +143,47 @@ export class FriendsComponent implements OnInit {
   }
 
   addFriendRequest(student_id) {
+    if(!confirm("Thist cost 5 Gold. Do you really want to continue?")) return false;
+
+    let cost = 5;
+    let ps = [];
+    this.attendClasses.every((t_class, ii) => {
+      let gold = t_class.Players[this.getIndexOfPlayers(t_class.Players, this.currentStudent._id)].Gold;
+      let next = false;
+      if(cost > t_class.Players[this.getIndexOfPlayers(t_class.Players, this.currentStudent._id)].Gold) {
+        t_class.Players[this.getIndexOfPlayers(t_class.Players, this.currentStudent._id)].Gold = 0;
+        cost -= gold;
+        next = true;
+      } else {
+        t_class.Players[this.getIndexOfPlayers(t_class.Players, this.currentStudent._id)].Gold -= cost;;
+        cost = 0;
+        next = false;
+      }
+      let p = new Promise((resolve, reject) => {
+        this.dataService.updateClassInfo({_id: t_class._id, Players: t_class.Players}).subscribe((response) => {
+          resolve();
+        })
+      });
+      ps.push(p);
+      return next;
+    })
+
     this.dataService.sendFriendRequest({ from: this.currentStudent._id, to: student_id }).subscribe((response) => {
       let newRequest = {...response.FriendRequest};
       newRequest.From = this.currentStudent;
       newRequest.To = this.studentList[this.getIndexOfUsers(this.studentList, newRequest.To)];
       this.requestList.push(newRequest);
-      console.log(this.requestList);
+
+
+      this.dataService.getAttendClasses({ student_id: this.dataService.getStudentID() }).subscribe( (response) => {
+        this.attendClasses = response.Classes.filter((t_class) => this.getIndexOfPlayers(t_class.Players, this.currentStudent._id)>=0 );
+        this.attendClasses.sort((a, b) => {
+          return parseFloat(b.Players[this.getIndexOfPlayers(b.Players, this.currentStudent._id)].Gold) - parseFloat(a.Players[this.getIndexOfPlayers(a.Players, this.currentStudent._id)].Gold);
+        });
+        this.totalGold = this.attendClasses.reduce((sum, t_class) => {
+          return sum + t_class.Players[this.getIndexOfPlayers(t_class.Players, this.currentStudent._id)].Gold;
+        }, 0)
+      });
     });
   }
 

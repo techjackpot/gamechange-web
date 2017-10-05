@@ -44,7 +44,7 @@
 
 	<div class="card">
 		<div class="card-header card-header-text" data-background-color="rose">
-			<h4 class="card-title">Send Friend Request</h4>
+			<h4 class="card-title">Send Friend Request</h4><span class="pull-right">Total Gold: {{ this.totalGold }}</span>
 		</div>
 		<div class="card-content table-responsive">
 			<table class="table">
@@ -55,7 +55,7 @@
 							<span>{{ student.DisplayName }}</span>
 						</td>
 						<td class="text-right">
-							<a class="btn btn-info" (click)="addFriendRequest(student._id)"><i class="material-icons"></i>Send Request</a>
+							<button class="btn btn-info" (click)="addFriendRequest(student._id)" [disabled]="5>totalGold"><i class="material-icons"></i>Send Request</button>
 						</td>
 					</tr>
 				</tbody>

@@ -126,6 +126,7 @@
 									<tr class="text-danger">
 										<td></td>
 										<td>Attendance</td>
+										<td>Explained</td>
 										<td *ngFor="let marktype of marktypes;">{{ marktype.Name }}</td>
 										<td>Note</td>
 									</tr>
@@ -134,6 +135,7 @@
 									<tr *ngFor="let student_id of currentClass.Students; let iii=index">
 										<td><div class="profile_info"><img src="{{ getServerAssetUrl(studentList[getIndexOfUsers(studentList, student_id)].DisplayPicture) }}"><span>{{ studentList[getIndexOfUsers(studentList, student_id)].DisplayName }}</span></div></td>
 										<td align="center"><input type="checkbox" name="attendance-{{iii}}" [(ngModel)]="studentBook[getIndexOfMarkHistory(studentBook, student_id)].Attendance" /></td>
+										<td align="center"><input type="checkbox" name="explained-{{iii}}" [(ngModel)]="studentBook[getIndexOfMarkHistory(studentBook, student_id)].Explained" /></td>
 										<td *ngFor="let marktype of marktypes; let jjj=index">
 											<div class="form-group">
 												<input class="form-control" type="number" name="mark-{{iii}}-{{jjj}}" [(ngModel)]="studentBook[getIndexOfMarkHistory(studentBook, student_id)].Marks[getIndexOfMark(studentBook[getIndexOfMarkHistory(studentBook, student_id)].Marks, marktype._id)].Value" (mouseup)="$event.target.select()"  min="0" max="5" required />

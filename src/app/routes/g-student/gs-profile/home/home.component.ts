@@ -220,6 +220,7 @@ export class HomeComponent implements OnInit {
               Student: this.me._id,
               Marks: this.marktypes.map((marktype) => { return { MarkType: marktype._id, Value: 0 }; } ),
               Attendance: false,
+              Explained: false,
               Date: new Date().toJSON(),
               Note: ''
             };

@@ -22,4 +22,5 @@ export const ROUTES: RouteInfo[] = [
     { path: '/classes/gamescreen/', title: 'Play Screen', icon: 'material-icons' },
     { path: '/classes/marking/', title: 'Roll Call', icon: 'material-icons' },
     { path: '/classes/spreadsheet/', title: 'Spread Sheet', icon: 'material-icons' },
+    { path: '/staff/units/', title: 'Units Management', icon: 'material-icons' }
 ];

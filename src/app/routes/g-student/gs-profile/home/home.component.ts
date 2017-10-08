@@ -15,7 +15,6 @@ import {ImageCropperComponent, CropperSettings, Bounds} from 'ng2-img-cropper';
 export class HomeComponent implements OnInit {
 
   me = null;
-  currentStudent = null;
   attendClasses = [];
   selectedClass = null;
   marktypes = [];
@@ -108,9 +107,6 @@ export class HomeComponent implements OnInit {
 
   ngOnInit() {
     this.me = this.authService.getUser();
-    this.currentStudent = this.authService.getUser();
-
-    console.log(this.me, this.currentStudent);
 
     let p1 = new Promise((resolve, reject) => {
       this.dataService.getAttendClasses({ student_id: this.dataService.getStudentID() }).subscribe( (response) => {
@@ -240,6 +236,15 @@ export class HomeComponent implements OnInit {
     this.authService.resetPassword({}).subscribe((response) => {
       this.authService.logout();
       location.href="/";
+    })
+  }
+
+
+  togglePrivateInfo() {
+    if(!confirm("Do you really want to change your privacy option?")) return false;
+    this.dataService.updateUser({IsPrivate: !this.me.IsPrivate}).subscribe((response) => {
+      this.authService.updateUserData();
+      this.me.IsPrivate = !this.me.IsPrivate;
     })
   }
 

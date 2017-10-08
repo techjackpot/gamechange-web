@@ -150,6 +150,23 @@ export class DataService {
       .map((response: Response) => response.json());
   }
 
+  createNewUnit(data) {
+    return this.http.post(this.url + '/api/units/create', data, { headers: this.getHeaders() })
+      .map((response: Response) => response.json());
+  }
+  updateUnit(data) {
+    return this.http.post(this.url + '/api/units/update', data, { headers: this.getHeaders() })
+      .map((response: Response) => response.json());
+  }
+  deleteUnit(data) {
+    return this.http.post(this.url + '/api/units/delete', data, { headers: this.getHeaders() })
+      .map((response: Response) => response.json());
+  }
+  getUnitsList(data) {
+    return this.http.post(this.url + '/api/units/list', data, { headers: this.getHeaders() })
+      .map((response: Response) => response.json());
+  }
+
   getAttendClasses(data) {
     return this.http.post(this.url + '/api/students/getclass', data, { headers: this.getHeaders() })
       .map((response: Response) => response.json());

@@ -1,10 +1,7 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { DataService } from '../../../../core/services/data.service';
-//import { ClassInfo } from '../../../../core/models/class-info'
 import { Router } from '@angular/router';
 import { NgForm } from '@angular/forms';
-
-declare var require: any
 
 declare var $:any;
 
@@ -18,46 +15,43 @@ export class ClassesComponent implements OnInit {
 	classesList = [];
   teachersList = [];
 
+  unitsList = [];
+
 	selectedClass;
 
 	opened = false;
   updating = false;
+  loaded = false;
 
   constructor(private dataService: DataService) { }
 
   ngOnInit() {
-    this.dataService.getTeacherList().subscribe(
-      response => {
+
+    let p1 = new Promise((resolve, reject) => {
+      this.dataService.getTeacherList().subscribe((response) => {
         this.teachersList = response;
-      },
-      (error) => {
-        // console.log(error);
-      }
-    );
-    this.dataService.getClassesList().subscribe(
-      response => {
+        resolve();
+      });
+    })
+
+    let p2 = new Promise((resolve, reject) => {
+      this.dataService.getClassesList().subscribe((response) => {
         this.classesList = response.Classes;
-      },
-      (error) => {
-        // console.log(error);
-      }
-    );
+        resolve();
+      });
+    })
 
+    let p3 = new Promise((resolve, reject) => {
+      this.dataService.getUnitsList({}).subscribe((response) => {
+        this.unitsList = response.Units;
+        resolve();
+      })
+    })
 
+    Promise.all([p1, p2, p3]).then(() => {
+      this.loaded = true;
+    })
 
-    // $('.datetimepicker').datetimepicker({
-    //     icons: {
-    //         time: "fa fa-clock-o",
-    //         date: "fa fa-calendar",
-    //         up: "fa fa-chevron-up",
-    //         down: "fa fa-chevron-down",
-    //         previous: 'fa fa-chevron-left',
-    //         next: 'fa fa-chevron-right',
-    //         today: 'fa fa-screenshot',
-    //         clear: 'fa fa-trash',
-    //         close: 'fa fa-remove'
-    //     }
-    //  });
   }
 
   selectClass(classInfo) {
@@ -78,6 +72,16 @@ export class ClassesComponent implements OnInit {
     return index;
   }
 
+  getIndexOfUnits(units, unit_id) {
+    let index = -1;
+    units.forEach((unit, i) => {
+      if(unit._id == unit_id) {
+        index = i;
+      }
+    });
+    return index;
+  }
+
   createNewClass() {
   	let newClass = {
   		Name: '',
@@ -86,7 +90,8 @@ export class ClassesComponent implements OnInit {
       TotalWeeks: 0,
   		Teachers: [],
       Room: '',
-      Subject: ''
+      Subject: '',
+      Unit: ''
   	};
 
     this.teachersList.forEach((teacher) => {
@@ -108,6 +113,7 @@ export class ClassesComponent implements OnInit {
       Teachers: [],
       Room: classInfo.Room,
       Subject: classInfo.Subject,
+      Unit: classInfo.Unit,
       _id: classInfo._id
     };
 
@@ -145,7 +151,8 @@ export class ClassesComponent implements OnInit {
       TotalWeeks: this.selectedClass.TotalWeeks,
       Teachers: [],
       Room: this.selectedClass.Room,
-      Subject: this.selectedClass.Subject
+      Subject: this.selectedClass.Subject,
+      Unit: this.selectedClass.Unit
 		};
     this.selectedClass.Teachers.forEach(function (user) {
       if(user.use) {
@@ -215,6 +222,7 @@ export class ClassesComponent implements OnInit {
       Teachers: [],
       Room: this.selectedClass.Room,
       Subject: this.selectedClass.Subject,
+      Unit: this.selectedClass.Unit,
       _id: this.selectedClass._id
     };
 
@@ -242,5 +250,13 @@ export class ClassesComponent implements OnInit {
 
   cancelNewClass() {
     this.opened = !this.opened;
+  }
+
+  getUnitName(unit) {
+    if(unit) {
+      return this.unitsList[this.getIndexOfUnits(this.unitsList, unit)].Name;
+    } else {
+      return '';
+    }
   }
 }

@@ -49,15 +49,19 @@
 		<div class="card-content table-responsive">
 			<table class="table">
 				<tbody>
-					<tr *ngFor="let student of getNonFriendsList();">
-						<td width="100px"><img [src]="getServerAssetUrl(student.DisplayPicture)"></td>
-						<td class="friend-name-wrapper">
-							<span>{{ student.DisplayName }}</span>
-						</td>
-						<td class="text-right">
-							<button class="btn btn-info" (click)="addFriendRequest(student._id)" [disabled]="5>totalGold"><i class="material-icons"></i>Send Request</button>
-						</td>
-					</tr>
+					<ng-container *ngFor="let student of getNonFriendsList();">
+						<ng-container *ngIf="!student.IsPrivate">
+							<tr>
+								<td width="100px"><img [src]="getServerAssetUrl(student.DisplayPicture)"></td>
+								<td class="friend-name-wrapper">
+									<span>{{ student.DisplayName }}</span>
+								</td>
+								<td class="text-right">
+									<button class="btn btn-info" (click)="addFriendRequest(student._id)" [disabled]="5>totalGold"><i class="material-icons"></i>Send Request</button>
+								</td>
+							</tr>
+						</ng-container>
+					</ng-container>
 				</tbody>
 			</table>
 		</div>

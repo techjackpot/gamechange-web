@@ -139,6 +139,12 @@
                                         <span class="sidebar-normal">{{menuItems[0].title}}</span>
                                     </a>
                                 </li>
+                                <li routerLinkActive="active" *ngIf="isConvenor()">
+                                    <a  [routerLink]="[menuItems[21].path]">
+                                        <span class="sidebar-mini"></span>
+                                        <span class="sidebar-normal">{{menuItems[21].title}}</span>
+                                    </a>
+                                </li>
                                 <li routerLinkActive="active">
                                     <a  [routerLink]="[menuItems[17].path]">
                                         <span class="sidebar-mini"></span>

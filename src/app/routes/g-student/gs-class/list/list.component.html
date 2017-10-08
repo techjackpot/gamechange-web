@@ -42,22 +42,33 @@
 			<div class="card-content table-responsive">
 				<table class="students-table">
 					<tbody>
-						<tr *ngFor="let student of selectedClass.Students;">
-							<td class="img-td"><img src="{{ getServerAssetUrl(studentList[getIndexOfUsers(studentList,student.student_id)].DisplayPicture) }}" alt="{{ studentList[getIndexOfUsers(studentList,student.student_id)].DisplayName }}"></td>
-							<td><span class="student-name">{{ studentList[getIndexOfUsers(studentList,student.student_id)].DisplayName }}</span></td>
-							<td><span>In Group</span><span class="in-group" [class.ingroupyes]="student.inGroup"><span class="text-danger">Y</span><span>/</span><span class="text-muted">N</span></span></td>
-							<td class="friend-status friend-status-{{checkFriendStatus(student.student_id)}}">
-								<div *ngIf="checkFriendStatus(student.student_id)=='none'">
-									<span>Add Friend</span><span class="add-friend" (click)="addFriendRequest(student.student_id)">+</span>
-								</div>
-								<div *ngIf="checkFriendStatus(student.student_id)=='waiting'">
-									<span>Friend Request is already sent!</span>
-								</div>
-								<div *ngIf="checkFriendStatus(student.student_id)=='approved'">
-									<span>Already Friend!</span>
-								</div>
-							</td>
-						</tr>
+						<ng-container *ngFor="let student of selectedClass.Students;">
+							<ng-container *ngIf="!studentList[getIndexOfUsers(studentList,student.student_id)].IsPrivate">
+								<tr>
+									<td class="img-td"><img src="{{ getServerAssetUrl(studentList[getIndexOfUsers(studentList,student.student_id)].DisplayPicture) }}" alt="{{ studentList[getIndexOfUsers(studentList,student.student_id)].DisplayName }}"></td>
+									<td><span class="student-name">{{ studentList[getIndexOfUsers(studentList,student.student_id)].DisplayName }}</span></td>
+									<td><span>In Group</span><span class="in-group" [class.ingroupyes]="student.inGroup"><span class="text-danger">Y</span><span>/</span><span class="text-muted">N</span></span></td>
+									<td class="friend-status friend-status-{{checkFriendStatus(student.student_id)}}">
+										<div *ngIf="checkFriendStatus(student.student_id)=='none'">
+											<span>Add Friend</span><span class="add-friend" (click)="addFriendRequest(student.student_id)">+</span>
+										</div>
+										<div *ngIf="checkFriendStatus(student.student_id)=='waiting'">
+											<span>Friend Request is already sent!</span>
+										</div>
+										<div *ngIf="checkFriendStatus(student.student_id)=='approved'">
+											<span>Already Friend!</span>
+										</div>
+									</td>
+								</tr>
+							</ng-container>
+							<ng-container *ngIf="studentList[getIndexOfUsers(studentList,student.student_id)].IsPrivate">
+								<tr>
+									<td colspan="4">
+										<div class="text-center">This student profile is private.</div>
+									</td>
+								</tr>
+							</ng-container>
+						</ng-container>
 					</tbody>
 				</table>
 			</div>

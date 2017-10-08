@@ -1,0 +1,72 @@
+<ng-container *ngIf="loaded">
+	<ng-container *ngIf="opened && selectedUnit">
+		<div class="card">
+		  <div class="card-header card-header-icon" data-background-color="rose">
+		    <i class="material-icons">assignment</i>
+		  </div>
+		  <div class="card-content">
+		    <h4 class="card-title">Edit Unit
+		    </h4>
+		    <form #f="ngForm">
+		      <div class="row">
+		        <div class="col-md-5">
+		          <div class="form-group">
+		            <label class="control-label">Name</label>
+		            <input type="text" class="form-control" name="Name" [(ngModel)]="selectedUnit.Name" required />
+		          </div>
+		        </div>
+		      </div>
+		      <div class="row">
+		        <div class="col-md-12">
+		          <div class="form-group label-floating">
+		            <label>Description</label>
+		            <textarea class="form-control" name="Description" [(ngModel)]="selectedUnit.Description" rows="3"></textarea>
+		          </div>
+		        </div>
+		      </div>
+		      <button class="btn btn-danger pull-right" *ngIf="opened" (click)="cancelNewUnit()"><i class="material-icons">close</i> Cancel</button>
+		      <button type="submit" class="btn btn-success pull-right" *ngIf="updating" [disabled]="!f.form.valid" (click)="onSubmitUpdateUnit(f)">Update Unit</button>
+		      <button type="submit" class="btn btn-success pull-right" *ngIf="!updating" [disabled]="!f.form.valid" (click)="onSubmitCreateUnit(f)">Create Unit</button>
+		      <div class="clearfix"></div>
+		    </form>
+		  </div>
+		</div>
+	</ng-container>
+
+
+	<button class="btn btn-success pull-right" (click)="createNewUnit()"><span class="btn-label"><i class="material-icons" >add</i></span>Create New Unit</button>
+
+	<div class="card">
+	  <div class="card-header card-header-icon" data-background-color="rose">
+	      <i class="material-icons">assignment</i>
+	  </div>
+	  <div class="card-content">
+	    <h4 class="card-title">Units</h4>
+	    <div class="table-responsive">
+	      <table class="table">
+	        <thead>
+	          <tr>
+	            <th>Name</th>
+	            <th>Description</th>
+	            <th class="text-right">Action</th>
+	          </tr>
+	        </thead>
+	        <tbody>
+	          <tr *ngFor="let unitInfo of unitsList;">
+	            <td>{{ unitInfo.Name }}</td>
+	            <td>{{ unitInfo.Description }}</td>
+	            <td class="td-actions text-right">
+	              <button type="button" rel="tooltip" class="btn btn-success" (click)="editUnit(unitInfo);">
+	                <i class="material-icons">edit</i>
+	              </button>
+	              <button type="button" rel="tooltip" class="btn btn-danger" (click)="removeUnit(unitInfo);">
+	                <i class="material-icons">close</i>
+	              </button>
+	            </td>
+	          </tr>
+	        </tbody>
+	      </table>
+	    </div>
+	  </div>
+	</div>
+</ng-container>

@@ -5,6 +5,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { StaffComponent } from './staff/staff.component';
 import { GtConvenorComponent } from './gt-convenor.component';
 import { ClassesComponent } from './classes/classes.component';
+import { UnitsComponent } from './units/units.component';
 
 const routes: Routes = [
 	{
@@ -12,7 +13,8 @@ const routes: Routes = [
 		children: [
 			{ path: '', redirectTo: 'classes', pathMatch: 'full' },
   		{ path: 'staff', component: StaffComponent },
-  		{ path: 'classes', component: ClassesComponent }
+  		{ path: 'classes', component: ClassesComponent },
+      { path: 'units', component: UnitsComponent }
   	]
 	}
 ];
@@ -23,7 +25,7 @@ const routes: Routes = [
     FormsModule,
     ReactiveFormsModule,
   ],
-  declarations: [StaffComponent, GtConvenorComponent, ClassesComponent],
+  declarations: [StaffComponent, GtConvenorComponent, ClassesComponent, UnitsComponent],
   exports: [
   	RouterModule
   ]

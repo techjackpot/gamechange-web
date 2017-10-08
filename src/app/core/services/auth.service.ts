@@ -113,6 +113,11 @@ export class AuthService {
     );
   }
 
+  togglePrivacyOption(data) {
+    return this.http.post(this.url + '/api/user/update', data, { headers: this.getHeaders() })
+      .map((response: Response) => response.json());
+  }
+
   /*
 	 *  Sample
 

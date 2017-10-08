@@ -51,13 +51,24 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr *ngFor="let player of selectedClass.Players; let idx = index;" [style.background-image]="'url(' + getPlayerBackground(player) + ')' | safe">
-							<th><img src="{{ getServerAssetUrl(studentList[getIndexOfUsers(studentList, player.Player)].DisplayPicture) }}"></th>
-							<td>{{ studentList[getIndexOfUsers(studentList, player.Player)].DisplayName }}{{ getPlayerTitle(player) }}</td>
-							<td>{{ player.Point }}</td>
-							<td>{{ player.Gold }}</td>
-							<td>{{ idx+1 }}</td>
-						</tr>
+						<ng-container *ngFor="let player of selectedClass.Players; let idx = index;">
+							<ng-container *ngIf="!studentList[getIndexOfUsers(studentList, player.Player)].IsPrivate">
+								<tr [style.background-image]="'url(' + getPlayerBackground(player) + ')' | safe">
+									<th><img src="{{ getServerAssetUrl(studentList[getIndexOfUsers(studentList, player.Player)].DisplayPicture) }}"></th>
+									<td>{{ studentList[getIndexOfUsers(studentList, player.Player)].DisplayName }}{{ getPlayerTitle(player) }}</td>
+									<td>{{ player.Point }}</td>
+									<td>{{ player.Gold }}</td>
+									<td>{{ idx+1 }}</td>
+								</tr>
+							</ng-container>
+							<ng-container *ngIf="studentList[getIndexOfUsers(studentList, player.Player)].IsPrivate">
+								<tr>
+									<td colspan="5">
+										<div class="text-center">This student profile is private.</div>
+									</td>
+								</tr>
+							</ng-container>
+						</ng-container>
 					</tbody>
 				</table>
 			</div>

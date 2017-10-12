@@ -49,7 +49,7 @@ export class LoginComponent implements OnInit {
       if(this.authService.getUserRole()=='Student') {
         this.router.navigate(['/profile']);
       } else {
-        this.router.navigate(['/classes']);
+        this.router.navigate(['/staff']);
       }
     } else {
       this.router.navigate(['/login']);

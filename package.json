@@ -34,6 +34,7 @@
     "bootstrap-select": "^1.12.2",
     "bootstrap-tagsinput": "^0.7.1",
     "chartist": "^0.9.4",
+    "chartist-plugin-legend": "^0.6.2",
     "chartist-plugin-zoom": "^0.4.0",
     "chartjs-plugin-zoom": "^0.5.0",
     "core-js": "^2.4.1",

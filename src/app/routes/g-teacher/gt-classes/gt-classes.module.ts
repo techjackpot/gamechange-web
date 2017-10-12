@@ -14,7 +14,6 @@ import { GamescreenComponent } from './gamescreen/gamescreen.component';
 import { MarkingComponent } from './marking/marking.component';
 import { DomSanitizer } from '@angular/platform-browser';
 import { SpreadsheetComponent } from './spreadsheet/spreadsheet.component';
-
 const routes: Routes = [
   {
     path: '', component: GtClassesComponent,

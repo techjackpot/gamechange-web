@@ -4,8 +4,12 @@ import { DataService } from '../../../../core/services/data.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { Http, Headers, Response, RequestOptions } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
-
 import {ImageCropperComponent, CropperSettings, Bounds} from 'ng2-img-cropper';
+import * as Chartist from 'chartist';
+import 'chartist-plugin-zoom';
+import 'chartist-plugin-legend';
+
+declare var $:any;
 
 @Component({
   selector: 'app-home',
@@ -19,9 +23,13 @@ export class HomeComponent implements OnInit {
   selectedClass = null;
   marktypes = [];
   markHistory = [];
+  studentBook = [];
+  cards = [];
 
   itemTitles = [];
   itemBackgrounds = [];
+  currentGame = null;
+  currentPlayer = null;
 
   myTitles = [];
   myBackgrounds = [];
@@ -73,6 +81,16 @@ export class HomeComponent implements OnInit {
       myReader.readAsDataURL(file);
       this.cropping = true;
     }
+  }
+
+  getIndexOfPlayers(players, player_id) {
+    let index = -1;
+    players.forEach((player, i) => {
+      if(player.Player == player_id) {
+        index = i;
+      }
+    });
+    return index;
   }
 
   onAvatarAcceptClicked() {
@@ -141,8 +159,15 @@ export class HomeComponent implements OnInit {
         resolve();
       })
     })
+    let p6 = new Promise((resolve, reject) => {
+      this.dataService.getAllCards({Approved: true}).subscribe(response => {
+        this.cards = response.Cards;
+        resolve();
+      })
+    });
 
-    Promise.all([p1, p2, p3, p4, p5]).then(() => {
+
+    Promise.all([p1, p2, p3, p4, p5, p6]).then(() => {
       this.itemTitles = this.itemTitles.filter((title) => this.myTitles.some((mtitle) => title._id == mtitle.Title));
       this.itemBackgrounds = this.itemBackgrounds.filter((background) => this.myBackgrounds.some((mbackground) => background._id == mbackground.Background));
 
@@ -186,7 +211,7 @@ export class HomeComponent implements OnInit {
 
   viewStatistics(classInfo) {
     this.selectedClass = Object.assign({},classInfo);
-    this.selectedClass.Players.sort(function(a, b) {
+    this.selectedClass.Players.sort((a, b) => {
       return parseFloat(b.Point) - parseFloat(a.Point);
     });
     this.selectedClass.Players.every((player, ii) => {
@@ -197,38 +222,139 @@ export class HomeComponent implements OnInit {
       }
       return true;
     })
-    this.dataService.getClassMarkTypes({ Class: this.selectedClass._id }).subscribe(response => {
-      this.marktypes = response.MarkTypes;
 
-      // console.log(this.marktypes);
+    let p1 = new Promise((resolve, reject) => {
+      this.dataService.getClassMarkTypes({ Class: this.selectedClass._id }).subscribe(response => {
+        this.marktypes = response.MarkTypes;
+        resolve();
+      });
+    })
+
+    let p3 = new Promise((resolve, reject) => {
+      this.dataService.getStudentBook({ Class: this.selectedClass._id }).subscribe((response) => {
+        this.studentBook = response.MarkHistory;
+        resolve();
+      });
+    })
+
+    Promise.all([p1, p3]).then(() => {
+      
+      this.currentPlayer = this.selectedClass.Players[this.getIndexOfPlayers(this.selectedClass.Players, this.me._id)];
+
       this.markHistory = [];
 
-      this.dataService.getStudentBook({ Class: this.selectedClass._id, Student: this.dataService.getStudentID() }).subscribe((response) => {
+      let studentHistory = this.studentBook.filter((history) => history.Student == this.me._id);
 
-        for(let i=1;i<=this.selectedClass.Weeks;i++) {
-          let index = this.getIndexOfWeeks(response.MarkHistory, i);
-          let obj = null;
-          if(index<0) {
-            obj = {
-              Class: this.selectedClass._id,
-              Staff: null,
-              Week: i,
-              Student: this.me._id,
-              Marks: this.marktypes.map((marktype) => { return { MarkType: marktype._id, Value: 0 }; } ),
-              Attendance: false,
-              Explained: false,
-              Date: new Date().toJSON(),
-              Note: ''
-            };
-          } else {
-            obj = response.MarkHistory[index];
-          }
-          this.markHistory.push(obj);
+      for(let i=1;i<=this.selectedClass.Weeks;i++) {
+        let index = this.getIndexOfWeeks(studentHistory, i);
+        let obj = null;
+        if(index<0) {
+          obj = {
+            Class: this.selectedClass._id,
+            Staff: null,
+            Week: i,
+            Student: this.me._id,
+            Marks: this.marktypes.map((marktype) => { return { MarkType: marktype._id, Value: 0 }; } ),
+            Attendance: false,
+            Explained: false,
+            Date: new Date().toJSON(),
+            Note: ''
+          };
+        } else {
+          obj = studentHistory[index];
         }
-        // console.log(this.markHistory);
-      });
+        this.markHistory.push(obj);
+      }
+
+      this.resetChartist();
     });
     // console.log(this.selectedClass);
+  }
+
+  getIndexOfCards(cards,card_id) {
+    let index = -1;
+    cards.forEach((card, i) => {
+      if(card._id == card_id) {
+        index = i;
+      }
+    });
+    return index;
+  }
+
+  getCardByCardId(card_id) {
+    return this.cards[this.getIndexOfCards(this.cards, card_id)];
+  }
+
+  getCurrentClassStudentMarkTypeValues(student_id, marktype_id) {
+    return this.studentBook.filter((history) => history.Student == student_id ).reduce((s, history) => s+=history.Marks[this.getIndexOfMark(history.Marks, marktype_id)].Value, 0);
+  }
+
+  resetChartist() {
+
+    this.marktypes.forEach((marktype) => {
+
+
+      let marktype_sorted = this.selectedClass.Players.concat().sort((a, b) => {
+        return parseFloat(this.getCurrentClassStudentMarkTypeValues(b.Player, marktype._id)) - parseFloat(this.getCurrentClassStudentMarkTypeValues(a.Player, marktype._id));
+      });
+
+      let my_rank = marktype_sorted.length;
+      marktype_sorted.every((player, ii) => {
+        if(player.Player==this.me._id) {
+          my_rank = ii+1;
+          return false;
+        }
+        return true;
+      });
+
+      let marktype_dataPreferences = {
+        series: [my_rank, marktype_sorted.length-my_rank]
+      };
+      let marktype_optionsPreferences = {
+        donut: true,
+        donutWidth: 30,
+        donutSolid: true,
+        showLabel: false
+      };
+      $('.marktype_rank_'+marktype._id).text(my_rank);
+      new Chartist.Pie('.marktype_'+marktype._id, marktype_dataPreferences, marktype_optionsPreferences);
+    })
+
+
+    let week_labels = [];
+    for(let i=0; i<this.selectedClass.Weeks; i++) {
+      week_labels.push(i+1);
+    }
+
+    let series_data = this.marktypes.map((marktype, ii) => {
+      return this.markHistory.map((history) => history.Marks[this.getIndexOfMark(history.Marks, marktype._id)].Value)
+    }).concat([this.markHistory.map((history) => history.Marks.reduce((s, mark) => s+mark.Value, 0)/history.Marks.length)]);
+
+    let week_by_week_chart_data = {
+      labels: week_labels,
+      series: series_data
+    };
+
+    let week_by_week_chart_options: any = {
+      lineSmooth: false,
+      axisY: {
+          showGrid: true,
+          offset: 40
+      },
+      axisX: {
+          showGrid: false,
+      },
+      low: 0,
+      showPoint: true,
+      height: '300px',
+      plugins: [
+        Chartist.plugins.legend({
+          legendNames: this.marktypes.map((marktype) => marktype.Name).concat('Average')
+        })
+      ]
+    };
+
+    let week_by_week_chart = new Chartist.Line('#week_by_week_graph', week_by_week_chart_data, week_by_week_chart_options);
   }
 
   resetPassword() {
@@ -247,5 +373,17 @@ export class HomeComponent implements OnInit {
       this.me.IsPrivate = !this.me.IsPrivate;
     })
   }
+
+  getAverageMarkValue(marktype_id) {
+    let s_mark = 0;
+    let s_weeks = 0;
+    this.markHistory.forEach((history) => {
+      s_mark += history.Marks[this.getIndexOfMark(history.Marks, marktype_id)].Value;
+      if(!history.Explained) s_weeks++;
+    })
+    if(s_weeks==0) return 0;
+    return (s_mark/s_weeks).toFixed(2);
+  }
+
 
 }

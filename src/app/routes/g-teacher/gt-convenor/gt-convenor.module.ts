@@ -6,15 +6,17 @@ import { StaffComponent } from './staff/staff.component';
 import { GtConvenorComponent } from './gt-convenor.component';
 import { ClassesComponent } from './classes/classes.component';
 import { UnitsComponent } from './units/units.component';
+import { AnalyticsComponent } from './analytics/analytics.component';
 
 const routes: Routes = [
 	{
 		path: '', component: GtConvenorComponent,
 		children: [
-			{ path: '', redirectTo: 'classes', pathMatch: 'full' },
+			{ path: '', redirectTo: 'analytics', pathMatch: 'full' },
   		{ path: 'staff', component: StaffComponent },
   		{ path: 'classes', component: ClassesComponent },
-      { path: 'units', component: UnitsComponent }
+      { path: 'units', component: UnitsComponent },
+      { path: 'analytics', component: AnalyticsComponent }
   	]
 	}
 ];
@@ -25,7 +27,7 @@ const routes: Routes = [
     FormsModule,
     ReactiveFormsModule,
   ],
-  declarations: [StaffComponent, GtConvenorComponent, ClassesComponent, UnitsComponent],
+  declarations: [StaffComponent, GtConvenorComponent, ClassesComponent, UnitsComponent, AnalyticsComponent],
   exports: [
   	RouterModule
   ]

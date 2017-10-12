@@ -76,6 +76,88 @@
 					</a>
 				</div>
 				<ng-container *ngIf="selectedClass">
+					<div class="row">
+						<ng-container *ngFor="let marktype of marktypes;">
+	            <div class="col-md-3">
+	              <div class="card">
+	                <div class="card-header card-header-text" data-background-color="red">
+	                	<h4 class="card-title">{{ marktype.Name }}</h4>
+	                </div>
+	                <div class="card-content">
+	                	<div class="text-center">Class Rank: <span class="marktype_rank_{{marktype._id}} text-danger"></span></div>
+	                	<div class="ct-chart marktype_{{ marktype._id }}"></div>
+	                </div>
+	              </div>
+	            </div>
+	          </ng-container>
+	          <div class="col-md-12">
+	          	<div class="card">
+	          		<div class="card-header card-header-text" data-background-color="blue">
+	          			<h4 class="card-title">Week By Week</h4>
+	          		</div>
+	          		<div class="card-content">
+	          			<div class="ct-chart" id="week_by_week_graph"></div>
+	          		</div>
+	          	</div>
+	          </div>
+						<ng-container *ngIf="currentPlayer">
+							<ng-container *ngIf="currentPlayer.Hand && currentPlayer.Hand.length>0 || currentPlayer.Stack">
+								<div class="col-md-12">
+									<div class="card">
+										<div class="card-header card-header-title" data-background-color="red">
+											<h4 class="card-title">My Hand - Stack</h4>
+										</div>
+										<div class="card-content">
+											<div class="row">
+												<div class="col-md-6"><h4 class="bg-primary text-center">Gold: {{ currentPlayer.Gold }}</h4></div>
+												<div class="col-md-6"><h4 class="bg-primary text-center">Point: {{ currentPlayer.Point }}</h4></div>
+											</div>
+											<div class="cards-list hand">
+												<div class="card-tile-wrapper-overlay">
+													<div class="card-placeholder stack card-tile-wrapper" *ngIf="currentPlayer.Stack.length>0">
+														<div class="card-tile {{ getCardByCardId(currentPlayer.Stack[0]).Type | lowercase }}">
+															<div class="card-title">
+																<span>{{ getCardByCardId(currentPlayer.Stack[0]).Title }}</span>
+															</div>
+															<div class="card-picture">
+																<img class="card-picture-preview" src="{{ getServerAssetUrl(getCardByCardId(currentPlayer.Stack[0]).Picture) }}">
+															</div>
+															<div class="card-description">
+																<span>{{ getCardByCardId(currentPlayer.Stack[0]).Description }}</span>
+															</div>
+															<div class="card-goldcost">
+																<span>{{ getCardByCardId(currentPlayer.Stack[0]).GoldCost }}</span>
+															</div>
+														</div>
+													</div>
+													<div *ngIf="currentPlayer.Hand.length==0">
+														<h4 class="text-danger text-center">You don't have Any Cards left to play!</h4>
+													</div>
+													<div *ngFor="let card_id of currentPlayer.Hand;" class="card-tile-wrapper" [class.card-selected]="selectedCard?card_id==selectedCard._id:false">
+														<a class="card-tile {{ getCardByCardId(card_id).Type | lowercase }}">
+															<div class="card-title">
+																<span>{{ getCardByCardId(card_id).Title }}</span>
+															</div>
+															<div class="card-picture">
+																<img class="card-picture-preview" src="{{ getServerAssetUrl(getCardByCardId(card_id).Picture) }}">
+															</div>
+															<div class="card-description">
+																<span>{{ getCardByCardId(card_id).Description }}</span>
+															</div>
+															<div class="card-goldcost">
+																<span>{{ getCardByCardId(card_id).GoldCost }}</span>
+															</div>
+														</a>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</ng-container>
+						</ng-container>
+
+          </div>
 					<div class="table-responsive">
 						<table class="table">
 							<thead>

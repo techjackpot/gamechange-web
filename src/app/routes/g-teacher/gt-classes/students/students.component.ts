@@ -26,6 +26,15 @@ export class StudentsComponent implements OnInit {
     ForRollCall: false
   };
 
+  csvArr = [
+    { Name: 'StudentNo', Index: 0 },
+    { Name: 'LastName', Index: 1 },
+    { Name: 'FirstName', Index: 2 },
+    { Name: 'MiddleName', Index: 3 },
+    { Name: 'Email', Index: 9 }
+  ];
+  csvArrIndex = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T']
+
   editingMark = false;
 
   isEditMode = false;
@@ -215,19 +224,20 @@ export class StudentsComponent implements OnInit {
             for (let j = 0; j < headers.length; j++) {
               tarr.push(data[j]);
             }
-            if(!isNumber(tarr[0])) continue;
+            if(!isNumber(tarr[this.csvArr[0].Index])) continue;
             this.studentRecords.push({
-              StudentNo: tarr[0],
-              LastName: tarr[1],
-              FirstName: tarr[2],
-              MiddleName: tarr[3],
-              Email: tarr[9],
+              StudentNo: tarr[this.csvArr[0].Index],
+              LastName: tarr[this.csvArr[1].Index],
+              FirstName: tarr[this.csvArr[2].Index],
+              MiddleName: tarr[this.csvArr[3].Index],
+              Email: tarr[this.csvArr[4].Index],
               Password: this.randomPassword(15)
             });
           }
         }
       };
       reader.readAsText(input.files[0]);
+      console.log(this.studentRecords);
     }
   }
 

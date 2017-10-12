@@ -1,0 +1,54 @@
+<ng-container *ngIf="loaded">
+	<div class="row">
+		<ng-container *ngIf="assignedClasses.length>0">
+			<div class="col-md-6">
+				<div class="card">
+					<div class="card-header card-header-text" data-background-color="red">
+						<h4>Assigned Classes</h4>
+					</div>
+					<div class="card-content">
+						<div class="assigned-classes-list">
+							<div class="btn-group">
+								<button *ngFor="let classInfo of assignedClasses;" (click)="chooseClass(classInfo);" class="btn btn-round" [class.btn-success]="currentClass && classInfo._id==currentClass._id" >
+									<i class="material-icons" *ngIf="currentClass && classInfo._id==currentClass._id">check</i>
+									<span>{{ classInfo.Name }}</span>({{ classInfo.DateTime | date : 'EEE h:mma' }} at {{ classInfo.Room }})
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</ng-container>
+		<ng-container *ngIf="units.length>0">
+			<div class="col-md-6">
+				<div class="card">
+					<div class="card-header card-header-text" data-background-color="red">
+						<h4>Units</h4>
+					</div>
+					<div class="card-content">
+						<div class="units-list">
+							<div class="btn-group">
+								<button *ngFor="let unitInfo of units;" (click)="chooseUnit(unitInfo);" class="btn btn-round" [class.btn-success]="currentUnit && unitInfo._id==currentUnit._id">
+									<i class="material-icons" *ngIf="currentUnit && unitInfo._id==currentUnit._id">check</i>
+									<span>{{ unitInfo.Name }}</span>
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</ng-container>
+		<ng-container *ngIf="currentUnit || currentClass">
+	    <div class="col-md-12">
+	    	<div class="card">
+	    		<div class="card-header card-header-text" data-background-color="blue">
+	    			<h4 class="card-title">Week By Week</h4>
+	    		</div>
+	    		<div class="card-content">
+	    			<div class="ct-chart" id="week_by_week_graph"></div>
+	    		</div>
+	    	</div>
+	    </div>
+	  </ng-container>
+	</div>
+</ng-container>

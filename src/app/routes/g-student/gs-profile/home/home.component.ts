@@ -38,6 +38,7 @@ export class HomeComponent implements OnInit {
   totalPoints = 0;
 
   loaded = false;
+  loaded_class = false;
 
 
   selectedClassRank = 0;
@@ -176,7 +177,6 @@ export class HomeComponent implements OnInit {
 
       this.totalPoints = this.attendClasses.reduce((s, cls) => s + cls.Players.reduce((ss, player) => ss + (player.Player==this.me._id?player.Point:0), 0), 0);
 
-      console.log(this.attendClasses);
       this.loaded = true;
     })
   }
@@ -211,6 +211,7 @@ export class HomeComponent implements OnInit {
 
   viewStatistics(classInfo) {
     this.selectedClass = Object.assign({},classInfo);
+    this.loaded_class = false;
     this.selectedClass.Players.sort((a, b) => {
       return parseFloat(b.Point) - parseFloat(a.Point);
     });
@@ -267,6 +268,7 @@ export class HomeComponent implements OnInit {
       }
 
       this.resetChartist();
+      this.loaded_class = true;
     });
     // console.log(this.selectedClass);
   }
@@ -374,15 +376,62 @@ export class HomeComponent implements OnInit {
     })
   }
 
-  getAverageMarkValue(marktype_id) {
-    let s_mark = 0;
-    let s_weeks = 0;
-    this.markHistory.forEach((history) => {
-      s_mark += history.Marks[this.getIndexOfMark(history.Marks, marktype_id)].Value;
-      if(!history.Explained) s_weeks++;
+  getMax(a,b) {
+    return a>b?a:b;
+  }
+
+  getStrongestCategory() {
+    let myBook = this.studentBook.filter((history) => history.Student == this.me._id);
+    let attendedWeeks = myBook.reduce((w, history) => history.Attendance==true?w+1:w, 0);
+    
+    let marktypes = this.marktypes.map((marktype) => {
+
+      let max_week_value = myBook.reduce((m, history) => this.getMax(history.Marks[this.getIndexOfMark(history.Marks, marktype._id)].Value, m), 0);
+
+      let totalMarks = myBook.reduce((t, history) => t+history.Marks[this.getIndexOfMark(history.Marks, marktype._id)].Value, 0);
+
+      if(attendedWeeks==0) return { ...marktype, ratio: 0};
+      return { ...marktype, ratio: totalMarks/(max_week_value * attendedWeeks) };
     })
-    if(s_weeks==0) return 0;
-    return (s_mark/s_weeks).toFixed(2);
+    marktypes.sort((a,b) => parseFloat(b.ratio) - parseFloat(a.ratio));
+
+    return marktypes[0].Name;
+  }
+
+  getWeakestCategory() {
+    let myBook = this.studentBook.filter((history) => history.Student == this.me._id);
+    let attendedWeeks = myBook.reduce((w, history) => history.Attendance==true?w+1:w, 0);
+    
+    let marktypes = this.marktypes.map((marktype) => {
+
+      let max_week_value = myBook.reduce((m, history) => this.getMax(history.Marks[this.getIndexOfMark(history.Marks, marktype._id)].Value, m), 0);
+
+      let totalMarks = myBook.reduce((t, history) => t+history.Marks[this.getIndexOfMark(history.Marks, marktype._id)].Value, 0);
+
+      if(attendedWeeks==0) return { ...marktype, ratio: 0};
+      return { ...marktype, ratio: totalMarks/(max_week_value * attendedWeeks) };
+    })
+    marktypes.sort((a,b) => parseFloat(a.ratio) - parseFloat(b.ratio));
+
+    return marktypes[0].Name;
+  }
+
+  getOverallMarkRatio() {
+    let myBook = this.studentBook.filter((history) => history.Student == this.me._id);
+    let attendedWeeks = myBook.reduce((w, history) => history.Attendance==true?w+1:w, 0);
+
+    let totalMarks = myBook.reduce((t, history) => t+history.Marks.reduce((st, mark) => st+mark.Value, 0), 0);
+
+    let total_max_week_value = 0;
+    let marktypes = this.marktypes.map((marktype) => {
+      let max_week_value = myBook.reduce((m, history) => this.getMax(history.Marks[this.getIndexOfMark(history.Marks, marktype._id)].Value, m), 0);
+
+      total_max_week_value += max_week_value;
+      return { ...marktype, max: max_week_value };
+    });
+
+    return totalMarks + ' out of ' + (attendedWeeks * total_max_week_value);
+
   }
 
 

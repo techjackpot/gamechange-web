@@ -9,8 +9,8 @@
 					<div class="card-content">
 						<div class="assigned-classes-list">
 							<div class="btn-group">
-								<button *ngFor="let classInfo of assignedClasses;" (click)="chooseClass(classInfo);" class="btn btn-round" [class.btn-success]="currentClass && classInfo._id==currentClass._id" >
-									<i class="material-icons" *ngIf="currentClass && classInfo._id==currentClass._id">check</i>
+								<button *ngFor="let classInfo of assignedClasses;" (click)="chooseClass(classInfo);" class="btn btn-round" [class.btn-success]="selectedClass && classInfo._id==selectedClass._id" >
+									<i class="material-icons" *ngIf="selectedClass && classInfo._id==selectedClass._id">check</i>
 									<span>{{ classInfo.Name }}</span>({{ classInfo.DateTime | date : 'EEE h:mma' }} at {{ classInfo.Room }})
 								</button>
 							</div>
@@ -28,8 +28,8 @@
 					<div class="card-content">
 						<div class="units-list">
 							<div class="btn-group">
-								<button *ngFor="let unitInfo of units;" (click)="chooseUnit(unitInfo);" class="btn btn-round" [class.btn-success]="currentUnit && unitInfo._id==currentUnit._id">
-									<i class="material-icons" *ngIf="currentUnit && unitInfo._id==currentUnit._id">check</i>
+								<button *ngFor="let unitInfo of units;" (click)="chooseUnit(unitInfo);" class="btn btn-round" [class.btn-success]="selectedUnit && unitInfo._id==selectedUnit._id">
+									<i class="material-icons" *ngIf="selectedUnit && unitInfo._id==selectedUnit._id">check</i>
 									<span>{{ unitInfo.Name }}</span>
 								</button>
 							</div>
@@ -38,17 +38,54 @@
 				</div>
 			</div>
 		</ng-container>
-		<ng-container *ngIf="currentUnit || currentClass">
+		<ng-container *ngIf="selectedClass">
 	    <div class="col-md-12">
 	    	<div class="card">
 	    		<div class="card-header card-header-text" data-background-color="blue">
 	    			<h4 class="card-title">Week By Week</h4>
 	    		</div>
 	    		<div class="card-content">
-	    			<div class="ct-chart" id="week_by_week_graph"></div>
+	    			<ng-container *ngIf="loaded_class">
+		    			<div class="text-center">
+		    				<label>Mark Type:</label> <select [(ngModel)]="selectedMarkType" (change)="resetClassGraph()">
+		    					<option *ngFor="let t of marktypes" [value]="t._id">{{ t.Name }}</option>
+		    				</select>
+		    			</div>
+	    				<div class="ct-chart" id="week_by_week_graph"></div>
+	    			</ng-container>
 	    		</div>
 	    	</div>
 	    </div>
+	  </ng-container>
+	  <ng-container *ngIf="selectedUnit">
+	  	<div class="col-md-12">
+	  		<div class="card">
+	  			<div class="card-header card-header-text" data-background-color="blue">
+	  				<h4 class="card-title">Compare Classes</h4>
+	  			</div>
+	  			<div class="card-content">
+	  				<div class="text-center">Default Mark Type: <select [(ngModel)]="selectedMarkTypeIndex" (change)="resetUnitGraph()">
+	  					<option *ngFor="let t of defaultMarkTypeIndexes; let ind=index" [value]="ind">{{ t }}</option>
+	  				</select></div>
+	  				<ng-container *ngIf="loaded_unit">
+	  					<div class="row">
+			  				<div *ngFor="let classInfo of selectedUnit.Classes">
+				  				<div class="col-md-4">
+				  					<div class="card">
+				  						<div class="card-header card-header-text" data-background-color="blue">
+				  							<h4 class="card-title">{{ classInfo.Name }}</h4>
+				  						</div>
+				  						<div class="card-content">
+				  							<div class="ct-chart class_{{ classInfo._id }}"></div>
+				  						</div>
+				  					</div>
+				  				</div>
+				  			</div>
+				  		</div>
+		  			</ng-container>
+	  			</div>
+	  		</div>
+	  	</div>
 	  </ng-container>
 	</div>
 </ng-container>

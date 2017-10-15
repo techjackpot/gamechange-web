@@ -28,7 +28,7 @@
 					<span class="info-item-name">Points Spent</span>
 					<span class="info-item-content">{{ totalPointSpent }}</span>
 				</div>
-				<ng-container *ngIf="selectedClass">
+				<ng-container *ngIf="selectedClass && loaded_class">
 					<div class="student-info-item">
 						<span class="info-item-name">Class</span>
 						<span class="info-item-content">{{ selectedClass.DateTime | date : 'EEE h:mma' }}</span>
@@ -43,15 +43,15 @@
 					</div>
 					<div class="student-info-item">
 						<span class="info-item-name">Weekly Average</span>
-						<span class="info-item-content">4.5/6.0</span>
+						<span class="info-item-content">{{ getOverallMarkRatio() }}</span>
 					</div>
 					<div class="student-info-item">
 						<span class="info-item-name">Strongest Category</span>
-						<span class="info-item-content">YMCA</span>
+						<span class="info-item-content">{{ getStrongestCategory() }}</span>
 					</div>
 					<div class="student-info-item">
 						<span class="info-item-name">Weakest Category</span>
-						<span class="info-item-content">Individual</span>
+						<span class="info-item-content">{{ getWeakestCategory() }}</span>
 					</div>
 				</ng-container>
 			</div>

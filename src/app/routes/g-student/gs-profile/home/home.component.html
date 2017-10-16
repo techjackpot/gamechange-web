@@ -75,7 +75,7 @@
 						{{ classInfo.Name }} ( {{ classInfo.DateTime | date : 'EEE h:mma' }} at {{ classInfo.Room }} )
 					</a>
 				</div>
-				<ng-container *ngIf="selectedClass">
+				<ng-container *ngIf="selectedClass && loaded_class">
 					<div class="row">
 						<ng-container *ngFor="let marktype of marktypes;">
 	            <div class="col-md-3">

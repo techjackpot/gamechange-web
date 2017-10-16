@@ -267,8 +267,10 @@ export class HomeComponent implements OnInit {
         this.markHistory.push(obj);
       }
 
-      this.resetChartist();
       this.loaded_class = true;
+      setTimeout(() => {
+        this.resetChartist();
+      }, 100)
     });
     // console.log(this.selectedClass);
   }

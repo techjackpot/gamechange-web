@@ -376,6 +376,11 @@
         }
     }
 
+    &[data-background-color="custom"]{
+        background-color: #01a7d0;
+        @include sidebar-background-color(#01a7d0, $white-color);
+    }
+
     &[data-background-color="black"]{
         background-color: #191919;
         @include sidebar-background-color($gray-base, $white-color);
